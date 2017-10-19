@@ -18,11 +18,25 @@
         <TextView
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textAlignment="center"
             android:text="WELCOME TO MAIN PAGE"/>
+
+        <Button
+            android:id="@+id/login_btn_main"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log in"/>
+
+        <Button
+            android:id="@+id/logout_btn_main"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log Out"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_main"
