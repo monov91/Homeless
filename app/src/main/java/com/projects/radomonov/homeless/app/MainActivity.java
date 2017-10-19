@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DatabaseReference offers;
 
-    private Button loginBtn,  logOutBtn;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -38,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        loginBtn = (Button) findViewById(R.id.login_btn_main);
-        logOutBtn = (Button) findViewById(R.id.logout_btn_main);
 
         setUpToolbar();
         setUpNavigationDrawer();
@@ -64,19 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
         setUpRecycler();
 
-        logOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-                Toast.makeText(MainActivity.this, "You Logged Out... \n Come back soon...", Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 
-    private void logout() {
-        mAuth.signOut();
-    }
 
     @Override
     protected void onStart() {

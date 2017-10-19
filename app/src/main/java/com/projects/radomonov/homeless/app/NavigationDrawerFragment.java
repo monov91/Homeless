@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.projects.radomonov.homeless.R;
 
 /**
@@ -24,11 +26,26 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
 
     private LinearLayout btnCreateOffer;
+    private LinearLayout btnLogOut;
+
+    private FirebaseAuth mAuth;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        btnLogOut = view.findViewById(R.id.btn_log_out);
+
+        btnLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Toast.makeText(getContext(), "You Logged Out... \n Come back soon...", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btnCreateOffer = view.findViewById(R.id.btn_create_offer);
         btnCreateOffer.setOnClickListener(new View.OnClickListener() {
@@ -40,6 +57,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         return view;
     }
+
 
     public void setUpDrawer(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar){
 
