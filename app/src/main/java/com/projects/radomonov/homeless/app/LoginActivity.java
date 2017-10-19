@@ -87,16 +87,24 @@ public class LoginActivity extends AppCompatActivity {
         String eMail = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (!TextUtils.isEmpty(eMail) || !TextUtils.isEmpty(password)) {
+        if(!validateStringForNullAndIsEmpty(eMail)) {
+            etEmail.setError("Invalid eMail");
+            return;
+        }
+
+        if(!validateStringForNullAndIsEmpty(password)) {
+            etPassword.setError("Invalid Password");
+            return;
+        }
+
+//        if (!TextUtils.isEmpty(eMail) || !TextUtils.isEmpty(password)) {
 
             mAuth.signInWithEmailAndPassword(eMail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, "You successfully logged in...", Toast.LENGTH_SHORT).show();
-
                         checkUserExist();
-
                     } else {
                         Toast.makeText(LoginActivity.this, "Sign In problems...", Toast.LENGTH_SHORT).show();
 
@@ -104,9 +112,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-        } else {
-            Toast.makeText(LoginActivity.this, "You have an empty field!", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(LoginActivity.this, "You have an empty field!", Toast.LENGTH_SHORT).show();
+//        }
 
     }
 
@@ -129,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "You need to setup your account...", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -138,6 +145,12 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private boolean validateStringForNullAndIsEmpty(String str) {
+        if(str == null || str.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 
     public void startSignIn() {
 
