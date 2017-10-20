@@ -26,6 +26,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,9 +48,10 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "LoginActivity";
-
     private DatabaseReference mDatabaseUsers;
 
+//    String user = "";
+//    FirebaseUser ads;
 //    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
@@ -62,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(this);
 
         mAuth = FirebaseAuth.getInstance();
+
+
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
@@ -106,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+                        Toast.makeText(LoginActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -117,6 +121,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 signIn();
+                // obekt user
+//                ads = mAuth.getCurrentUser();
+//                user = ads.getEmail();
+//                Log.d("TEST",user);
 
             }
         });
@@ -264,9 +272,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     } else {
 
-                        Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(setupIntent);
+//                        Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
+//                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(setupIntent);
+                        Toast.makeText(LoginActivity.this, "User doesn't exist yet", Toast.LENGTH_SHORT).show();
 
                     }
                 }

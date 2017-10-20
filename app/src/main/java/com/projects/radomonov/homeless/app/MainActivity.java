@@ -166,9 +166,10 @@ public class MainActivity extends AppCompatActivity {
 
                     if (!dataSnapshot.hasChild(userID)) {
 
-                        Intent mainIntent = new Intent(MainActivity.this, SetupActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent);
+//                        Intent mainIntent = new Intent(MainActivity.this, SetupActivity.class);
+//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(mainIntent);
+
 
                     }
                 }
