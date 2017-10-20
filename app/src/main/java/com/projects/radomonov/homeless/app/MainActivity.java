@@ -17,8 +17,11 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.model.Offer;
 import com.squareup.picasso.Picasso;
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private DatabaseReference offers;
+
+    private DatabaseReference mDatabaseUsers;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         setUpRecycler();
 
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.keepSynced(true);
 
     }
 
@@ -66,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        checkUserExist();
 
         mAuth.addAuthStateListener(mAuthListener);
 
@@ -145,4 +153,33 @@ public class MainActivity extends AppCompatActivity {
             Picasso.with(context).load(imageUri).into(image_item);
         }
     }
+
+    private void checkUserExist() {
+
+        if(mAuth.getCurrentUser() != null) {
+
+            final String userID = mAuth.getCurrentUser().getUid();
+
+            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (!dataSnapshot.hasChild(userID)) {
+
+                        Intent mainIntent = new Intent(MainActivity.this, SetupActivity.class);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(mainIntent);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
+
 }

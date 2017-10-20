@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "LoginActivity";
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabaseUsers;
 
 //    private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -62,7 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(this);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.keepSynced(true);
 
         etEmail = (EditText) findViewById(R.id.et_email_login);
         etPassword = (EditText) findViewById(R.id.et_pass_login);
@@ -251,7 +252,7 @@ public class LoginActivity extends AppCompatActivity {
 
             final String userID = mAuth.getCurrentUser().getUid();
 
-            mDatabase.addValueEventListener(new ValueEventListener() {
+            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
