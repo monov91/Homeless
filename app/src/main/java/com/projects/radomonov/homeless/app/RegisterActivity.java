@@ -22,18 +22,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText etName, etEmail, etPassword, etConfirmPass;
+    private EditText etName, etEmail, etPassword, etConfirmPass, etPhoneNumber;
     private Button btnRegister;
 
+    private ArrayList<String> keyList;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseUsers;
-    private DatabaseReference usersNickNamesEmails;
     private Map<String, String> mapUserNamesEmails = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +45,11 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        usersNickNamesEmails = FirebaseDatabase.getInstance().getReference().child("UsersNickNamesEmails");
-
-
 
 
         etName = (EditText) findViewById(R.id.et_nick_name_reg);
         etEmail = (EditText) findViewById(R.id.et_email_reg);
+        etPhoneNumber = (EditText) findViewById(R.id.et_phone_number_reg);
         etPassword = (EditText) findViewById(R.id.et_password_reg);
         etConfirmPass = (EditText) findViewById(R.id.et_confirm_password_reg);
 
@@ -65,11 +65,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void startRegister() {
 
-        usersNickNamesEmails.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                mapUserNamesEmails = (Map<String, String>) dataSnapshot.getValue();
+                keyList = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    keyList.add(child.getKey());
+                }
+
 
                 for(Map.Entry<String,String> entry : mapUserNamesEmails.entrySet()) {
                     Log.i("tagche",entry.getKey() + " ---> " + entry.getValue());
@@ -77,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 final String userName = etName.getText().toString().trim();
                 final String eMail = etEmail.getText().toString().trim();
+                final String phoneNumber = etPhoneNumber.getText().toString().trim();
                 String pass = etPassword.getText().toString().trim();
                 String passConfirm = etConfirmPass.getText().toString().trim();
 
@@ -85,18 +90,61 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(mapUserNamesEmails.containsKey(userName)) {
-                    etName.setError("NickName already exist!");
-                    return;
+                // iterating firebase and checking is user exist
+                for (int i = 0; i < keyList.size(); i++) {
+                    DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("nickName");
+                    nickName.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String nick = (String) dataSnapshot.getValue();
+                            if(nick.equals(userName)) {
+                                etName.setError("NickName already exist!");
+                                return;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
+//                if(mapUserNamesEmails.containsKey(userName)) {
+//                    etName.setError("NickName already exist!");
+//                    return;
+//                }
 
                 if(!validateStringForNullAndIsEmpty(eMail)) {
                     etEmail.setError("Invalid eMail");
                     return;
                 }
 
-                if(mapUserNamesEmails.containsValue(eMail)) {
-                    etEmail.setError("e-Mail already exist!");
+
+                for (int i = 0; i < keyList.size(); i++) {
+                    DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("eMail");
+                    nickName.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String nick = (String) dataSnapshot.getValue();
+                            if(nick.equals(eMail)) {
+                                etEmail.setError("e-Mail already exist!");
+                                return;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+//                if(mapUserNamesEmails.containsValue(eMail)) {
+//                    etEmail.setError("e-Mail already exist!");
+//                    return;
+//                }
+
+                if(!validateStringForNullAndIsEmpty(phoneNumber)) {
+                    etPhoneNumber.setError("Invalid PhoneNumber");
                     return;
                 }
 
@@ -111,23 +159,17 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
 
-//        Map<String, String> userNamesEmails = new HashMap<>();
-//        userNamesEmails.put(userName, eMail);
-
-//        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(eMail) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(passConfirm)) {
-//            if (pass.equals(passConfirm)) {
                 mAuth.createUserWithEmailAndPassword(eMail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             String userID = mAuth.getCurrentUser().getUid();
 
-                            DatabaseReference currentUser = usersNickNamesEmails.child(userName);
-                            currentUser.setValue(eMail);
-
                             DatabaseReference currentUserDb = mDatabaseUsers.child(userID);
 
                             currentUserDb.child("nickName").setValue(userName);
+                            currentUserDb.child("eMail").setValue(eMail);
+                            currentUserDb.child("phoneNumber").setValue(phoneNumber);
 
                             Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
                             mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -136,13 +178,6 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
-//            } else {
-//                Toast.makeText(RegisterActivity.this, "Pass and ConfirmPass doesn't match!", Toast.LENGTH_SHORT).show();
-//            }
-
-//        } else {
-//            Toast.makeText(RegisterActivity.this, "You have an empty field!", Toast.LENGTH_SHORT).show();
-//        }
             }
 
             @Override
@@ -150,9 +185,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
+
 
     private boolean validateStringForNullAndIsEmpty(String str) {
         if(str == null || str.isEmpty()) {

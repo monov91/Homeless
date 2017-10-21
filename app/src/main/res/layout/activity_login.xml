@@ -9,22 +9,36 @@
     android:padding="20dp"
     tools:context="com.projects.radomonov.homeless.app.LoginActivity">
 
-    <EditText
-        android:id="@+id/et_email_login"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="eMail..."
-        android:layout_marginTop="20dp"
-        />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/et_pass_login"
+        <android.support.design.widget.TextInputEditText
+
+            android:id="@+id/et_email_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="eMail..."
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+
+            android:id="@+id/et_pass_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            />
+    </android.support.design.widget.TextInputLayout>
 
     <com.google.android.gms.common.SignInButton
         android:layout_width="wrap_content"

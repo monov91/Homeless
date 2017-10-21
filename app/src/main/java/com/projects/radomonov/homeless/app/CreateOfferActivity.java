@@ -15,8 +15,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -35,15 +38,21 @@ public class CreateOfferActivity extends AppCompatActivity {
     private EditText etTitle, etPrice, etCurrency, etRooms, etNeighbourhood;
     private Button btnSave;
     private ImageButton imgbtnChoose;
+    private DatabaseReference offers;
     private DatabaseReference databaseMyOffers;
+    private  DatabaseReference currentUser;
     private StorageReference mStorage;
     private Uri imageUri;
+    private String phoneNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_offer);
+        offers = FirebaseDatabase.getInstance().getReference().child("Offers");
+
         mAuth = FirebaseAuth.getInstance();
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         databaseMyOffers = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("MyOffers");
         mStorage = FirebaseStorage.getInstance().getReference();
 
@@ -72,7 +81,6 @@ public class CreateOfferActivity extends AppCompatActivity {
                 final String currency = etCurrency.getText().toString().trim();
                 final int rooms = Integer.parseInt(etRooms.getText().toString());
                 final String neighbourhood = etNeighbourhood.getText().toString().trim();
-
                 // if(nqkvi validacii)
                 //DatabaseReference offerImages = newOffer.child("images");
                 if (imageUri != null) {
@@ -82,13 +90,29 @@ public class CreateOfferActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            DatabaseReference newOffer = databaseMyOffers.push();
+                            final DatabaseReference newOffer = offers.push();
                             newOffer.child("title").setValue(title);
                             newOffer.child("price").setValue(price);
                             newOffer.child("currency").setValue(currency);
                             newOffer.child("rooms").setValue(rooms);
                             newOffer.child("neighbourhood").setValue(neighbourhood);
                             newOffer.child("image").setValue(downloadUrl.toString());
+                            DatabaseReference phoneRef = currentUser.child("phoneNumber");
+                            phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    phoneNum = (String) dataSnapshot.getValue();
+                                    newOffer.child("phoneNumber").setValue(phoneNum);
+                                    Toast.makeText(CreateOfferActivity.this, phoneNum, Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(CreateOfferActivity.this, "Failed phone", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            newOffer.child("owner").setValue(currentUser.getKey().toString());
                             finish();
                         }
                     });

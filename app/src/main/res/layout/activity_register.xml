@@ -8,38 +8,80 @@
     android:padding="20dp"
     tools:context="com.projects.radomonov.homeless.app.RegisterActivity">
 
-    <EditText
-        android:id="@+id/et_nick_name_reg"
-        android:layout_width="match_parent"
-        android:layout_margin="16dp"
-        android:layout_height="wrap_content"
-        android:hint="Enter your NickName"
-        android:gravity="center"/>
 
-    <EditText
-        android:id="@+id/et_email_reg"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_margin="16dp"
-        android:layout_height="wrap_content"
-        android:hint="Enter your eMail"
-        android:gravity="center"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/et_password_reg"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_nick_name_reg"
+            android:layout_width="match_parent"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter your NickName"
+            android:gravity="center" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:inputType="textPassword"
-        android:hint="Enter Password"
-        android:gravity="center"/>
-    <EditText
-        android:id="@+id/et_confirm_password_reg"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_email_reg"
+            android:layout_width="match_parent"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter your eMail"
+            android:gravity="center"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:inputType="textPassword"
-        android:hint="Confirm Password"
-        android:gravity="center"/>
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_phone_number_reg"
+            android:layout_width="match_parent"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter your phone Number"
+            android:gravity="center"
+            android:inputType="number"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_password_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:inputType="textPassword"
+            android:hint="Enter Password"
+            android:gravity="center"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+
+            android:id="@+id/et_confirm_password_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:inputType="textPassword"
+            android:hint="Confirm Password"
+            android:gravity="center"
+            />
+    </android.support.design.widget.TextInputLayout>
+
     <Button
         android:id="@+id/btn_register_reg"
         android:layout_width="match_parent"
