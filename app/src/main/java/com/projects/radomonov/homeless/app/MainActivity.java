@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
                 } else {
-                    Toast.makeText(MainActivity.this, "Welcome...", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Welcome...", Toast.LENGTH_SHORT).show();
                 }
             }
         };

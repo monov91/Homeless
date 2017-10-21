@@ -68,10 +68,13 @@ public class RegisterActivity extends AppCompatActivity {
         usersNickNamesEmails.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 mapUserNamesEmails = (Map<String, String>) dataSnapshot.getValue();
+
                 for(Map.Entry<String,String> entry : mapUserNamesEmails.entrySet()) {
                     Log.i("tagche",entry.getKey() + " ---> " + entry.getValue());
                 }
+
                 final String userName = etName.getText().toString().trim();
                 final String eMail = etEmail.getText().toString().trim();
                 String pass = etPassword.getText().toString().trim();

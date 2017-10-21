@@ -1,4 +1,4 @@
-package com.projects.radomonov.homeless.app.model;
+package com.projects.radomonov.homeless.model;
 
 import android.app.Application;
 

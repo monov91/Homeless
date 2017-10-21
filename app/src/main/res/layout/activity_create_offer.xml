@@ -1,64 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.projects.radomonov.homeless.app.CreateOfferActivity">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:gravity="center_horizontal"
-        android:text="CREATE NEW OFER"/>
 
-    <EditText
-        android:id="@+id/et_title_create"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:textSize="28sp"
-        android:layout_margin="16dp"
-        android:textAlignment="center"
-        android:hint="Title"/>
-    
-    <EditText
-        android:id="@+id/et_rooms_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_margin="16dp"
-        android:hint="Rooms"/>
-    <EditText
-        android:id="@+id/et_price_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_margin="16dp"
-        android:hint="Price"/>
-    <EditText
-        android:id="@+id/et_currency_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_margin="16dp"
-        android:hint="Currency"/>
-    <EditText
-        android:id="@+id/et_neighbourhood_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:layout_margin="16dp"
-        android:hint="Neighbourhood"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_save_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:text="Save" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="CREATE NEW OFER"
+            android:textSize="20sp" />
 
+        <ImageButton
+            android:id="@+id/img_select_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:adjustViewBounds="true"
+            android:background="#00ffffff"
+            android:scaleType="centerCrop"
+            app:srcCompat="@mipmap/add_btn" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/et_title_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Title"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/et_rooms_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Rooms"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/et_price_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Price"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/et_currency_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Currency"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/et_neighbourhood_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Neighbourhood"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btn_save_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</ScrollView>
