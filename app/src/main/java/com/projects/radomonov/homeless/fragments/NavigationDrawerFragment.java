@@ -1,9 +1,11 @@
-package com.projects.radomonov.homeless.app;
+package com.projects.radomonov.homeless.fragments;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -15,19 +17,22 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.app.CreateOfferActivity;
 
 /**
  * Created by admin on 17.10.2017.
  */
 
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends android.app.Fragment implements View.OnClickListener {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
     private LinearLayout btnCreateOffer;
     private LinearLayout btnLogOut;
-
+    private LinearLayout btnMyOffers;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
 
     @Nullable
@@ -36,24 +41,14 @@ public class NavigationDrawerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
 
         mAuth = FirebaseAuth.getInstance();
-
+        fragmentManager = getFragmentManager();
         btnLogOut = view.findViewById(R.id.btn_log_out);
-
-        btnLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                Toast.makeText(getContext(), "You Logged Out... \n Come back soon...", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         btnCreateOffer = view.findViewById(R.id.btn_create_offer);
-        btnCreateOffer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(),CreateOfferActivity.class));
-            }
-        });
+        btnMyOffers = view.findViewById(R.id.btn_my_offers);
+
+        btnCreateOffer.setOnClickListener(this);
+        btnLogOut.setOnClickListener(this);
+        btnMyOffers.setOnClickListener(this);
 
         return view;
     }
@@ -89,5 +84,36 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
+    }
+
+    private void closeNavDrawer(){
+        mDrawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.btn_log_out :
+                mAuth.signOut();
+                break;
+
+            case R.id.btn_create_offer :
+                fragmentTransaction = fragmentManager.beginTransaction();
+                CreateOfferFragment fragment = new CreateOfferFragment();
+                fragmentTransaction.replace(R.id.fragment_container_main,fragment,"createOfferFrag");
+                fragmentTransaction.commit();
+                break;
+
+            case R.id.btn_my_offers :
+                fragmentTransaction = fragmentManager.beginTransaction();
+                MyOffersFragment fragMyOffers = new MyOffersFragment();
+                fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.commit();
+                break;
+
+            default:  break;
+        }
+        mDrawerLayout.closeDrawers();
     }
 }

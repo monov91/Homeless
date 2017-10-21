@@ -1,7 +1,10 @@
 package com.projects.radomonov.homeless.app;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +13,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,17 +24,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
+import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
 import com.projects.radomonov.homeless.model.Offer;
 import com.squareup.picasso.Picasso;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private RecyclerView recyclerView;
     private DatabaseReference offers;
-
     private DatabaseReference mDatabaseUsers;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         offers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
-        setUpRecycler();
+        //setUpRecycler();
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
@@ -96,16 +98,16 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private void setUpRecycler() {
+   /* private void setUpRecycler() {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_main);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-    }
+    }*/
 
     private void setUpNavigationDrawer(){
-        NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
+        NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
         drawerFragment.setUpDrawer(R.id.nav_drawer_fragment,drawerLayout,toolbar);
     }
@@ -182,5 +184,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 }
