@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private LinearLayout btnCreateOffer;
     private LinearLayout btnLogOut;
     private LinearLayout btnMyOffers;
+    private ImageView imgEditProfile;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
@@ -45,10 +47,12 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnLogOut = view.findViewById(R.id.btn_log_out);
         btnCreateOffer = view.findViewById(R.id.btn_create_offer);
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
+        imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
         btnCreateOffer.setOnClickListener(this);
         btnLogOut.setOnClickListener(this);
         btnMyOffers.setOnClickListener(this);
+        imgEditProfile.setOnClickListener(this);
 
         return view;
     }
@@ -109,6 +113,13 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyOffersFragment fragMyOffers = new MyOffersFragment();
                 fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.commit();
+                break;
+
+            case R.id.img_edit_profile_drawer_frag :
+                fragmentTransaction = fragmentManager.beginTransaction();
+                SetupAccountFragment setupFrag = new SetupAccountFragment();
+                fragmentTransaction.replace(R.id.fragment_container_main, setupFrag, "setupAccFrag");
                 fragmentTransaction.commit();
                 break;
 
