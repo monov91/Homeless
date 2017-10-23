@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "516119560856",
+    "firebase_url": "https://homeless-ddf77.firebaseio.com",
+    "project_id": "homeless-ddf77",
+    "storage_bucket": "homeless-ddf77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516119560856:android:16e7d6b6cca772cd",
+        "android_client_info": {
+          "package_name": "com.projects.radomonov.homeless"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516119560856-7hcgh34uoc2l1m5a27p3u05t4gt0nnjb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.projects.radomonov.homeless",
+            "certificate_hash": "7104be28795500baf955442e2b052379f251f43d"
+          }
+        },
+        {
+          "client_id": "516119560856-6rgubf7ujg7a1kb9hhq5kps675c18nkl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.projects.radomonov.homeless",
+            "certificate_hash": "71ebdb3675175db00a030f371f54598945a32d26"
+          }
+        },
+        {
+          "client_id": "516119560856-m8or3qk2jc7bb2ehq87pjd7duk2gbtn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2dixHSM5u2Q9zOtP9qSq52xy9rPY8O1U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516119560856-m8or3qk2jc7bb2ehq87pjd7duk2gbtn8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
