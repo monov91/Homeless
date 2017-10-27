@@ -166,13 +166,6 @@ public class SetupAccountFragment extends Fragment {
                     round = RoundedBitmapDrawableFactory.create(getResources(), image);
                     round.setCircular(true);
 
-                    StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
-                    filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            downloadURL = taskSnapshot.getDownloadUrl();
-                        }
-                    });
 //                   /* Bitmap bit = round.getBitmap();
 //                    Uri imgUri = getImageUri(getActivity().getBaseContext(), bit);*/
 //                    StorageReference filepath = mStorage.child(imgUri.getLastPathSegment());
@@ -183,6 +176,43 @@ public class SetupAccountFragment extends Fragment {
 //                        }
 //                    });
                     imgProfilePic.setImageDrawable(round);
+
+                    StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
+                    filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            downloadURL = taskSnapshot.getDownloadUrl();
+                        }
+                    });
+
+
+                    currentUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            final DatabaseReference profilePic = currentUser.child("profilePic");
+
+                            profilePic.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    profilePic.setValue(downloadURL.toString());
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
 
                     flag = true;
                     Toast.makeText(getActivity().getBaseContext(), "Image changed!", Toast.LENGTH_SHORT).show();
