@@ -8,10 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.app.MainActivity;
+import com.projects.radomonov.homeless.model.Owner;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -38,14 +42,17 @@ import static com.theartofdev.edmodo.cropper.CropImage.CROP_IMAGE_ACTIVITY_REQUE
 
 public class SetupAccountFragment extends Fragment {
 
+    private View view;
     private ImageView imgProfilePic;
     private Button btnEditPhoneNumber, btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
 
+    private RoundedBitmapDrawable round;
     private File file;
     private Uri imageUri;
-    private Intent GalIntent, CropIntent;
+    private Intent GalIntent, CropIntent, SaveIntent;
     boolean flag = false;
+    private Owner owner;
 
     public  static final int GALLERY_REQUEST  = 10;
     public static final int REQUEST_PERMISSION_CODE = 1;
@@ -54,11 +61,12 @@ public class SetupAccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_setup_account, container, false);
+        view = inflater.inflate(R.layout.fragment_setup_account, container, false);
         mAuth = FirebaseAuth.getInstance();
 
         EnableRuntimePermission();
 
+        owner = new Owner();
         btnEditPhoneNumber = view.findViewById(R.id.btn_edit_phone_number);
         btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
@@ -71,10 +79,18 @@ public class SetupAccountFragment extends Fragment {
             }
         });
 
+        btnSaveChanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent SaveIntent = new Intent(getContext(), MainActivity.class);
+                owner.setUserPic(round);
+                SaveIntent.putExtra("owner", owner);
+                startActivity(SaveIntent);
+            }
+        });
 
         return view;
     }
-
 
 
     public void GetImageFromGallery(){
@@ -86,33 +102,34 @@ public class SetupAccountFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
-            imageUri = data.getData();
-            CropImage.activity(imageUri)
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            Uri imageUri2 = data.getData();
+            CropImage.activity(imageUri2)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
-                    .setAspectRatio(1,1)
-                    .start(getActivity());
+                    .setAspectRatio(1, 1)
+                    .start(getContext(), this);
 //            Picasso.with(getContext()).load(imageUri).into(imgProfilePic);
-            imgProfilePic.setImageURI(imageUri);
+//            imgProfilePic.setImageURI(imageUri);
         }
 
+        Log.e("vlado", "1");
         if (requestCode == CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Log.e("vlado", "2");
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
 
+                Log.e("vlado", "3");
                 Uri resultUri = result.getUri();
 
                 InputStream inputStream;
 
                 try {
                     inputStream = getActivity().getContentResolver().openInputStream(resultUri);
-//                    inputStream = getContentResolver().openInputStream(resultUri);
 
                     Bitmap image = BitmapFactory.decodeStream(inputStream);
 
-                    RoundedBitmapDrawable round = RoundedBitmapDrawableFactory.create(getResources(),image);
+                    round = RoundedBitmapDrawableFactory.create(getResources(),image);
                     round.setCircular(true);
 
                     imgProfilePic.setImageDrawable(round);
@@ -120,57 +137,17 @@ public class SetupAccountFragment extends Fragment {
                     flag = true;
                     Toast.makeText(getActivity().getBaseContext(), "Image changed!", Toast.LENGTH_SHORT).show();
 
-                }catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     flag = false;
                     Toast.makeText(getActivity().getBaseContext(), "Unable to open image...", Toast.LENGTH_LONG).show();
                 }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(getActivity().getBaseContext(),"Somethings wrong with cropping...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getBaseContext(), "Somethings wrong with cropping...", Toast.LENGTH_SHORT).show();
             }
         }
-
-//        if (requestCode == 2 && resultCode == RESULT_OK) {
-//
-//            if (data != null) {
-//                uri = data.getData();
-//                ImageCropFunction();
-//            }
-//        }
-//        else if (requestCode == REQUEST_PERMISSION_CODE) {
-//
-//            if (data != null) {
-//                Bundle bundle = data.getExtras();
-//                Bitmap bitmap = bundle.getParcelable("data");
-//                imgProfilePic.setImageBitmap(bitmap);
-//            }
-//        }
     }
-
-
-    public void ImageCropFunction() {
-        // Image Crop Code
-        try {
-            CropIntent = new Intent("com.android.camera.action.CROP");
-
-            CropIntent.setDataAndType(imageUri, "image/*");
-
-            CropIntent.putExtra("crop", "true");
-            CropIntent.putExtra("outputX", 180);
-            CropIntent.putExtra("outputY", 180);
-            CropIntent.putExtra("aspectX", 3);
-            CropIntent.putExtra("aspectY", 4);
-            CropIntent.putExtra("scaleUpIfNeeded", true);
-            CropIntent.putExtra("return-data", true);
-
-            startActivityForResult(CropIntent, 1);
-
-        } catch (ActivityNotFoundException e) {
-
-        }
-    }
-    //Image Crop Code End Here
 
 
     public void EnableRuntimePermission(){
