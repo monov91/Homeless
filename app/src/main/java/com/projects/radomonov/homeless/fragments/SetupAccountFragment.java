@@ -3,12 +3,14 @@ package com.projects.radomonov.homeless.fragments;
 import android.Manifest;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -21,7 +23,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.projects.radomonov.homeless.model.Owner;
@@ -29,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -46,15 +58,17 @@ public class SetupAccountFragment extends Fragment {
     private ImageView imgProfilePic;
     private Button btnEditPhoneNumber, btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
-
+    private DatabaseReference currentUser;
+    private DatabaseReference accountPicRef;
+    private StorageReference mStorage;
     private RoundedBitmapDrawable round;
     private File file;
     private Uri imageUri;
     private Intent GalIntent, CropIntent, SaveIntent;
     boolean flag = false;
     private Owner owner;
-
-    public  static final int GALLERY_REQUEST  = 10;
+    private Uri downloadURL;
+    public static final int GALLERY_REQUEST = 10;
     public static final int REQUEST_PERMISSION_CODE = 1;
 
     @Nullable
@@ -63,6 +77,8 @@ public class SetupAccountFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_setup_account, container, false);
         mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
         EnableRuntimePermission();
 
@@ -78,14 +94,28 @@ public class SetupAccountFragment extends Fragment {
                 GetImageFromGallery();
             }
         });
-
+        Log.e("Dima", "1");
         btnSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent SaveIntent = new Intent(getContext(), MainActivity.class);
-                owner.setUserPic(round);
-                SaveIntent.putExtra("owner", owner);
-                startActivity(SaveIntent);
+                Log.e("Dima", "2");
+//                accountPicRef = currentUser.child("accountPicture");
+//                accountPicRef.setValue(round);
+                currentUser.child("accountPicture").setValue(downloadURL);
+//                accountPicRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        Log.e("Dima", "3");
+//                        accountPicRef.setValue(round);
+//                        Toast.makeText(getActivity().getBaseContext(), "It works!!!", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        Log.e("Dima", "4");
+//                        Toast.makeText(getActivity().getBaseContext(), "Something went wrong...", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         });
 
@@ -93,7 +123,7 @@ public class SetupAccountFragment extends Fragment {
     }
 
 
-    public void GetImageFromGallery(){
+    public void GetImageFromGallery() {
         GalIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(GalIntent, "Select Image From Gallery"), GALLERY_REQUEST);
@@ -113,14 +143,18 @@ public class SetupAccountFragment extends Fragment {
 //            imgProfilePic.setImageURI(imageUri);
         }
 
-        Log.e("vlado", "1");
         if (requestCode == CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Log.e("vlado", "2");
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
 
-                Log.e("vlado", "3");
                 Uri resultUri = result.getUri();
+//                StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
+//                filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        downloadURL = taskSnapshot.getDownloadUrl();
+//                    }
+//                });
 
                 InputStream inputStream;
 
@@ -129,9 +163,25 @@ public class SetupAccountFragment extends Fragment {
 
                     Bitmap image = BitmapFactory.decodeStream(inputStream);
 
-                    round = RoundedBitmapDrawableFactory.create(getResources(),image);
+                    round = RoundedBitmapDrawableFactory.create(getResources(), image);
                     round.setCircular(true);
 
+                    StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
+                    filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            downloadURL = taskSnapshot.getDownloadUrl();
+                        }
+                    });
+//                   /* Bitmap bit = round.getBitmap();
+//                    Uri imgUri = getImageUri(getActivity().getBaseContext(), bit);*/
+//                    StorageReference filepath = mStorage.child(imgUri.getLastPathSegment());
+//                    filepath.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            downloadURL = taskSnapshot.getDownloadUrl();
+//                        }
+//                    });
                     imgProfilePic.setImageDrawable(round);
 
                     flag = true;
@@ -150,18 +200,23 @@ public class SetupAccountFragment extends Fragment {
     }
 
 
-    public void EnableRuntimePermission(){
+    public void EnableRuntimePermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.CAMERA))
-        {
-            Toast.makeText(getActivity(),"CAMERA permission allows us to Access CAMERA app",
+                Manifest.permission.CAMERA)) {
+            Toast.makeText(getActivity(), "CAMERA permission allows us to Access CAMERA app",
                     Toast.LENGTH_LONG).show();
 
         } else {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{
                     Manifest.permission.CAMERA}, REQUEST_PERMISSION_CODE);
         }
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 }

@@ -70,13 +70,13 @@ public class RegisterActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 keyList = new ArrayList<>();
-                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
                     keyList.add(child.getKey());
                 }
 
 
-                for(Map.Entry<String,String> entry : mapUserNamesEmails.entrySet()) {
-                    Log.i("tagche",entry.getKey() + " ---> " + entry.getValue());
+                for (Map.Entry<String, String> entry : mapUserNamesEmails.entrySet()) {
+                    Log.i("tagche", entry.getKey() + " ---> " + entry.getValue());
                 }
 
                 final String userName = etName.getText().toString().trim();
@@ -85,36 +85,40 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass = etPassword.getText().toString().trim();
                 String passConfirm = etConfirmPass.getText().toString().trim();
 
-                if(!validateStringForNullAndIsEmpty(userName)) {
+                if (!validateStringForNullAndIsEmpty(userName)) {
                     etName.setError("Invalid Name");
                     return;
                 }
 
                 // iterating firebase and checking is user exist
-                for (int i = 0; i < keyList.size(); i++) {
-                    DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("nickName");
-                    nickName.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            String nick = (String) dataSnapshot.getValue();
-                            if(nick.equals(userName)) {
-                                etName.setError("NickName already exist!");
-                                return;
+                if (userName != null) {
+                    for (int i = 0; i < keyList.size(); i++) {
+                        Log.i("user", keyList.get(i));
+                        DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("nickName");
+                        nickName.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String nick = (String) dataSnapshot.getValue();
+                                if (nick.equals(userName)) {
+                                    etName.setError("NickName already exist!");
+                                    return;
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
+
 //                if(mapUserNamesEmails.containsKey(userName)) {
 //                    etName.setError("NickName already exist!");
 //                    return;
 //                }
 
-                if(!validateStringForNullAndIsEmpty(eMail)) {
+                if (!validateStringForNullAndIsEmpty(eMail)) {
                     etEmail.setError("Invalid eMail");
                     return;
                 }
@@ -125,11 +129,16 @@ public class RegisterActivity extends AppCompatActivity {
                     nickName.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String nick = (String) dataSnapshot.getValue();
-                            if(nick.equals(eMail)) {
-                                etEmail.setError("e-Mail already exist!");
-                                return;
+                            String mail = (String) dataSnapshot.getValue();
+                            if (mail != null) {
+                                if (mail.equals(eMail)) {
+                                    etEmail.setError("e-Mail already exist!");
+                                    return;
+                                }
+                            } else { // tuka puk ni dava null dataSnapshot.getValue(), mamka mu deeba!!! SUKA!
+                                Toast.makeText(RegisterActivity.this, "Pizdec Bleeeeaaaatttttt..........", Toast.LENGTH_SHORT).show();
                             }
+
                         }
 
                         @Override
@@ -143,17 +152,17 @@ public class RegisterActivity extends AppCompatActivity {
 //                    return;
 //                }
 
-                if(!validateStringForNullAndIsEmpty(phoneNumber)) {
+                if (!validateStringForNullAndIsEmpty(phoneNumber)) {
                     etPhoneNumber.setError("Invalid PhoneNumber");
                     return;
                 }
 
-                if(!validateStringForNullAndIsEmpty(pass)) {
+                if (!validateStringForNullAndIsEmpty(pass)) {
                     etPassword.setError("Invalid Password");
                     return;
                 }
 
-                if(!pass.equals(passConfirm)) {
+                if (!pass.equals(passConfirm)) {
                     etConfirmPass.setError("Passwords don't match");
                     return;
                 }
@@ -189,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private boolean validateStringForNullAndIsEmpty(String str) {
-        if(str == null || str.isEmpty()) {
+        if (str == null || str.isEmpty()) {
             return false;
         }
         return true;
