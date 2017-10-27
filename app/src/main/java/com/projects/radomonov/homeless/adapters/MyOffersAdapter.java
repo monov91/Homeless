@@ -21,15 +21,24 @@ import java.util.List;
  */
 
 public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyViewHolder> {
+
+    public interface onOfferClickListener{
+        void onOfferClick(Offer currentOffer);
+    }
     private Context context;
     private List<Offer> myOffers;
     private LayoutInflater inflater;
+    private onOfferClickListener listener;
 
-    public MyOffersAdapter(Context context,List<Offer> myOffers) {
+    public MyOffersAdapter(Context context,List<Offer> myOffers,onOfferClickListener listener) {
         this.myOffers = myOffers;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
+        this.listener = listener;
+
     }
+
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.offer_item,parent,false);
@@ -41,6 +50,7 @@ public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Offer currentOffer = myOffers.get(position);
         holder.setData(currentOffer, position);
+        holder.setClickListener(listener,currentOffer);
     }
 
     @Override
@@ -73,18 +83,29 @@ public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyView
         }
 
         private void setData(Offer current,int position){
-            tvCurrency.setText(current.getCurrency());
+            tvCurrency.setText(current.getCurrency().toString());
             tvTitle.setText(current.getTitle());
-            tvPrice.setText(current.getPrice());
-            tvRooms.setText(current.getRooms());
+            tvPrice.setText("Price: "+current.getPrice());
+            tvRooms.setText("Rooms: "+current.getRooms());
             tvNeighbourhood.setText(current.getNeighbourhood());
+
             setImage(context, current.getImage());
             this.position = position;
         }
 
         private void setImage(Context context, String imgURL) {
-            Picasso.with(context).load(Uri.parse(imgURL)).into(imgPic);
+            Picasso.with(context).load(imgURL).into(imgPic);
         }
+
+        private void setClickListener(final onOfferClickListener listener,final Offer currentOffer) {
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onOfferClick(currentOffer);
+                }
+            });
+        }
+
 
     }
 }

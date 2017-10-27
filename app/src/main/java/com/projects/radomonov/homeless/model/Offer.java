@@ -2,20 +2,52 @@ package com.projects.radomonov.homeless.model;
 
 import android.net.Uri;
 
+import java.io.Serializable;
+
 /**
  * Created by admin on 17.10.2017.
  */
 
-public class Offer {
+public class Offer implements Serializable {
+    public enum Currency {
+        EU, BGN
+    }
 
+    private String id;
     private String title;
     private int rooms;
     private int price;
     private String neighbourhood;
-    private String currency;
+    private Currency currency;
     private String phoneNumber;
     private String owner;
     private String image;
+
+    public Offer() {
+
+    }
+
+
+    public Offer(String title, int rooms, int price, String neighbourhood, Currency currency, String imgDownloadUrl, String phone, String ownerID) {
+        this.title = title;
+        this.rooms = rooms;
+        this.price = price;
+        this.neighbourhood = neighbourhood;
+        this.currency = currency;
+        this.image = imgDownloadUrl;
+        this.phoneNumber = phone;
+        this.owner = ownerID;
+
+    }
+
+    public Offer(String title, int rooms, int price, String neighbourhood, Currency currency, String image) {
+        this.title = title;
+        this.rooms = rooms;
+        this.price = price;
+        this.neighbourhood = neighbourhood;
+        this.currency = currency;
+        this.image = image;
+    }
 
     public String getOwner() {
         return owner;
@@ -45,25 +77,11 @@ public class Offer {
         return neighbourhood;
     }
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
-
-    public Offer(){
-
+    public String getId() {
+        return id;
     }
-
-    public Offer(String title, int rooms, int price,  String neighbourhood, String currency,String imgDownloadUrl,String phone, String ownerID) {
-        this.title = title;
-        this.rooms = rooms;
-        this.price = price;
-        this.neighbourhood = neighbourhood;
-        this.currency = currency;
-        this.image = imgDownloadUrl;
-        this.phoneNumber = phone;
-        this.owner = ownerID;
-    }
-
-
 }

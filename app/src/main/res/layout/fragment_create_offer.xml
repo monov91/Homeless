@@ -77,20 +77,20 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_currency_create"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:hint="Currency"
-                android:inputType="text"
-                />
-
-        </android.support.design.widget.TextInputLayout>
+       <RadioGroup
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <RadioButton
+               android:id="@+id/rbtn_bgn"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="BGN"/>
+           <RadioButton
+               android:id="@+id/rbtn_eu"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="EU"/>
+       </RadioGroup>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
