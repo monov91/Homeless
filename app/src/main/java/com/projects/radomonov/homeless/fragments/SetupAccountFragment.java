@@ -1,6 +1,7 @@
 package com.projects.radomonov.homeless.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -70,6 +71,8 @@ public class SetupAccountFragment extends Fragment {
     public static final int GALLERY_REQUEST = 10;
     public static final int REQUEST_PERMISSION_CODE = 1;
 
+    private OnFragmentUpdateListener mListener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +100,7 @@ public class SetupAccountFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+                mListener.updateFragment();
                 getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
 
             }
@@ -131,8 +135,6 @@ public class SetupAccountFragment extends Fragment {
                     .setCropShape(CropImageView.CropShape.OVAL)
                     .setAspectRatio(1, 1)
                     .start(getContext(), this);
-//            Picasso.with(getContext()).load(imageUri).into(imgProfilePic);
-//            imgProfilePic.setImageURI(imageUri);
         }
 
         if (requestCode == CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -145,6 +147,7 @@ public class SetupAccountFragment extends Fragment {
 
                 try {
                     inputStream = getActivity().getContentResolver().openInputStream(resultUri);
+                    Log.i("pic", String.valueOf(resultUri));
 
                     Bitmap image = BitmapFactory.decodeStream(inputStream);
 
@@ -167,8 +170,6 @@ public class SetupAccountFragment extends Fragment {
                         public void onFailure(@NonNull Exception e) {
                         }
                     });
-
-//                    currentUser.child("profilePic").setValue(downloadURL);
 
                     flag = true;
                     Toast.makeText(getActivity().getBaseContext(), "Image changed!", Toast.LENGTH_SHORT).show();
@@ -206,5 +207,17 @@ public class SetupAccountFragment extends Fragment {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
+
+    // interface for connection between fragments
+    public interface OnFragmentUpdateListener {
+        void updateFragment();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mListener = (OnFragmentUpdateListener) activity;
+        mListener.updateFragment();
     }
 }

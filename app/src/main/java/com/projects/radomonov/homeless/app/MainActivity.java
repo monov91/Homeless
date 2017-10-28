@@ -26,12 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
 import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
+import com.projects.radomonov.homeless.fragments.SetupAccountFragment;
 import com.projects.radomonov.homeless.model.Offer;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
 
     private Toolbar toolbar;
     private DatabaseReference offers;
@@ -63,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         offers = FirebaseDatabase.getInstance().getReference().child("Offers");
-
-        //setUpRecycler();
-
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
@@ -75,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        checkUserExist();
 
         mAuth.addAuthStateListener(mAuthListener);
 
@@ -86,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
         drawerFragment.setUpDrawer(R.id.nav_drawer_fragment,drawerLayout,toolbar);
+
     }
 
     private void setUpToolbar(){
@@ -94,32 +92,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checkUserExist() {
 
-        if(mAuth.getCurrentUser() != null) {
-
-            final String userID = mAuth.getCurrentUser().getUid();
-
-            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if (!dataSnapshot.hasChild(userID)) {
-
-//                        Intent mainIntent = new Intent(MainActivity.this, SetupActivity.class);
-//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(mainIntent);
-
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
+    //for connection between fragments
+    @Override
+    public void updateFragment() {
+        NavigationDrawerFragment fragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
+        fragment.updateProfilePic();
     }
+
 }

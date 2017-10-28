@@ -1,5 +1,6 @@
 package com.projects.radomonov.homeless.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -50,14 +51,13 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
 
-    private DatabaseReference currentUser;
+    private DatabaseReference currentUserPic;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
-
-
 
         mAuth = FirebaseAuth.getInstance();
         fragmentManager = getFragmentManager();
@@ -65,6 +65,8 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnCreateOffer = view.findViewById(R.id.btn_create_offer);
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
+
+        updateProfilePic();
 
         btnCreateOffer.setOnClickListener(this);
         btnLogOut.setOnClickListener(this);
@@ -74,22 +76,21 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         return view;
     }
 
-    private void updateProfilePic(){
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
+    public void updateProfilePic(){
+        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
-        Log.i("profpic",currentUser.child("profilePic").getKey());
-        currentUser.addListenerForSingleValueEvent(new ValueEventListener() {
+        currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String pic = dataSnapshot.getValue().toString();
-                Log.i("profpic", pic);
-                setImage(getContext(), pic);
+                String picURL = dataSnapshot.getValue().toString();
+                setImage(getContext(), picURL);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
+
     public void setUpDrawer(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar){
 
         mDrawerLayout = drawerLayout;
@@ -163,4 +164,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private void setImage(Context context, String imgURL) {
         Picasso.with(context).load(imgURL).into(imgEditProfile);
     }
+
+
+
 }
