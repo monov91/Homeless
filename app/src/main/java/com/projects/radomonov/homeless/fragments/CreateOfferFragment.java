@@ -1,6 +1,7 @@
 package com.projects.radomonov.homeless.fragments;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -53,6 +54,13 @@ public class CreateOfferFragment extends Fragment {
 
     public static final int GALLERY_REQUEST = 1;
 
+    private String title;
+    private int price;
+    private Offer.Currency currency;
+    private int rooms;
+    private String neighbourhood;
+    ProgressDialog progressDialog;
+
     private FirebaseAuth mAuth;
     private EditText etTitle, etPrice, etRooms, etNeighbourhood;
     private Button btnSave;
@@ -100,7 +108,7 @@ public class CreateOfferFragment extends Fragment {
         btnSave = (Button) view.findViewById(R.id.btn_save_create);
         // Check if this is editing or new offer
         Bundle bundle = getArguments();
-        if(bundle != null){
+        if (bundle != null) {
             editOffer = (Offer) getArguments().getSerializable("offer");
         }
         if (editOffer != null) {
@@ -111,17 +119,18 @@ public class CreateOfferFragment extends Fragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String title = etTitle.getText().toString().trim();
-                final int price = Integer.parseInt(etPrice.getText().toString());
-                final Offer.Currency currency;
+                progressDialog = new ProgressDialog(getContext());
+                progressDialog.show();
+
+                title = etTitle.getText().toString().trim();
+                price = Integer.parseInt(etPrice.getText().toString());
                 if (rdbtnEU.isChecked()) {
                     currency = Offer.Currency.EU;
                 } else {
                     currency = Offer.Currency.BGN;
                 }
-
-                final int rooms = Integer.parseInt(etRooms.getText().toString());
-                final String neighbourhood = etNeighbourhood.getText().toString().trim();
+                rooms = Integer.parseInt(etRooms.getText().toString());
+                neighbourhood = etNeighbourhood.getText().toString().trim();
 
                 // if(nqkvi validacii)
                 //DatabaseReference offerImages = newOffer.child("images");
@@ -132,57 +141,68 @@ public class CreateOfferFragment extends Fragment {
                     offer = offers.child(editOffer.getId());
                     offer.child("image").setValue(editOffer.getImage());
                 }
-                if(imageUri!=null){
-                    StorageReference filepath = mStorage.child("OfferImages").child(imageUri.getLastPathSegment());
-                    filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.i("snimka"," =====onSuccess=====");
-                            @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            offer.child("image").setValue(downloadUrl.toString());
-                        }
-                    });
-                    filepath.putFile(imageUri).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                           Log.i("snimka","=========onFail========");
-                        }
-                    });
+                if (isNewOffer) {
+                    if (imageUri != null) {
+                        StorageReference filepath = mStorage.child("OfferImages").child(imageUri.getLastPathSegment());
+                        filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.i("snimka", " =====onSuccess=====");
+                                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                offer.child("image").setValue(downloadUrl.toString());
+
+                                writeToDB(offer);
+                            }
+                        });
+                        filepath.putFile(imageUri).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.i("snimka", "=========onFail========");
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(getContext(), "Choose Image", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(getContext(), "Choose Image", Toast.LENGTH_SHORT).show();
+                    writeToDB(offer);
                 }
-                offer.child("id").setValue(offer.getKey());
-                offer.child("title").setValue(title);
-                offer.child("price").setValue(price);
-                offer.child("currency").setValue(currency);
-                offer.child("rooms").setValue(rooms);
-                offer.child("neighbourhood").setValue(neighbourhood);
-                DatabaseReference phoneRef = currentUser.child("phoneNumber");
-                phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        phoneNum = (String) dataSnapshot.getValue();
-                        offer.child("phoneNumber").setValue(phoneNum);
-                        // Toast.makeText(getActivity(), phoneNum, Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                offer.child("owner").setValue(currentUser.getKey().toString());
-                getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
-                    //StorageReference filepath = mStorage.child("Blog_images").child(imageUri.getLastPathSegment());
             }
         });
         return view;
     }
 
+    private void writeToDB(final DatabaseReference offer) {
+        offer.child("id").setValue(offer.getKey());
+        offer.child("title").setValue(title);
+        offer.child("price").setValue(price);
+        offer.child("currency").setValue(currency);
+        offer.child("rooms").setValue(rooms);
+        offer.child("neighbourhood").setValue(neighbourhood);
+        DatabaseReference phoneRef = currentUser.child("phoneNumber");
+        phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                phoneNum = (String) dataSnapshot.getValue();
+                offer.child("phoneNumber").setValue(phoneNum);
+                // Toast.makeText(getActivity(), phoneNum, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        offer.child("owner").setValue(currentUser.getKey().toString());
+        progressDialog.dismiss();
+        getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
+    }
+
     public void fillFields(Offer offer) {
-        Picasso.with(getContext()).load(offer.getImage()).into(imgbtnChoose);
-        //Glide.with(getContext()).load(offer.getImage()).override(200,200    ).into(imgbtnChoose);
+        //Picasso.with(getContext()).load(offer.getImage()).into(imgbtnChoose);
+        Glide.with(getContext()).load(offer.getImage()).override(200, 200).into(imgbtnChoose);
         etTitle.setText(offer.getTitle());
         etRooms.setText("" + offer.getRooms());
         etPrice.setText("" + offer.getPrice());
@@ -196,6 +216,7 @@ public class CreateOfferFragment extends Fragment {
         etNeighbourhood.setText(offer.getNeighbourhood());
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,8 +224,8 @@ public class CreateOfferFragment extends Fragment {
         if (requestCode == GALLERY_REQUEST && resultCode == getActivity().RESULT_OK) {
 
             imageUri = data.getData();
-            imgbtnChoose.setImageURI(imageUri);
-
+           // imgbtnChoose.setImageURI(imageUri);
+            Glide.with(getContext()).load(imageUri).into(imgbtnChoose);
         }
     }
 }
