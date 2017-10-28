@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -59,14 +61,11 @@ public class SetupAccountFragment extends Fragment {
     private Button btnEditPhoneNumber, btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;
-    private DatabaseReference accountPicRef;
     private StorageReference mStorage;
     private RoundedBitmapDrawable round;
-    private File file;
-    private Uri imageUri;
-    private Intent GalIntent, CropIntent, SaveIntent;
+
+    private Intent GalIntent;
     boolean flag = false;
-    private Owner owner;
     private Uri downloadURL;
     public static final int GALLERY_REQUEST = 10;
     public static final int REQUEST_PERMISSION_CODE = 1;
@@ -82,7 +81,6 @@ public class SetupAccountFragment extends Fragment {
 
         EnableRuntimePermission();
 
-        owner = new Owner();
         btnEditPhoneNumber = view.findViewById(R.id.btn_edit_phone_number);
         btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
@@ -94,28 +92,22 @@ public class SetupAccountFragment extends Fragment {
                 GetImageFromGallery();
             }
         });
-        Log.e("Dima", "1");
+
         btnSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Dima", "2");
-//                accountPicRef = currentUser.child("accountPicture");
-//                accountPicRef.setValue(round);
-                currentUser.child("accountPicture").setValue(downloadURL);
-//                accountPicRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        Log.e("Dima", "3");
-//                        accountPicRef.setValue(round);
-//                        Toast.makeText(getActivity().getBaseContext(), "It works!!!", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        Log.e("Dima", "4");
-//                        Toast.makeText(getActivity().getBaseContext(), "Something went wrong...", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+
+                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
+
+            }
+        });
+
+        btnCancelChanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
+
             }
         });
 
@@ -148,13 +140,6 @@ public class SetupAccountFragment extends Fragment {
             if (resultCode == RESULT_OK) {
 
                 Uri resultUri = result.getUri();
-//                StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
-//                filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        downloadURL = taskSnapshot.getDownloadUrl();
-//                    }
-//                });
 
                 InputStream inputStream;
 
@@ -166,15 +151,6 @@ public class SetupAccountFragment extends Fragment {
                     round = RoundedBitmapDrawableFactory.create(getResources(), image);
                     round.setCircular(true);
 
-//                   /* Bitmap bit = round.getBitmap();
-//                    Uri imgUri = getImageUri(getActivity().getBaseContext(), bit);*/
-//                    StorageReference filepath = mStorage.child(imgUri.getLastPathSegment());
-//                    filepath.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            downloadURL = taskSnapshot.getDownloadUrl();
-//                        }
-//                    });
                     imgProfilePic.setImageDrawable(round);
 
                     StorageReference filepath = mStorage.child(resultUri.getLastPathSegment());
@@ -182,37 +158,17 @@ public class SetupAccountFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             downloadURL = taskSnapshot.getDownloadUrl();
+                            currentUser.child("profilePic").setValue(downloadURL.toString());
                         }
                     });
 
-
-                    currentUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    filepath.putFile(resultUri).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            final DatabaseReference profilePic = currentUser.child("profilePic");
-
-                            profilePic.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    profilePic.setValue(downloadURL.toString());
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
+                        public void onFailure(@NonNull Exception e) {
                         }
                     });
 
+//                    currentUser.child("profilePic").setValue(downloadURL);
 
                     flag = true;
                     Toast.makeText(getActivity().getBaseContext(), "Image changed!", Toast.LENGTH_SHORT).show();
@@ -228,6 +184,8 @@ public class SetupAccountFragment extends Fragment {
             }
         }
     }
+
+
 
 
     public void EnableRuntimePermission() {
