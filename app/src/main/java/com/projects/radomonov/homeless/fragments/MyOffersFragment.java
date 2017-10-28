@@ -102,6 +102,15 @@ public class MyOffersFragment extends Fragment {
                             Offer offer = dataSnapshot.getValue(Offer.class);
                             if (offer.getOwner().equals(currentUserID)) {
                                 myOffers.add(offer);
+                               /* Utilities.getInstance().getAllOffers().add(offer);
+                                Log.i("tagche", "OFFERS SIZE" + myOffers.size());
+                                Log.i("tagche", offer.getImage());
+                                Log.i("tagche", offer.getTitle());
+                                Log.i("tagche", offer.getPhoneNumber());
+                                Log.i("tagche", offer.getOwner());
+                                Log.i("tagche", ""+offer.getRooms());
+                                Log.i("tagche", ""+offer.getPrice());
+                                Log.i("tagche",offer.getNeighbourhood());*/
                                 adapter.notifyDataSetChanged();
                             }
                         }
