@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/create_offer_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -20,15 +20,16 @@
 
         <ImageButton
             android:id="@+id/img_select_create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
             android:adjustViewBounds="true"
             android:background="#00ffffff"
-            android:scaleType="centerCrop"
-            app:srcCompat="@mipmap/add_btn" />
+            android:scaleType="fitCenter"
+            app:srcCompat="@mipmap/add_btn"
+            />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
