@@ -1,9 +1,13 @@
 package com.projects.radomonov.homeless.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -13,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +37,11 @@ import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.CreateOfferActivity;
 import com.projects.radomonov.homeless.model.Offer;
 import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Random;
 
 import static android.R.attr.data;
 
@@ -55,6 +66,8 @@ public class CreateOfferFragment extends Fragment {
     private RadioButton rddbtnBGN;
     private boolean isNewOffer = true;
     private Offer editOffer;
+    private Bitmap bitmap;
+    private byte[] imgBytes;
 
     @Nullable
     @Override
@@ -84,7 +97,6 @@ public class CreateOfferFragment extends Fragment {
 
             }
         });
-
         btnSave = (Button) view.findViewById(R.id.btn_save_create);
         // Check if this is editing or new offer
         Bundle bundle = getArguments();
@@ -93,13 +105,6 @@ public class CreateOfferFragment extends Fragment {
         }
         if (editOffer != null) {
             isNewOffer = false;
-            /*Log.i("oferta",editOffer.getTitle());
-            Log.i("oferta", String.valueOf(editOffer.getRooms()));
-            Log.i("oferta", String.valueOf(editOffer.getPrice()));
-            Log.i("oferta", String.valueOf(editOffer.getCurrency()));
-            Log.i("oferta",editOffer.getImage());
-            Log.i("oferta",editOffer.getNeighbourhood());
-            Log.i("oferta",editOffer.getTitle());*/
             fillFields(editOffer);
         }
 
@@ -140,7 +145,7 @@ public class CreateOfferFragment extends Fragment {
                     filepath.putFile(imageUri).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), "Couldnt upload file", Toast.LENGTH_SHORT).show();
+                           Log.i("snimka","=========onFail========");
                         }
                     });
                 } else {
@@ -177,6 +182,7 @@ public class CreateOfferFragment extends Fragment {
 
     public void fillFields(Offer offer) {
         Picasso.with(getContext()).load(offer.getImage()).into(imgbtnChoose);
+        //Glide.with(getContext()).load(offer.getImage()).override(200,200    ).into(imgbtnChoose);
         etTitle.setText(offer.getTitle());
         etRooms.setText("" + offer.getRooms());
         etPrice.setText("" + offer.getPrice());

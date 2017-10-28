@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.model.Offer;
 import com.squareup.picasso.Picasso;
@@ -94,7 +95,8 @@ public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyView
         }
 
         private void setImage(Context context, String imgURL) {
-            Picasso.with(context).load(imgURL).into(imgPic);
+            //Picasso.with(context).load(imgURL).into(imgPic);
+            Glide.with(context).load(imgURL).override(100,80).into(imgPic);
         }
 
         private void setClickListener(final onOfferClickListener listener,final Offer currentOffer) {
