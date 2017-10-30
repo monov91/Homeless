@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -45,6 +46,8 @@ import java.io.InputStream;
 import java.util.Random;
 
 import static android.R.attr.data;
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import static com.projects.radomonov.homeless.database.DatabaseInfo.offersList;
 
 /**
  * Created by Tom on 21.10.2017.
@@ -123,6 +126,31 @@ public class CreateOfferFragment extends Fragment {
             btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String currentOfferID = editOffer.getId();
+
+                    for(Offer of : offersList) {
+                        if(of.getId().equals(currentOfferID)) {
+                            offersList.remove(of);
+                        }
+                    }
+
+                    final Query offerQuery = offers.child(currentOfferID);
+
+                    offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot offerSnapshot : dataSnapshot.getChildren()) {
+                                offerSnapshot.getRef().removeValue();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
 
                 }
             });
