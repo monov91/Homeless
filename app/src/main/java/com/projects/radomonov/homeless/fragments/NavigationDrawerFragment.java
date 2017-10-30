@@ -1,17 +1,17 @@
 package com.projects.radomonov.homeless.fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
-import android.media.Image;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.util.Base64;
+import android.widget.ImageView;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,13 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.app.CreateOfferActivity;
-import com.projects.radomonov.homeless.app.LoginActivity;
-import com.projects.radomonov.homeless.app.MainActivity;
-import com.squareup.picasso.Picasso;
-
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static java.lang.System.load;
 
@@ -92,6 +85,10 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         return view;
     }
 
+    private RoundedBitmapDrawable round;
+
+    InputStream input = null;
+
     public void updateProfilePic(){
         currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
@@ -99,16 +96,59 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null) {
-                    String picURL = dataSnapshot.getValue().toString();
-                    setImage(getContext(), picURL);
+                    final String picURL = dataSnapshot.getValue().toString();
+                    new AsyncTask<Void,Void,Bitmap>(){
+                        @Override
+                        protected Bitmap doInBackground(Void... voids) {
+                            try {
+                                input = new java.net.URL(picURL).openStream();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Bitmap image = BitmapFactory.decodeStream(input);
+                            return image;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Bitmap object) {
+                            round = RoundedBitmapDrawableFactory.create(getResources(), object);
+                            round.setCircular(true);
+
+                            imgEditProfile.setImageDrawable(round);
+                            super.onPostExecute(object);
+                        }
+                    }.execute();
+
+
+
+
+
+                    //Bitmap image = StringToBitMap(picURL);
+
+                    Log.e("vlado4",picURL);
+
+//                    setImage(getContext(), picURL);
                 }
 
+                Log.e("vlado5",dataSnapshot.getValue().toString());
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
+
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
 
     public void setUpDrawer(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar){
 

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -47,6 +48,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
@@ -129,18 +131,44 @@ public class SetupAccountFragment extends Fragment {
         startActivityForResult(Intent.createChooser(GalIntent, "Select Image From Gallery"), GALLERY_REQUEST);
     }
 
-    public void updateProfilePic(){
+    InputStream input = null;
+
+    public void updateProfilePic() {
         currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null) {
-                    String picURL = dataSnapshot.getValue().toString();
-                    setImage(getContext(), picURL);
+                if (dataSnapshot.getValue() != null) {
+                    final String picURL = dataSnapshot.getValue().toString();
+
+                    new AsyncTask<Void, Void, Bitmap>() {
+                        @Override
+                        protected Bitmap doInBackground(Void... voids) {
+                            try {
+                                input = new java.net.URL(picURL).openStream();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Bitmap image = BitmapFactory.decodeStream(input);
+                            return image;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Bitmap object) {
+                            round = RoundedBitmapDrawableFactory.create(getResources(), object);
+                            round.setCircular(true);
+
+                            imgProfilePic.setImageDrawable(round);
+                            super.onPostExecute(object);
+                        }
+                    }.execute();
+//                    setImage(getContext(), picURL);
                 }
 
+
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -207,8 +235,6 @@ public class SetupAccountFragment extends Fragment {
             }
         }
     }
-
-
 
 
     public void EnableRuntimePermission() {

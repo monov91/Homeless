@@ -2,13 +2,10 @@ package com.projects.radomonov.homeless.fragments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -36,18 +32,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.app.CreateOfferActivity;
+import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
-import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Random;
-
-import static android.R.attr.data;
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-import static com.projects.radomonov.homeless.database.DatabaseInfo.offersList;
+import java.util.ArrayList;
 
 /**
  * Created by Tom on 21.10.2017.
@@ -79,6 +67,7 @@ public class CreateOfferFragment extends Fragment {
     private Offer editOffer;
     private Bitmap bitmap;
     private byte[] imgBytes;
+    private ArrayList<Offer> offersList;
 
     @Nullable
     @Override
@@ -127,7 +116,7 @@ public class CreateOfferFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     String currentOfferID = editOffer.getId();
-
+                    offersList = (ArrayList<Offer>) DatabaseInfo.getOffersList();
                     for(Offer of : offersList) {
                         if(of.getId().equals(currentOfferID)) {
                             offersList.remove(of);
