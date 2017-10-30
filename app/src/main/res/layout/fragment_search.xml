@@ -12,13 +12,27 @@
     <Spinner
         android:id="@+id/spinner_neigh"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
     </Spinner>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_neighbourhoods_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/et_price_min"
             android:layout_width="wrap_content"
@@ -44,5 +58,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Rooms"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:gravity="center">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sort by price"
+            android:textSize="20sp"/>
+
+        <ImageButton
+            android:id="@+id/imgbtn_descending_search"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/down_icon"
+            android:scaleType="fitCenter"
+            android:layout_height="match_parent"/>
+
+        <ImageButton
+            android:id="@+id/imgbtn_ascending_search"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/up_icon"
+            android:scaleType="fitCenter"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 </LinearLayout>
