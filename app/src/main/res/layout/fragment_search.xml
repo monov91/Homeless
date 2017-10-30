@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Neighbourhood"/>
+
+    <Spinner
+        android:id="@+id/spinner_neigh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </Spinner>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/et_price_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Min"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "
+
+            android:textStyle="bold"
+            android:textSize="20sp"/>/>
+        <EditText
+            android:id="@+id/et_price_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Max"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_rooms_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Rooms"/>
+
+</LinearLayout>

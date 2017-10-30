@@ -10,26 +10,9 @@ import java.util.List;
  */
 
 public class Utilities {
-    private static Utilities instance;
 
-    private List<Offer> allOffers;
-    private List<Offer> myOffers;
-
-    private Utilities(){
-        this.allOffers = new ArrayList<>();
-        this.myOffers = new ArrayList<>();
-    }
-
-
-    public List<Offer> getAllOffers(){
-        return this.allOffers;
-    }
-
-    public static Utilities getInstance(){
-        if(instance == null){
-            instance = new Utilities();
-        }
-        return instance;
+    public enum Neighbourhood{
+        ЦЕНТЪР,ЛОЗЕНЕЦ,СТУДЕНТСКИ,ЛЮЛИН,МЛАДОСТ,ДРУЖДБА
     }
 
 }
