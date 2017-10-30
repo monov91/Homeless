@@ -11,14 +11,14 @@ public class User {
     private String nickName;
     private String eMail;
     private String phoneNumber;
-    private Uri profilePic;
+    private String profilePic;
     private String ID;
 
     public User() {
 
     }
 
-    public User(String nickName, String eMail, String phoneNumber, Uri profilePic, String ID) {
+    public User(String nickName, String eMail, String phoneNumber, String profilePic, String ID) {
         this.nickName = nickName;
         this.eMail = eMail;
         this.phoneNumber = phoneNumber;
@@ -38,7 +38,7 @@ public class User {
         return phoneNumber;
     }
 
-    public Uri getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 

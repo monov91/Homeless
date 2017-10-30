@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,6 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.CreateOfferActivity;
+import com.projects.radomonov.homeless.app.LoginActivity;
+import com.projects.radomonov.homeless.app.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
@@ -53,6 +56,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference currentUserPic;
 
@@ -69,7 +73,15 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
-        updateProfilePic();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() != null) {
+                    updateProfilePic();
+                }
+            }
+        };
+
 
         btnCreateOffer.setOnClickListener(this);
         btnLogOut.setOnClickListener(this);
@@ -85,8 +97,10 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String picURL = dataSnapshot.getValue().toString();
-                setImage(getContext(), picURL);
+                if(dataSnapshot.getValue() != null) {
+                    String picURL = dataSnapshot.getValue().toString();
+                    setImage(getContext(), picURL);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -141,21 +155,21 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             case R.id.btn_create_offer :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 CreateOfferFragment fragment = new CreateOfferFragment();
-                fragmentTransaction.add(R.id.fragment_container_main,fragment,"createOfferFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main,fragment,"createOfferFrag");
                 fragmentTransaction.commit();
                 break;
 
             case R.id.btn_my_offers :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyOffersFragment fragMyOffers = new MyOffersFragment();
-                fragmentTransaction.add(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
                 fragmentTransaction.commit();
                 break;
 
             case R.id.img_edit_profile_drawer_frag :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 SetupAccountFragment setupFrag = new SetupAccountFragment();
-                fragmentTransaction.add(R.id.fragment_container_main, setupFrag, "setupAccFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main, setupFrag, "setupAccFrag");
                 fragmentTransaction.commit();
                 break;
 

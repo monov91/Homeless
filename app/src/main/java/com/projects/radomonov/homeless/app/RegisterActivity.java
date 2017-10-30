@@ -113,11 +113,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 }
 
-//                if(mapUserNamesEmails.containsKey(userName)) {
-//                    etName.setError("NickName already exist!");
-//                    return;
-//                }
-
                 if (!validateStringForNullAndIsEmpty(eMail)) {
                     etEmail.setError("Invalid eMail");
                     return;
@@ -147,10 +142,6 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
                 }
-//                if(mapUserNamesEmails.containsValue(eMail)) {
-//                    etEmail.setError("e-Mail already exist!");
-//                    return;
-//                }
 
                 if (!validateStringForNullAndIsEmpty(phoneNumber)) {
                     etPhoneNumber.setError("Invalid PhoneNumber");
@@ -173,6 +164,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             String userID = mAuth.getCurrentUser().getUid();
+                            Log.i("dima", "ID --- > " + userID);
 
                             DatabaseReference currentUserDb = mDatabaseUsers.child(userID);
 

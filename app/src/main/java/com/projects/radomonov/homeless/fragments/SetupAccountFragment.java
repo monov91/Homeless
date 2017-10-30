@@ -135,8 +135,11 @@ public class SetupAccountFragment extends Fragment {
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String picURL = dataSnapshot.getValue().toString();
-                setImage(getContext(), picURL);
+                if(dataSnapshot.getValue() != null) {
+                    String picURL = dataSnapshot.getValue().toString();
+                    setImage(getContext(), picURL);
+                }
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

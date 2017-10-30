@@ -63,7 +63,7 @@ public class CreateOfferFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private EditText etTitle, etPrice, etRooms, etNeighbourhood;
-    private Button btnSave;
+    private Button btnSave, btnDelete;
     private ImageButton imgbtnChoose;
     private DatabaseReference offers;
     private DatabaseReference currentUser;
@@ -94,6 +94,8 @@ public class CreateOfferFragment extends Fragment {
         etPrice = (EditText) view.findViewById(R.id.et_price_create);
         etRooms = (EditText) view.findViewById(R.id.et_rooms_create);
         etNeighbourhood = (EditText) view.findViewById(R.id.et_neighbourhood_create);
+        btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
+        btnDelete.setVisibility(View.GONE);
 
         imgbtnChoose = (ImageButton) view.findViewById(R.id.img_select_create);
         imgbtnChoose.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +116,16 @@ public class CreateOfferFragment extends Fragment {
         if (editOffer != null) {
             isNewOffer = false;
             fillFields(editOffer);
+            // tuka slagame butona Delete Offer
+            btnDelete.setVisibility(View.VISIBLE);
+
+            // Delete offer
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +152,7 @@ public class CreateOfferFragment extends Fragment {
                 } else {
                     offer = offers.child(editOffer.getId());
                     offer.child("image").setValue(editOffer.getImage());
+
                 }
                 if (isNewOffer) {
                     if (imageUri != null) {
@@ -172,6 +185,8 @@ public class CreateOfferFragment extends Fragment {
         });
         return view;
     }
+
+
 
     private void writeToDB(final DatabaseReference offer) {
         offer.child("id").setValue(offer.getKey());
@@ -222,5 +237,9 @@ public class CreateOfferFragment extends Fragment {
            // imgbtnChoose.setImageURI(imageUri);
             Glide.with(getContext()).load(imageUri).into(imgbtnChoose);
         }
+    }
+
+    public void btnGone() {
+        btnDelete.setVisibility(View.GONE);
     }
 }

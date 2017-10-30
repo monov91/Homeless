@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         setUpToolbar();
         setUpNavigationDrawer();
+        DatabaseInfo.readUsers();
+        DatabaseInfo.readOffers();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -72,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         SearchFragment search = new SearchFragment();
         ft.add(R.id.fragment_container_main,search);
         ft.commit();
-
 
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
