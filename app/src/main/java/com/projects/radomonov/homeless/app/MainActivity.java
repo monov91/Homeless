@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,11 +26,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
 import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
 import com.projects.radomonov.homeless.fragments.SearchFragment;
 import com.projects.radomonov.homeless.fragments.SetupAccountFragment;
 import com.projects.radomonov.homeless.model.Offer;
+import com.projects.radomonov.homeless.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
+
 
     }
 

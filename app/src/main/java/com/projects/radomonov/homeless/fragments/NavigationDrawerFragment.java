@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +34,8 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import static java.lang.System.load;
 
 /**
  * Created by admin on 17.10.2017.
@@ -162,7 +165,8 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     }
 
     private void setImage(Context context, String imgURL) {
-        Picasso.with(context).load(imgURL).into(imgEditProfile);
+//        Picasso.with(context).load(imgURL).into(imgEditProfile);
+        Glide.with(context).load(imgURL).override(60, 60).into(imgEditProfile);
     }
 
 }

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -72,6 +73,7 @@ public class SetupAccountFragment extends Fragment {
     public static final int REQUEST_PERMISSION_CODE = 1;
 
     private OnFragmentUpdateListener mListener;
+    private DatabaseReference currentUserPic;
 
     @Nullable
     @Override
@@ -82,12 +84,14 @@ public class SetupAccountFragment extends Fragment {
         mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
         currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
+        updateProfilePic();
         EnableRuntimePermission();
 
         btnEditPhoneNumber = view.findViewById(R.id.btn_edit_phone_number);
         btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
         imgProfilePic = view.findViewById(R.id.img_edit_profile);
+
 
         imgProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +127,21 @@ public class SetupAccountFragment extends Fragment {
         GalIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(GalIntent, "Select Image From Gallery"), GALLERY_REQUEST);
+    }
+
+    public void updateProfilePic(){
+        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
+
+        currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String picURL = dataSnapshot.getValue().toString();
+                setImage(getContext(), picURL);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override
@@ -219,5 +238,10 @@ public class SetupAccountFragment extends Fragment {
         super.onAttach(activity);
         mListener = (OnFragmentUpdateListener) activity;
         mListener.updateFragment();
+    }
+
+    private void setImage(Context context, String imgURL) {
+//        Picasso.with(context).load(imgURL).into(imgEditProfile);
+        Glide.with(context).load(imgURL).override(200, 200).into(imgProfilePic);
     }
 }
