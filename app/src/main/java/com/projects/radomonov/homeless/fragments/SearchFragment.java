@@ -59,8 +59,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         btnSortDescending = view.findViewById(R.id.imgbtn_descending_search);
         btnSortAscending = view.findViewWithTag(R.id.imgbtn_ascending_search);
 
-        btnSortAscending.setOnClickListener(this);
-        btnSortDescending.setOnClickListener(this);
+//        btnSortAscending.setOnClickListener(this);
+//        btnSortDescending.setOnClickListener(this);
 
         setUpRecycler(view);
 

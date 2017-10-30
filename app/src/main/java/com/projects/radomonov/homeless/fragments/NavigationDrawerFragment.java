@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
@@ -59,6 +60,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference currentUserPic;
+    private DatabaseReference currentUser;
 
 
     @Nullable
@@ -73,14 +75,13 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null) {
-                    updateProfilePic();
-                }
-            }
-        };
+        String currentUserID = mAuth.getCurrentUser().getUid();
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+
+        if(currentUser.child("profilePic") != null) {
+            Log.i("plamen", "1");
+            updateProfilePic();
+        }
 
 
         btnCreateOffer.setOnClickListener(this);
@@ -101,6 +102,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
                     String picURL = dataSnapshot.getValue().toString();
                     setImage(getContext(), picURL);
                 }
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
