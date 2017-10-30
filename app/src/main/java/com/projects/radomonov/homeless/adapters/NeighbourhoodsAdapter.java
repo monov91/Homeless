@@ -45,7 +45,7 @@ public class NeighbourhoodsAdapter extends RecyclerView.Adapter<NeighbourhoodsAd
             @Override
             public void onClick(View view) {
                 neighbourhoodList.remove(position);
-                notifyItemRemoved(position);
+                notifyDataSetChanged();
             }
         });
     }
