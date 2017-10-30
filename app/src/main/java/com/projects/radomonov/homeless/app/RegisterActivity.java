@@ -179,6 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                             currentUserDb.child("nickName").setValue(userName);
                             currentUserDb.child("eMail").setValue(eMail);
                             currentUserDb.child("phoneNumber").setValue(phoneNumber);
+                            currentUserDb.child("ID").setValue(userID);
 
                             Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
                             mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
