@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -35,16 +33,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.app.CreateOfferActivity;
 import com.projects.radomonov.homeless.model.Offer;
-import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Random;
+import java.io.IOException;
 
-import static android.R.attr.data;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Tom on 21.10.2017.
@@ -53,7 +49,7 @@ import static android.R.attr.data;
 public class CreateOfferFragment extends Fragment {
 
     public static final int GALLERY_REQUEST = 1;
-
+    public static final int CHOOSE_IMAGE = 2;
     private String title;
     private int price;
     private Offer.Currency currency;
@@ -61,11 +57,14 @@ public class CreateOfferFragment extends Fragment {
     private String neighbourhood;
     ProgressDialog progressDialog;
 
+    private Uri thumbnail;
+
     private FirebaseAuth mAuth;
     private EditText etTitle, etPrice, etRooms, etNeighbourhood;
     private Button btnSave, btnDelete;
     private ImageButton imgbtnChoose;
     private DatabaseReference offers;
+    private DatabaseReference offer;
     private DatabaseReference currentUser;
     private StorageReference mStorage;
     private Uri imageUri;
@@ -74,8 +73,7 @@ public class CreateOfferFragment extends Fragment {
     private RadioButton rddbtnBGN;
     private boolean isNewOffer = true;
     private Offer editOffer;
-    private Bitmap bitmap;
-    private byte[] imgBytes;
+    private boolean changedImage = false;
 
     @Nullable
     @Override
@@ -100,10 +98,15 @@ public class CreateOfferFragment extends Fragment {
         imgbtnChoose = (ImageButton) view.findViewById(R.id.img_select_create);
         imgbtnChoose.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {/*
                 Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLERY_REQUEST);
+                galleryIntent.setType("image*//*");
+                startActivityForResult(galleryIntent, GALLERY_REQUEST);*/
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
+                        CHOOSE_IMAGE);
 
             }
         });
@@ -143,49 +146,57 @@ public class CreateOfferFragment extends Fragment {
                 }
                 rooms = Integer.parseInt(etRooms.getText().toString());
                 neighbourhood = etNeighbourhood.getText().toString().trim();
-
                 // if(nqkvi validacii)
                 //DatabaseReference offerImages = newOffer.child("images");
-                final DatabaseReference offer;
+
+
                 if (isNewOffer) {
                     offer = offers.push();
                 } else {
                     offer = offers.child(editOffer.getId());
-                    offer.child("image").setValue(editOffer.getImage());
-
                 }
+
                 if (isNewOffer) {
-                    if (imageUri != null) {
-                        StorageReference filepath = mStorage.child("OfferImages").child(imageUri.getLastPathSegment());
-                        filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                Log.i("snimka", " =====onSuccess=====");
-                                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                offer.child("image").setValue(downloadUrl.toString());
-
-                                writeToDB(offer);
-                            }
-                        });
-                        filepath.putFile(imageUri).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("snimka", "=========onFail========");
-                            }
-                        });
-
+                    if (thumbnail != null) {
+                        updateThumbnail();
+                        writeToDB(offer);
                     } else {
                         Toast.makeText(getContext(), "Choose Image", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    if (changedImage) {
+                        updateThumbnail();
+                    }
                     writeToDB(offer);
                 }
-
             }
         });
         return view;
     }
 
+    private void updateThumbnail() {
+        StorageReference filepath2 = mStorage.child("OfferImages").child("Offers").child(offer.getKey()).child("thumbnail");
+        filepath2.putFile(thumbnail).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("thumb", " =====onSuccess=====");
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                offer.child("imageThumbnail").setValue(downloadUrl.toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("thumb", "=========onFail========");
+            }
+        });
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 
 
     private void writeToDB(final DatabaseReference offer) {
@@ -215,7 +226,7 @@ public class CreateOfferFragment extends Fragment {
     }
 
     public void fillFields(Offer offer) {
-        Glide.with(getContext()).load(offer.getImage()).override(200, 200).into(imgbtnChoose);
+        Glide.with(getContext()).load(offer.getImageThumbnail()).into(imgbtnChoose);
         etTitle.setText(offer.getTitle());
         etRooms.setText("" + offer.getRooms());
         etPrice.setText("" + offer.getPrice());
@@ -234,8 +245,32 @@ public class CreateOfferFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST && resultCode == getActivity().RESULT_OK) {
             imageUri = data.getData();
-           // imgbtnChoose.setImageURI(imageUri);
+            // imgbtnChoose.setImageURI(imageUri);
             Glide.with(getContext()).load(imageUri).into(imgbtnChoose);
+        }
+        //uj crop
+        if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK) {
+            changedImage = true;
+            //imageUri = data.getData();
+            //imgbtnChoose.setImageURI(imageUri);
+            Intent intent = CropImage.activity(data.getData()).setMaxCropResultSize(1100, 800)
+                    .setCropShape(CropImageView.CropShape.RECTANGLE)
+                    .setAspectRatio(5, 3)
+                    .setFixAspectRatio(true).getIntent(getActivity());
+            startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            try {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Bitmap bitmap = MediaStore.Images.Media
+                        .getBitmap(getActivity().getContentResolver(), result.getUri());
+                /*Picasso.with(getActivity()).load(result.getUri())
+                        .transform(new CropSquareTransformation())
+                        .into(imgbtnChoose);*/
+                thumbnail = getImageUri(getContext(), bitmap);
+                imgbtnChoose.setImageURI(thumbnail);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 

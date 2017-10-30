@@ -86,7 +86,6 @@ public class MyOffersFragment extends Fragment {
             Log.i("tagche","title" + offer.getTitle());
             Log.i("tagche","rooms" + offer.getRooms());
             Log.i("tagche","price " + offer.getPrice());
-            Log.i("tagche","image" + offer.getImage());
             Log.i("tagche","neighbourhood" + offer.getNeighbourhood());
             Log.i("tagche","phone" + offer.getPhoneNumber());
         }

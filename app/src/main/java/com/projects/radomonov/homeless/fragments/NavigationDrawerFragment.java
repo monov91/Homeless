@@ -31,7 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.app.CreateOfferActivity;
 import com.projects.radomonov.homeless.app.LoginActivity;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.squareup.picasso.Picasso;

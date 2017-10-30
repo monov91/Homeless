@@ -21,8 +21,12 @@ public class Offer implements Serializable {
     private Currency currency;
     private String phoneNumber;
     private String owner;
-    private String image;
 
+    public String getImageThumbnail() {
+        return imageThumbnail;
+    }
+
+    private String imageThumbnail;
     public Offer() {
 
     }
@@ -34,7 +38,6 @@ public class Offer implements Serializable {
         this.price = price;
         this.neighbourhood = neighbourhood;
         this.currency = currency;
-        this.image = imgDownloadUrl;
         this.phoneNumber = phone;
         this.owner = ownerID;
 
@@ -46,7 +49,6 @@ public class Offer implements Serializable {
         this.price = price;
         this.neighbourhood = neighbourhood;
         this.currency = currency;
-        this.image = image;
     }
 
     public String getOwner() {
@@ -55,10 +57,6 @@ public class Offer implements Serializable {
 
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public String getImage() {
-        return image;
     }
 
     public String getTitle() {
