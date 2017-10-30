@@ -29,6 +29,7 @@ import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
 import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
+import com.projects.radomonov.homeless.fragments.SearchFragment;
 import com.projects.radomonov.homeless.fragments.SetupAccountFragment;
 import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.model.User;
@@ -39,7 +40,6 @@ import java.io.Serializable;
 public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
 
     private Toolbar toolbar;
-    private DatabaseReference offers;
     private DatabaseReference mDatabaseUsers;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -67,7 +67,14 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
             }
         };
 
-        offers = FirebaseDatabase.getInstance().getReference().child("Offers");
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        SearchFragment search = new SearchFragment();
+        ft.add(R.id.fragment_container_main,search);
+        ft.commit();
+
+
+
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 

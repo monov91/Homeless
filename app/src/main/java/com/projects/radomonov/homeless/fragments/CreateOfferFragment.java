@@ -194,14 +194,12 @@ public class CreateOfferFragment extends Fragment {
                 //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
             }
         });
-
         offer.child("owner").setValue(currentUser.getKey().toString());
         progressDialog.dismiss();
         getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
     }
 
     public void fillFields(Offer offer) {
-        //Picasso.with(getContext()).load(offer.getImage()).into(imgbtnChoose);
         Glide.with(getContext()).load(offer.getImage()).override(200, 200).into(imgbtnChoose);
         etTitle.setText(offer.getTitle());
         etRooms.setText("" + offer.getRooms());
@@ -216,13 +214,10 @@ public class CreateOfferFragment extends Fragment {
         etNeighbourhood.setText(offer.getNeighbourhood());
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == GALLERY_REQUEST && resultCode == getActivity().RESULT_OK) {
-
             imageUri = data.getData();
            // imgbtnChoose.setImageURI(imageUri);
             Glide.with(getContext()).load(imageUri).into(imgbtnChoose);

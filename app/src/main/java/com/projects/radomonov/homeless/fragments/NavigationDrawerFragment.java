@@ -141,21 +141,21 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             case R.id.btn_create_offer :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 CreateOfferFragment fragment = new CreateOfferFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main,fragment,"createOfferFrag");
+                fragmentTransaction.add(R.id.fragment_container_main,fragment,"createOfferFrag");
                 fragmentTransaction.commit();
                 break;
 
             case R.id.btn_my_offers :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyOffersFragment fragMyOffers = new MyOffersFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.add(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
                 fragmentTransaction.commit();
                 break;
 
             case R.id.img_edit_profile_drawer_frag :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 SetupAccountFragment setupFrag = new SetupAccountFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main, setupFrag, "setupAccFrag");
+                fragmentTransaction.add(R.id.fragment_container_main, setupFrag, "setupAccFrag");
                 fragmentTransaction.commit();
                 break;
 
@@ -168,7 +168,5 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
 //        Picasso.with(context).load(imgURL).into(imgEditProfile);
         Glide.with(context).load(imgURL).override(60, 60).into(imgEditProfile);
     }
-
-
 
 }
