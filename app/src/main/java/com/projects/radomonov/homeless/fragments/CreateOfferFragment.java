@@ -46,7 +46,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static android.R.attr.data;
@@ -89,7 +91,7 @@ public class CreateOfferFragment extends Fragment {
     private List<Uri> offerImages;
     private List<Uri> offerImagesUrlsOrig;
     private List<Uri> offerImagesUrls;
-
+    private HashMap<String,Uri> originalPics;
     private OfferPhotosAdapter adapter;
 
     @Nullable
@@ -99,6 +101,7 @@ public class CreateOfferFragment extends Fragment {
         offerImagesUrlsOrig = new ArrayList<>();
         offerImages = new ArrayList<>();
         offerImagesUrls = new ArrayList<>();
+        originalPics = new HashMap<>();
         setUpRecyclerForPhotos(view);
         offers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
@@ -179,6 +182,7 @@ public class CreateOfferFragment extends Fragment {
                     if (thumbnail != null) {
                         updateThumbnail();
                         writeToDB(offer);
+
                     } else {
                         Toast.makeText(getContext(), "Choose Image", Toast.LENGTH_SHORT).show();
                     }
@@ -186,6 +190,7 @@ public class CreateOfferFragment extends Fragment {
                     if (changedImage) {
                         updateThumbnail();
                     }
+                    deleteAllPics();
                     writeToDB(offer);
                 }
             }
@@ -273,12 +278,40 @@ public class CreateOfferFragment extends Fragment {
                 //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
             }
         });
-        deleteAllPics();
+        updatePics();
+        offer.child("owner").setValue(currentUser.getKey().toString());
+        progressDialog.dismiss();
+        getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
+    }
+    private void deleteAllPics(){
+        Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
+        for(Map.Entry<String,Uri> entry : originalPics.entrySet()){
+            Uri url = entry.getValue();
+            String key = entry.getKey();
+            FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
+            StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
+            pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i("delete","successful deletion");
+                  //  FirebaseDatabase.getInstance().getReference().child("Offers").
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("delete"," UNsuccessful deletion");
+                }
+            });
+        }
+    }
+    private void updatePics() {
         for (Uri photo : offerImagesUrls) {
             if(isValidURL(String.valueOf(photo))){
                 photo =  Uri.parse(String.valueOf(photo));
             }
-            StorageReference pictureRef = mStorage.child("OfferImages").child("Offers").child(offer.getKey()).child("Photos").child(getRandomString());
+            final String randomString = getRandomString();
+            StorageReference pictureRef = mStorage.child("OfferImages")
+                    .child("Offers").child(offer.getKey()).child("Photos").child(randomString);
             pictureRef.putFile(photo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -286,7 +319,7 @@ public class CreateOfferFragment extends Fragment {
                     Uri link = taskSnapshot.getDownloadUrl();
                     // offerImagesUrls.add(link);
                     //StorageReference storageRefDelete = FirebaseStorage.getInstance().getReferenceFromUrl(String.valueOf(link));
-                    DatabaseReference pictureDBRef = offer.child("imageUrls").push();
+                    DatabaseReference pictureDBRef = offer.child("imageUrls").child(randomString);
                     pictureDBRef.setValue(link.toString());
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -316,11 +349,11 @@ public class CreateOfferFragment extends Fragment {
         }
         etNeighbourhood.setText(offer.getNeighbourhood());
         //get pics links
-        for(String url: offer.getImageUrls().values()){
-            offerImagesUrls.add(Uri.parse(url));
-            adapter.notifyDataSetChanged();
 
-            offerImagesUrlsOrig.add(Uri.parse(url));
+        for(Map.Entry<String,String> entry : offer.getImageUrls().entrySet()){
+            originalPics.put(entry.getKey(), Uri.parse(entry.getValue()));
+            offerImagesUrls.add(Uri.parse(entry.getValue()));
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -396,27 +429,6 @@ public class CreateOfferFragment extends Fragment {
             return false;
         }
     }
-
-    private void deleteAllPics(){
-
-        Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
-        for(Uri url: offerImagesUrlsOrig){
-            FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
-            StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
-            pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.i("delete","successful deletion");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("delete"," UNsuccessful deletion");
-                }
-            });
-        }
-    }
-
     private String getRandomString(){
         String uuid = UUID.randomUUID().toString();
         return  uuid;
