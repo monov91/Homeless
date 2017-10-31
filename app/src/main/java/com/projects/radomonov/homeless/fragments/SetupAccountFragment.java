@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.MainActivity;
+import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Owner;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -64,9 +66,10 @@ public class SetupAccountFragment extends Fragment {
     private ImageView imgProfilePic;
     private Button btnEditPhoneNumber, btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
-    private DatabaseReference currentUser;
+    private DatabaseReference currentUserID;
     private StorageReference mStorage;
     private RoundedBitmapDrawable round;
+    private EditText etPhoneNumber;
 
     private Intent GalIntent;
     boolean flag = false;
@@ -84,12 +87,13 @@ public class SetupAccountFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_setup_account, container, false);
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        currentUserID = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
         updateProfilePic();
         EnableRuntimePermission();
 
         btnEditPhoneNumber = view.findViewById(R.id.btn_edit_phone_number);
+        etPhoneNumber = view.findViewById(R.id.edit_phone_number_setup_frag);
         btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
         imgProfilePic = view.findViewById(R.id.img_edit_profile);
@@ -104,7 +108,6 @@ public class SetupAccountFragment extends Fragment {
         btnSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 mListener.updateFragment();
                 getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
 
@@ -114,9 +117,19 @@ public class SetupAccountFragment extends Fragment {
         btnCancelChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
 
+            }
+        });
+
+        btnEditPhoneNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String phoneNumber = etPhoneNumber.getText().toString().trim();
+                if (validateStringForNullAndIsEmpty(phoneNumber)) {
+                    currentUserID.child("phoneNumber").setValue(phoneNumber);
+                }
+                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
             }
         });
 
@@ -164,8 +177,6 @@ public class SetupAccountFragment extends Fragment {
                     }.execute();
 //                    setImage(getContext(), picURL);
                 }
-
-
             }
 
             @Override
@@ -210,7 +221,7 @@ public class SetupAccountFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             downloadURL = taskSnapshot.getDownloadUrl();
-                            currentUser.child("profilePic").setValue(downloadURL.toString());
+                            currentUserID.child("profilePic").setValue(downloadURL.toString());
                         }
                     });
 
@@ -271,5 +282,12 @@ public class SetupAccountFragment extends Fragment {
     private void setImage(Context context, String imgURL) {
 //        Picasso.with(context).load(imgURL).into(imgEditProfile);
         Glide.with(context).load(imgURL).override(200, 200).into(imgProfilePic);
+    }
+
+    private boolean validateStringForNullAndIsEmpty(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 }

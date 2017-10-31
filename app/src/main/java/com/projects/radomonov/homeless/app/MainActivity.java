@@ -1,8 +1,11 @@
 package com.projects.radomonov.homeless.app;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         SearchFragment search = new SearchFragment();
-        ft.add(R.id.fragment_container_main,search);
+        ft.add(R.id.fragment_container_main,search, "searchFrag");
         ft.commit();
 
 
@@ -111,6 +114,47 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     public void updateFragment() {
         NavigationDrawerFragment fragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
         fragment.updateProfilePic();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
+
+        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MainActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            //additional code
+        } else {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            SearchFragment searchFrag = new SearchFragment();
+            ft.replace(R.id.fragment_container_main, searchFrag, "searchFrag");
+            ft.commit();
+//            getFragmentManager().popBackStack();
+        }
+
+//        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
+//        Log.i("frag", "cur ===> " + currFrag);
+//        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
+//
+//        }
+
+
     }
 
 }

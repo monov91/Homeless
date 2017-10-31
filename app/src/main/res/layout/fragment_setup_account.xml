@@ -10,6 +10,7 @@
         android:id="@+id/img_edit_profile"
         android:layout_width="250dp"
         android:layout_height="250dp"
+        android:scaleType="centerInside"
         android:layout_marginTop="30dp"
         android:layout_gravity="center"
         android:clickable="true"
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:text="Edit phone number"/>
 
     <LinearLayout
@@ -44,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="10dp">
 
         <Button
             android:id="@+id/btn_save_changes_setup_acc"
