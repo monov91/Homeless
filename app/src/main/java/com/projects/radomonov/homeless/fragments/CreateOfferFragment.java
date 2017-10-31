@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.adapters.OfferPhotosAdapter;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -41,9 +44,12 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import static android.R.attr.data;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -51,9 +57,10 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class CreateOfferFragment extends Fragment {
-
+    public static final int ADD_PHOTO_CROP = 5;
     public static final int GALLERY_REQUEST = 1;
     public static final int CHOOSE_IMAGE = 2;
+    public static final int ADD_PHOTO = 3;
     private String title;
     private int price;
     private Offer.Currency currency;
@@ -66,7 +73,7 @@ public class CreateOfferFragment extends Fragment {
     private FirebaseAuth mAuth;
     private EditText etTitle, etPrice, etRooms, etNeighbourhood;
     private Button btnSave, btnDelete;
-    private ImageButton imgbtnChoose;
+    private ImageButton imgbtnChoose, imgbtnAdd;
     private DatabaseReference offers;
     private DatabaseReference offer;
     private DatabaseReference currentUser;
@@ -79,11 +86,20 @@ public class CreateOfferFragment extends Fragment {
     private Offer editOffer;
     private boolean changedImage = false;
 
+    private List<Uri> offerImages;
+    private List<Uri> offerImagesUrlsOrig;
+    private List<Uri> offerImagesUrls;
+
+    private OfferPhotosAdapter adapter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_offer, container, false);
-
+        offerImagesUrlsOrig = new ArrayList<>();
+        offerImages = new ArrayList<>();
+        offerImagesUrls = new ArrayList<>();
+        setUpRecyclerForPhotos(view);
         offers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
         mAuth = FirebaseAuth.getInstance();
@@ -99,13 +115,22 @@ public class CreateOfferFragment extends Fragment {
         btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
         btnDelete.setVisibility(View.GONE);
 
+        imgbtnAdd = view.findViewById(R.id.imgbtn_add_photo);
+        imgbtnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
+                        ADD_PHOTO);
+            }
+        });
+
         imgbtnChoose = (ImageButton) view.findViewById(R.id.img_select_create);
         imgbtnChoose.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {/*
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image*//*");
-                startActivityForResult(galleryIntent, GALLERY_REQUEST);*/
+            public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -115,7 +140,6 @@ public class CreateOfferFragment extends Fragment {
             }
         });
         btnSave = (Button) view.findViewById(R.id.btn_save_create);
-        // Check if this is editing or new offer
         Bundle bundle = getArguments();
         if (bundle != null) {
             editOffer = (Offer) getArguments().getSerializable("offer");
@@ -144,8 +168,6 @@ public class CreateOfferFragment extends Fragment {
                 rooms = Integer.parseInt(etRooms.getText().toString());
                 neighbourhood = etNeighbourhood.getText().toString().trim();
                 // if(nqkvi validacii)
-                //DatabaseReference offerImages = newOffer.child("images");
-
 
                 if (isNewOffer) {
                     offer = offers.push();
@@ -171,15 +193,15 @@ public class CreateOfferFragment extends Fragment {
         return view;
     }
 
-    private void setDeleteListener(){
+    private void setDeleteListener() {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<Offer> offersList ;
+                List<Offer> offersList;
                 String currentOfferID = editOffer.getId();
                 offersList = DatabaseInfo.getOffersList();
-                for(Offer of : offersList) {
-                    if(of.getId().equals(currentOfferID)) {
+                for (Offer of : offersList) {
+                    if (of.getId().equals(currentOfferID)) {
                         offersList.remove(of);
                     }
                 }
@@ -246,12 +268,34 @@ public class CreateOfferFragment extends Fragment {
                 offer.child("phoneNumber").setValue(phoneNum);
                 // Toast.makeText(getActivity(), phoneNum, Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
             }
         });
+        deleteAllPics();
+        for (Uri photo : offerImagesUrls) {
+            if(isValidURL(String.valueOf(photo))){
+                photo =  Uri.parse(String.valueOf(photo));
+            }
+            StorageReference pictureRef = mStorage.child("OfferImages").child("Offers").child(offer.getKey()).child("Photos").child(getRandomString());
+            pictureRef.putFile(photo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.i("kachena","pic uploaded");
+                    Uri link = taskSnapshot.getDownloadUrl();
+                    // offerImagesUrls.add(link);
+                    //StorageReference storageRefDelete = FirebaseStorage.getInstance().getReferenceFromUrl(String.valueOf(link));
+                    DatabaseReference pictureDBRef = offer.child("imageUrls").push();
+                    pictureDBRef.setValue(link.toString());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("kachena","pic upload failed");
+                }
+            });
+        }
         offer.child("owner").setValue(currentUser.getKey().toString());
         progressDialog.dismiss();
         getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
@@ -270,17 +314,19 @@ public class CreateOfferFragment extends Fragment {
             rdbtnEU.setChecked(true);
         }
         etNeighbourhood.setText(offer.getNeighbourhood());
+        //get pics links
+        for(String url: offer.getImageUrls().values()){
+            offerImagesUrls.add(Uri.parse(url));
+            adapter.notifyDataSetChanged();
+
+            offerImagesUrlsOrig.add(Uri.parse(url));
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GALLERY_REQUEST && resultCode == getActivity().RESULT_OK) {
-            imageUri = data.getData();
-            // imgbtnChoose.setImageURI(imageUri);
-            Glide.with(getContext()).load(imageUri).into(imgbtnChoose);
-        }
-        //uj crop
+
         if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK) {
             changedImage = true;
             //imageUri = data.getData();
@@ -304,8 +350,76 @@ public class CreateOfferFragment extends Fragment {
                 ioe.printStackTrace();
             }
         }
+
+        if (requestCode == ADD_PHOTO && resultCode == RESULT_OK) {
+            Uri uncroppedPhoto = data.getData();
+            // ne trqa da e taka
+            offerImagesUrls.add(uncroppedPhoto);
+            adapter.notifyDataSetChanged();
+
+            /*Intent intent = CropImage.activity(data.getData()).setMaxCropResultSize(1100, 800)
+                    .setCropShape(CropImageView.CropShape.RECTANGLE)
+                    .setAspectRatio(5, 3)
+                    .setFixAspectRatio(true).getIntent(getActivity());
+            startActivityForResult(intent, ADD_PHOTO_CROP);*/
+        }
+       /* if (requestCode == ADD_PHOTO_CROP) {
+            try {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Bitmap bitmap = MediaStore.Images.Media
+                        .getBitmap(getActivity().getContentResolver(), result.getUri());
+                Uri uri = getImageUri(getContext(), bitmap);
+                offerImagesThumbnails.add(uri);
+                adapter.notifyDataSetChanged();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }*/
     }
 
+    private void setUpRecyclerForPhotos(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_photos);
+        adapter = new OfferPhotosAdapter(getContext(), offerImagesUrls);
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(manager);
+    }
+
+    private boolean isValidURL(String urlStr) {
+        try {
+            URI uri = new URI(urlStr);
+            return uri.getScheme().equals("http") || uri.getScheme().equals("https");
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void deleteAllPics(){
+
+        Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
+        for(Uri url: offerImagesUrlsOrig){
+            FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
+            StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
+            pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i("delete","successful deletion");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("delete"," UNsuccessful deletion");
+                }
+            });
+        }
+    }
+
+    private String getRandomString(){
+        String uuid = UUID.randomUUID().toString();
+        return  uuid;
+    }
     public void btnGone() {
         btnDelete.setVisibility(View.GONE);
     }

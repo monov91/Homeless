@@ -3,6 +3,8 @@ package com.projects.radomonov.homeless.model;
 import android.net.Uri;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by admin on 17.10.2017.
@@ -22,6 +24,14 @@ public class Offer implements Serializable {
     private String phoneNumber;
     private String owner;
 
+    public HashMap<String,String> getImageUrls() {
+        return imageUrls;
+    }
+
+    private HashMap<String,String> imageUrls;
+
+
+
     public String getImageThumbnail() {
         return imageThumbnail;
     }
@@ -40,6 +50,7 @@ public class Offer implements Serializable {
         this.currency = currency;
         this.phoneNumber = phone;
         this.owner = ownerID;
+
 
     }
 

@@ -17,7 +17,6 @@
             android:text="CREATE NEW OFFER"
             android:gravity="center"
             android:textSize="20sp" />
-
         <ImageButton
             android:id="@+id/img_select_create"
             android:layout_width="match_parent"
@@ -30,6 +29,20 @@
             android:scaleType="fitCenter"
             app:srcCompat="@mipmap/add_btn"
             />
+
+        <ImageButton
+            android:id="@+id/imgbtn_add_photo"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/add_pic_icon"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_photos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
