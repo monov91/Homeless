@@ -109,7 +109,7 @@ public class SetupAccountFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mListener.updateFragment();
-                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
+                goToMain();
 
             }
         });
@@ -117,7 +117,7 @@ public class SetupAccountFragment extends Fragment {
         btnCancelChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
+                goToMain();
 
             }
         });
@@ -129,7 +129,7 @@ public class SetupAccountFragment extends Fragment {
                 if (validateStringForNullAndIsEmpty(phoneNumber)) {
                     currentUserID.child("phoneNumber").setValue(phoneNumber);
                 }
-                getActivity().getFragmentManager().beginTransaction().remove(SetupAccountFragment.this).commit();
+               goToMain();
             }
         });
 
@@ -282,6 +282,11 @@ public class SetupAccountFragment extends Fragment {
     private void setImage(Context context, String imgURL) {
 //        Picasso.with(context).load(imgURL).into(imgEditProfile);
         Glide.with(context).load(imgURL).override(200, 200).into(imgProfilePic);
+    }
+
+    public void goToMain() {
+        SearchFragment searchFrag = new SearchFragment();
+        getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
     }
 
     private boolean validateStringForNullAndIsEmpty(String str) {
