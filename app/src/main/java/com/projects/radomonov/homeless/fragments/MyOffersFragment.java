@@ -61,6 +61,8 @@ public class MyOffersFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         myOffers = new ArrayList<>();
 
+        Log.i("offersChild", "offers count ======> " + DatabaseInfo.getOffersList().size());
+
         Log.i("dima", "List size ---> " + DatabaseInfo.getUsersList().size());
         for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
             Log.i("dima", "name ----- > " + DatabaseInfo.getUsersList().get(i).getNickName());
@@ -70,11 +72,11 @@ public class MyOffersFragment extends Fragment {
 
         Log.i("dima", "Offer List size ---> " + DatabaseInfo.getOffersList().size());
         for(int i = 0; i < DatabaseInfo.getOffersList().size(); i++) {
-            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
-            Log.i("dima", "titla ----- > " + DatabaseInfo.getOffersList().get(i).getTitle());
-            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
-            Log.i("dima", "owner ----- > " + DatabaseInfo.getOffersList().get(i).getOwner());
-            Log.i("dima", "rajon ----- > " + DatabaseInfo.getOffersList().get(i).getNeighbourhood());
+//            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
+//            Log.i("dima", "titla ----- > " + DatabaseInfo.getOffersList().get(i).getTitle());
+//            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
+//            Log.i("dima", "owner ----- > " + DatabaseInfo.getOffersList().get(i).getOwner());
+//            Log.i("dima", "rajon ----- > " + DatabaseInfo.getOffersList().get(i).getNeighbourhood());
         }
 
 
