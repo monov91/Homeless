@@ -107,11 +107,11 @@ public class DatabaseInfo extends AppCompatActivity {
     }
 
     public static final List<User> getUsersList() {
-        return Collections.unmodifiableList(usersList);
+        return usersList;
     }
 
     public static final List<Offer> getOffersList() {
-        return Collections.unmodifiableList(offersList);
+        return offersList;
     }
 
 //   public static HashMap<String, User> getUsers() {

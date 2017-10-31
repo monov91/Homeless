@@ -94,7 +94,6 @@ public class SetupAccountFragment extends Fragment {
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
         imgProfilePic = view.findViewById(R.id.img_edit_profile);
 
-
         imgProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -15,7 +15,16 @@
         android:clickable="true"
         android:src="@drawable/ic_profile"
         android:tint="@android:color/darker_gray" />
-
+    <EditText
+        android:id="@+id/edit_phone_number_setup_frag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:hint="Enter your new Phone Number"
+        android:gravity="center"
+        android:inputType="phone"
+        android:layout_gravity="center"
+        android:textStyle="italic"/>
     <Button
         android:id="@+id/btn_edit_phone_number"
         android:layout_width="wrap_content"

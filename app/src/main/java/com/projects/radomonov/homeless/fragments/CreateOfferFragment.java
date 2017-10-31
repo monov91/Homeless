@@ -28,17 +28,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -119,16 +123,9 @@ public class CreateOfferFragment extends Fragment {
         if (editOffer != null) {
             isNewOffer = false;
             fillFields(editOffer);
-            // tuka slagame butona Delete Offer
+
             btnDelete.setVisibility(View.VISIBLE);
-
-            // Delete offer
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
+            setDeleteListener();
         }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +169,41 @@ public class CreateOfferFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void setDeleteListener(){
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Offer> offersList ;
+                String currentOfferID = editOffer.getId();
+                offersList = DatabaseInfo.getOffersList();
+                for(Offer of : offersList) {
+                    if(of.getId().equals(currentOfferID)) {
+                        offersList.remove(of);
+                    }
+                }
+
+                final Query offerQuery = offers.child(currentOfferID);
+
+                offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot offerSnapshot : dataSnapshot.getChildren()) {
+                            offerSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
+
+            }
+        });
     }
 
     private void updateThumbnail() {
