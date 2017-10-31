@@ -16,7 +16,9 @@ import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.model.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Tom on 28.10.2017.
@@ -24,16 +26,15 @@ import java.util.HashMap;
 
 public class DatabaseInfo extends AppCompatActivity {
 
-    public static DatabaseReference currentUser;
-    public static DatabaseReference currentOffer;
+    private static DatabaseReference currentUser;
+    private static DatabaseReference currentOffer;
 
-//    public static HashMap<String, User> users = new HashMap<String, User>();
 
-    public static ArrayList<User> usersList = new ArrayList<>();
-    public static ArrayList<Offer> offersList = new ArrayList<>();
+    private static ArrayList<User> usersList = new ArrayList<>();
+    private static ArrayList<Offer> offersList = new ArrayList<>();
 
-    public static DatabaseReference mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-    public static DatabaseReference mDatabaseOffers = FirebaseDatabase.getInstance().getReference().child("Offers");
+    private static DatabaseReference mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+    private static DatabaseReference mDatabaseOffers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
 
 
@@ -70,6 +71,9 @@ public class DatabaseInfo extends AppCompatActivity {
 
     }
 
+
+
+
     public static void readOffers() {
         final ArrayList<String> allOffers = new ArrayList<>();
 
@@ -100,6 +104,14 @@ public class DatabaseInfo extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static final List<User> getUsersList() {
+        return Collections.unmodifiableList(usersList);
+    }
+
+    public static final List<Offer> getOffersList() {
+        return Collections.unmodifiableList(offersList);
     }
 
 //   public static HashMap<String, User> getUsers() {

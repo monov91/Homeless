@@ -45,7 +45,6 @@ public class MyOffersFragment extends Fragment {
     private MyOffersAdapter adapter;
     private ArrayList<Offer> myOffers;
 
-//    ArrayList<User> usersInMyOffers = new ArrayList<>();
     HashMap<String, User> usersInMyOffers = new HashMap<>();
 
     @Override
@@ -62,20 +61,20 @@ public class MyOffersFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         myOffers = new ArrayList<>();
 
-        Log.i("dima", "List size ---> " + DatabaseInfo.usersList.size());
-        for(int i = 0; i < DatabaseInfo.usersList.size(); i++) {
-            Log.i("dima", "name ----- > " + DatabaseInfo.usersList.get(i).getNickName());
-            Log.i("dima", "ID ----- > " + DatabaseInfo.usersList.get(i).getID());
-            Log.i("dima", "pic ----- > " + DatabaseInfo.usersList.get(i).getProfilePic());
+        Log.i("dima", "List size ---> " + DatabaseInfo.getUsersList().size());
+        for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
+            Log.i("dima", "name ----- > " + DatabaseInfo.getUsersList().get(i).getNickName());
+            Log.i("dima", "ID ----- > " + DatabaseInfo.getUsersList().get(i).getID());
+            Log.i("dima", "pic ----- > " + DatabaseInfo.getUsersList().get(i).getProfilePic());
         }
 
-        Log.i("dima", "Offer List size ---> " + DatabaseInfo.offersList.size());
-        for(int i = 0; i < DatabaseInfo.offersList.size(); i++) {
-            Log.i("dima", "id ----- > " + DatabaseInfo.offersList.get(i).getId());
-            Log.i("dima", "titla ----- > " + DatabaseInfo.offersList.get(i).getTitle());
-            Log.i("dima", "telefon ----- > " + DatabaseInfo.offersList.get(i).getPhoneNumber());
-            Log.i("dima", "owner ----- > " + DatabaseInfo.offersList.get(i).getOwner());
-            Log.i("dima", "rajon ----- > " + DatabaseInfo.offersList.get(i).getNeighbourhood());
+        Log.i("dima", "Offer List size ---> " + DatabaseInfo.getOffersList().size());
+        for(int i = 0; i < DatabaseInfo.getOffersList().size(); i++) {
+            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
+            Log.i("dima", "titla ----- > " + DatabaseInfo.getOffersList().get(i).getTitle());
+            Log.i("dima", "id ----- > " + DatabaseInfo.getOffersList().get(i).getId());
+            Log.i("dima", "owner ----- > " + DatabaseInfo.getOffersList().get(i).getOwner());
+            Log.i("dima", "rajon ----- > " + DatabaseInfo.getOffersList().get(i).getNeighbourhood());
         }
 
 
