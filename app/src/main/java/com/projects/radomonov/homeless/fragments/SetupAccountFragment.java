@@ -177,8 +177,6 @@ public class SetupAccountFragment extends Fragment {
                     }.execute();
 //                    setImage(getContext(), picURL);
                 }
-
-
             }
 
             @Override

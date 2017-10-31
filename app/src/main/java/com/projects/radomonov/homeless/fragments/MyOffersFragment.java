@@ -79,7 +79,8 @@ public class MyOffersFragment extends Fragment {
 //            Log.i("dima", "rajon ----- > " + DatabaseInfo.getOffersList().get(i).getNeighbourhood());
         }
 
-
+        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
+        Log.i("frag", "cur ===> " + currFrag);
 
         //List<Offer> offers = Utilities.getInstance().getAllOffers();
         Log.i("tagche","============= list size - " + myOffers.size() + " =============");

@@ -39,12 +39,15 @@ public class DatabaseInfo extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                User user = dataSnapshot.getValue(User.class);
+                usersList.remove(s);
+                usersList.add(user);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                User user = dataSnapshot.getValue(User.class);
+                usersList.remove(user);
             }
 
             @Override
@@ -102,10 +105,15 @@ public class DatabaseInfo extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Offer offer = dataSnapshot.getValue(Offer.class);
+                offersList.remove(s);
+                offersList.add(offer);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Offer offer = dataSnapshot.getValue(Offer.class);
+                offersList.remove(offer);
             }
 
             @Override
