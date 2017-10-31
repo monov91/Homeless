@@ -6,12 +6,17 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +40,8 @@ import com.projects.radomonov.homeless.app.LoginActivity;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -56,6 +63,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
+    private RoundedBitmapDrawable round;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference currentUserPic;
@@ -74,13 +82,16 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
-        String currentUserID = mAuth.getCurrentUser().getUid();
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+//        String currentUserID = mAuth.getCurrentUser().getUid();
+//        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 
-        if(currentUser.child("profilePic") != null) {
-            Log.i("plamen", "1");
+        if(mAuth != null) {
             updateProfilePic();
         }
+//        if(currentUser.child("profilePic") != null) {
+//            Log.i("plamen", "1");
+//            updateProfilePic();
+//        }
 
 
         btnCreateOffer.setOnClickListener(this);
@@ -91,22 +102,50 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         return view;
     }
 
+    InputStream input = null;
+
     public void updateProfilePic(){
-        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
+        if (mAuth.getCurrentUser() != null) {
+            currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
-        currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null) {
-                    String picURL = dataSnapshot.getValue().toString();
-                    setImage(getContext(), picURL);
+            currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue() != null) {
+//                        String picURL = dataSnapshot.getValue().toString();
+//                        setImage(getContext(), picURL);
+
+                        final String picURL = dataSnapshot.getValue().toString();
+
+                        new AsyncTask<Void, Void, Bitmap>() {
+                            @Override
+                            protected Bitmap doInBackground(Void... voids) {
+                                try {
+                                    input = new java.net.URL(picURL).openStream();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                Bitmap image = BitmapFactory.decodeStream(input);
+                                return image;
+                            }
+
+                            @Override
+                            protected void onPostExecute(Bitmap object) {
+                                round = RoundedBitmapDrawableFactory.create(getResources(), object);
+                                round.setCircular(true);
+
+                                imgEditProfile.setImageDrawable(round);
+                                super.onPostExecute(object);
+                            }
+                        }.execute();
+                    }
                 }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 
     public void setUpDrawer(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar){
