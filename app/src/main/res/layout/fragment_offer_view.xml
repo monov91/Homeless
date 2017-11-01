@@ -54,6 +54,14 @@
             android:textStyle="bold"
             android:textSize="20sp"/>
 
+        <CheckBox
+            android:id="@+id/cb_like_this_offer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="Like this offer"/>
+
         <Button
             android:id="@+id/btn_call_to_owner_offer_info"
             android:layout_width="match_parent"
