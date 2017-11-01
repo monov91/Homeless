@@ -12,7 +12,7 @@ import java.util.List;
 public class Utilities {
 
     public enum Neighbourhood{
-        ЦЕНТЪР,ЛОЗЕНЕЦ,СТУДЕНТСКИ,ЛЮЛИН,МЛАДОСТ,ДРУЖДБА
+        CENTAR,LOZENEC,STUDENTSKI,LIULIN,MLADOST,DRUJBA
     }
 
 }

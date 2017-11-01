@@ -2,6 +2,8 @@ package com.projects.radomonov.homeless.model;
 
 import android.net.Uri;
 
+import com.projects.radomonov.homeless.utilities.Utilities;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Offer implements Serializable {
     private String title;
     private int rooms;
     private int price;
-    private String neighbourhood;
+    private Utilities.Neighbourhood neighbourhood;
     private Currency currency;
     private String phoneNumber;
     private String owner;
@@ -42,7 +44,7 @@ public class Offer implements Serializable {
     }
 
 
-    public Offer(String title, int rooms, int price, String neighbourhood, Currency currency, String imgDownloadUrl, String phone, String ownerID) {
+    public Offer(String title, int rooms, int price, Utilities.Neighbourhood neighbourhood, Currency currency, String imgDownloadUrl, String phone, String ownerID) {
         this.title = title;
         this.rooms = rooms;
         this.price = price;
@@ -54,7 +56,7 @@ public class Offer implements Serializable {
 
     }
 
-    public Offer(String title, int rooms, int price, String neighbourhood, Currency currency, String image) {
+    public Offer(String title, int rooms, int price, Utilities.Neighbourhood neighbourhood, Currency currency, String image) {
         this.title = title;
         this.rooms = rooms;
         this.price = price;
@@ -82,7 +84,7 @@ public class Offer implements Serializable {
         return price;
     }
 
-    public String getNeighbourhood() {
+    public Utilities.Neighbourhood getNeighbourhood() {
         return neighbourhood;
     }
 

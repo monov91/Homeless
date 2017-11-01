@@ -125,19 +125,21 @@ public class CreateOfferFragment extends Fragment {
         etNeighbourhood = view.findViewById(R.id.et_neighbourhood_create);
         btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
         btnDelete.setVisibility(View.GONE);
-//        spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
-//        spinnerNeigh.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
-//        spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                neighborhood = (Utilities.Neighbourhood) spinnerNeigh.getSelectedItem();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
+        spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
+        spinnerNeigh.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
+        spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                neighborhood = (Utilities.Neighbourhood) spinnerNeigh.getSelectedItem();
+                Log.i("spinner","selected " + spinnerNeigh.getSelectedItem());
+                Log.i("spinner","selected " + neighborhood);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         imgbtnAdd = view.findViewById(R.id.imgbtn_add_photo);
         imgbtnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,7 +334,7 @@ public class CreateOfferFragment extends Fragment {
         offer.child("price").setValue(price);
         offer.child("currency").setValue(currency);
         offer.child("rooms").setValue(rooms);
-        offer.child("neighbourhood").setValue(neighbourhood);
+        offer.child("neighbourhood").setValue(neighborhood.toString());
         DatabaseReference phoneRef = currentUser.child("phoneNumber");
         phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -394,7 +396,7 @@ public class CreateOfferFragment extends Fragment {
         if (currency == Offer.Currency.EU) {
             rdbtnEU.setChecked(true);
         }
-       etNeighbourhood.setText(offer.getNeighbourhood());
+       etNeighbourhood.setText(offer.getNeighbourhood().toString());
 
         //get pics links
         if(offer.getImageUrls()!= null){

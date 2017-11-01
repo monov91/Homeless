@@ -88,7 +88,7 @@ public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyView
             tvTitle.setText(current.getTitle());
             tvPrice.setText("Price: "+current.getPrice());
             tvRooms.setText("Rooms: "+current.getRooms());
-            tvNeighbourhood.setText(current.getNeighbourhood());
+            tvNeighbourhood.setText(current.getNeighbourhood().toString());
             setImage(context, current.getImageThumbnail());
             this.position = position;
         }
