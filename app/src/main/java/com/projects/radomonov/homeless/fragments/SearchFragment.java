@@ -36,7 +36,7 @@ import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
  * Created by admin on 28.10.2017.
  */
 
-public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferClickListener {
+public class SearchFragment extends Fragment  {
 
     private EditText etPriceMin, etPriceMax, etRooms;
     private NeighbourhoodsAdapter adapter;
@@ -48,10 +48,11 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
     private LinearLayout searchOptions, sortOptions;
     private List<Offer> allOffers;
     private List<Offer> searchedOffers;
-
+    private List<Offer> primaryDisplayOffers;
     private int minPrice;
     private int maxPrice;
     private int rooms;
+    private RecyclerView offersRecycler;
 
 
     // for recycle view
@@ -63,13 +64,18 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
         //offerAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         allOffers = DatabaseInfo.getOffersList();
-
-
+        offersRecycler = view.findViewById(R.id.recycler_search_search);
         neighbourhoodList = new ArrayList<>();
         spinnerNeighbourhoods = view.findViewById(R.id.spinner_neigh);
         spinnerNeighbourhoods.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
@@ -92,8 +98,6 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
             public void onClick(View view) {
                 searchedOffers = new ArrayList<>();
                 sortOptions.setVisibility(View.VISIBLE);
-                boolean noMinPrice = false;
-                boolean noMaxPrice = false;
                 boolean noRooms = false;
 
                 if (TextUtils.isEmpty(etPriceMin.getText())) {
@@ -148,12 +152,12 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
                         }
                     }
                 }
-                for (Offer offer :
-                        searchedOffers) {
+                for (Offer offer : searchedOffers) {
                     Log.i("search", offer.getNeighbourhood().toString());
                     Log.i("search", "price" + String.valueOf(offer.getPrice()));
                     Log.i("search", "rooms" + String.valueOf(offer.getRooms()));
                 }
+                setUpOfferRecycler(searchedOffers,view);
                 Log.i("search", "SIZE -> " + searchedOffers.size());
             }
         });
@@ -171,11 +175,11 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
             }
         });
 
-//        btnSortAscending.setOnClickListener(this);
-//        btnSortDescending.setOnClickListener(this);
+       // btnSortAscending.setOnClickListener(this);
+       // btnSortDescending.setOnClickListener(this);
 
         setUpRecyclerNeighbourhoods(view);
-        //  setUpOfferRecycler(view);
+        //setUpOfferRecycler(primaryDisplayOffers,view);
 
         spinnerNeighbourhoods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -196,7 +200,8 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
     }
 
     private void setUpRecyclerNeighbourhoods(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_neighbourhoods_search);
+        RecyclerView recyclerView ;
+        recyclerView = view.findViewById(R.id.recycler_neighbourhoods_search);
         adapter = new NeighbourhoodsAdapter(getContext(), neighbourhoodList);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
@@ -204,10 +209,10 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
         recyclerView.setLayoutManager(manager);
     }
 
-    private void setUpOfferRecycler(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_my_offers_search_frag);
+    private void setUpOfferRecycler(List<Offer> offers,View view) {
+
         offerAdapter = new MyOffersAdapter(getActivity(),
-                DatabaseInfo.getOffersList(), new MyOffersAdapter.onOfferClickListener() {
+                offers, new MyOffersAdapter.onOfferClickListener() {
 
             @Override
             public void onOfferClick(Offer currentOffer) {
@@ -232,20 +237,12 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
             }
         });
 
-        recyclerView.setAdapter(offerAdapter);
-
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(manager);
-
-
+        offersRecycler.setLayoutManager(manager);
+        offersRecycler.setAdapter(offerAdapter);
     }
 
-
-    @Override
-    public void onOfferClick(Offer currentOffer) {
-
-    }
 
     public MyOffersAdapter getOfferAdapter() {
         return this.offerAdapter;
