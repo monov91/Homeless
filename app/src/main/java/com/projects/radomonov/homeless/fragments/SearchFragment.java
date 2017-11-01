@@ -115,15 +115,23 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
                     @Override
                     public void onOfferClick(Offer currentOffer) {
                         FragmentManager fragmentManager = getFragmentManager();
-                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
 
+                        ViewOfferFragment viewOfferFragment = new ViewOfferFragment();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("offer", currentOffer);
-                        createOfferFragment.setArguments(bundle);
+                        viewOfferFragment.setArguments(bundle);
 
                         FragmentTransaction ft = fragmentManager.beginTransaction();
-                        ft.replace(R.id.fragment_container_main, createOfferFragment, "frag");
-                        ft.commit();
+                        ft.replace(R.id.fragment_container_main, viewOfferFragment, "frag").commit();
+//                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
+//
+//                        Bundle bundle = new Bundle();
+//                        bundle.putSerializable("offer", currentOffer);
+//                        createOfferFragment.setArguments(bundle);
+//
+//                        FragmentTransaction ft = fragmentManager.beginTransaction();
+//                        ft.replace(R.id.fragment_container_main, createOfferFragment, "frag");
+
                     }
                 });
 
