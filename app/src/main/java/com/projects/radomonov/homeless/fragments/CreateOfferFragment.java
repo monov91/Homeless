@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -69,6 +71,7 @@ public class CreateOfferFragment extends Fragment {
     public static final int ADD_PHOTO = 3;
     private String title;
     private int price;
+    private String description;
     private Offer.Currency currency;
     private int rooms;
     ProgressDialog progressDialog;
@@ -76,7 +79,7 @@ public class CreateOfferFragment extends Fragment {
     private Uri thumbnail;
 
     private FirebaseAuth mAuth;
-    private EditText etTitle, etPrice, etRooms,etNeighbourhood;
+    private EditText etTitle, etPrice, etRooms,etDescription;
     private Button btnSave, btnDelete,btnCancel;
     private ImageButton imgbtnChoose, imgbtnAdd;
     private DatabaseReference offers;
@@ -122,7 +125,8 @@ public class CreateOfferFragment extends Fragment {
         etTitle = (EditText) view.findViewById(R.id.et_title_create);
         etPrice = (EditText) view.findViewById(R.id.et_price_create);
         etRooms = (EditText) view.findViewById(R.id.et_rooms_create);
-        etNeighbourhood = view.findViewById(R.id.et_neighbourhood_create);
+        etDescription = view.findViewById(R.id.et_description_create);
+
         btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
         btnDelete.setVisibility(View.GONE);
         spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
@@ -191,8 +195,10 @@ public class CreateOfferFragment extends Fragment {
                 progressDialog = new ProgressDialog(getContext());
                 progressDialog.show();
 
+                description = etDescription.getText().toString();
                 title = etTitle.getText().toString().trim();
                 price = Integer.parseInt(etPrice.getText().toString());
+
                 if (rdbtnEU.isChecked()) {
                     currency = Offer.Currency.EU;
                 } else {
@@ -335,6 +341,7 @@ public class CreateOfferFragment extends Fragment {
         offer.child("currency").setValue(currency);
         offer.child("rooms").setValue(rooms);
         offer.child("neighbourhood").setValue(neighborhood.toString());
+        offer.child("description").setValue(description);
         DatabaseReference phoneRef = currentUser.child("phoneNumber");
         phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -396,8 +403,9 @@ public class CreateOfferFragment extends Fragment {
         if (currency == Offer.Currency.EU) {
             rdbtnEU.setChecked(true);
         }
-       etNeighbourhood.setText(offer.getNeighbourhood().toString());
-
+        Utilities.Neighbourhood neighbourhood = offer.getNeighbourhood();
+        spinnerNeigh.setSelection(((ArrayAdapter)spinnerNeigh.getAdapter()).getPosition(neighbourhood));
+        etDescription.setText(offer.getDescription());
         //get pics links
         if(offer.getImageUrls()!= null){
 

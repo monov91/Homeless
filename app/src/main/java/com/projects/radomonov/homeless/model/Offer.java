@@ -25,43 +25,22 @@ public class Offer implements Serializable {
     private Currency currency;
     private String phoneNumber;
     private String owner;
-
-    public HashMap<String,String> getImageUrls() {
-        return imageUrls;
-    }
-
-    private HashMap<String,String> imageUrls;
-
-
-
-    public String getImageThumbnail() {
-        return imageThumbnail;
-    }
-
     private String imageThumbnail;
+    private String description;
+    private HashMap<String, String> imageUrls;
+
+
     public Offer() {
 
     }
 
 
-    public Offer(String title, int rooms, int price, Utilities.Neighbourhood neighbourhood, Currency currency, String imgDownloadUrl, String phone, String ownerID) {
-        this.title = title;
-        this.rooms = rooms;
-        this.price = price;
-        this.neighbourhood = neighbourhood;
-        this.currency = currency;
-        this.phoneNumber = phone;
-        this.owner = ownerID;
-
-
+    public HashMap<String, String> getImageUrls() {
+        return imageUrls;
     }
 
-    public Offer(String title, int rooms, int price, Utilities.Neighbourhood neighbourhood, Currency currency, String image) {
-        this.title = title;
-        this.rooms = rooms;
-        this.price = price;
-        this.neighbourhood = neighbourhood;
-        this.currency = currency;
+    public String getImageThumbnail() {
+        return imageThumbnail;
     }
 
     public String getOwner() {
@@ -86,6 +65,10 @@ public class Offer implements Serializable {
 
     public Utilities.Neighbourhood getNeighbourhood() {
         return neighbourhood;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public Currency getCurrency() {
