@@ -61,7 +61,7 @@ public class MyOffersFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         myOffers = new ArrayList<>();
 
-        Log.i("offersChild", "offers count ======> " + DatabaseInfo.getOffersList().size());
+        Log.i("ofer", "koli4estvo ----> " + DatabaseInfo.getOffersList().size());
 
         Log.i("dima", "List size ---> " + DatabaseInfo.getUsersList().size());
         for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
@@ -79,10 +79,6 @@ public class MyOffersFragment extends Fragment {
 //            Log.i("dima", "rajon ----- > " + DatabaseInfo.getOffersList().get(i).getNeighbourhood());
         }
 
-        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
-        Log.i("frag", "cur ===> " + currFrag);
-
-        //List<Offer> offers = Utilities.getInstance().getAllOffers();
         Log.i("tagche","============= list size - " + myOffers.size() + " =============");
         for (Offer offer : myOffers) {
             Log.i("tagche","title" + offer.getTitle());

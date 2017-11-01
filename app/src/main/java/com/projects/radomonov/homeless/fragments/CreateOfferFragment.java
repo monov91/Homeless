@@ -205,11 +205,11 @@ public class CreateOfferFragment extends Fragment {
                 List<Offer> offersList;
                 String currentOfferID = editOffer.getId();
                 offersList = DatabaseInfo.getOffersList();
-                for (Offer of : offersList) {
-                    if (of.getId().equals(currentOfferID)) {
-                        offersList.remove(of);
-                    }
-                }
+//                for (Offer of : offersList) {
+//                    if (of.getId().equals(currentOfferID)) {
+//                        offersList.remove(of);
+//                    }
+//                }
 
                 final Query offerQuery = offers.child(currentOfferID);
 
@@ -330,6 +330,10 @@ public class CreateOfferFragment extends Fragment {
                 }
             });
         }
+        offer.child("owner").setValue(currentUser.getKey().toString());
+        progressDialog.dismiss();
+        SearchFragment searchFrag = new SearchFragment();
+        getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
     }
 
     public void fillFields(Offer offer) {
