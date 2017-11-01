@@ -7,13 +7,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Neighbourhood"/>
+        android:text="Neighbourhood" />
 
     <Spinner
         android:id="@+id/spinner_neigh"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
     </Spinner>
 
@@ -23,69 +22,123 @@
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Price"/>
+
 
     <LinearLayout
+        android:id="@+id/layout_search_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_price_min"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Min"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" - "
+            android:text="Price" />
 
-            android:textStyle="bold"
-            android:textSize="20sp"/>/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_price_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Min"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" - "
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_price_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Max"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/rdbtn_BGN_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BGN"
+                    android:checked="true"/>
+
+                <RadioButton
+                    android:id="@+id/rdbtn_EU_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EU" />
+            </RadioGroup>
+
+        </LinearLayout>
+
         <EditText
-            android:id="@+id/et_price_max"
+            android:id="@+id/et_rooms_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Max"/>
+            android:hint="Rooms"
+            android:inputType="number"
+            android:maxLength="2" />
+
+        <ImageButton
+            android:id="@+id/imgbtn_search"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/search_icon" />
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_rooms_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Rooms"/>
+    <ImageButton
+        android:id="@+id/imgbtn_search_options"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/up_icon" />
+
     <LinearLayout
+        android:id="@+id/layout_sort"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal"
         android:layout_margin="10dp"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sort by price"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/imgbtn_descending_search"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/down_icon"
             android:scaleType="fitCenter"
-            android:layout_height="match_parent"/>
+            android:src="@drawable/down_icon" />
 
         <ImageButton
             android:id="@+id/imgbtn_ascending_search"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/up_icon"
             android:scaleType="fitCenter"
-            android:layout_height="match_parent" />
+            android:src="@drawable/up_icon" />
 
     </LinearLayout>
 

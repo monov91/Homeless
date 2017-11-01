@@ -3,20 +3,21 @@ package com.projects.radomonov.homeless.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.projects.radomonov.homeless.R;
@@ -29,26 +30,29 @@ import com.projects.radomonov.homeless.utilities.Utilities;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.onClick;
-import static android.os.Build.VERSION_CODES.M;
-import static java.security.AccessController.getContext;
-import static java.security.AccessController.getContext;
-import static java.security.AccessController.getContext;
-import static java.security.AccessController.getContext;
-import static java.security.AccessController.getContext;
-import static java.security.AccessController.getContext;
+import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
 
 /**
  * Created by admin on 28.10.2017.
  */
 
-public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferClickListener{
+public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferClickListener {
 
-    private EditText etPriceMin,etPriceMax,etRooms;
+    private EditText etPriceMin, etPriceMax, etRooms;
     private NeighbourhoodsAdapter adapter;
     private Spinner spinnerNeighbourhoods;
     private List<Utilities.Neighbourhood> neighbourhoodList;
-    private ImageButton btnSortAscending,btnSortDescending;
+    private ImageButton btnSortAscending, btnSortDescending, btnSearchOptions, btnSearch;
+    private RadioButton rdbtnBGN;
+    private RadioButton rdbtnEU;
+    private LinearLayout searchOptions, sortOptions;
+    private List<Offer> allOffers;
+    private List<Offer> searchedOffers;
+
+    private int minPrice;
+    private int maxPrice;
+    private int rooms;
+
 
     // for recycle view
     private MyOffersAdapter offerAdapter;
@@ -62,7 +66,9 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search,container,false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        allOffers = DatabaseInfo.getOffersList();
+
 
         neighbourhoodList = new ArrayList<>();
         spinnerNeighbourhoods = view.findViewById(R.id.spinner_neigh);
@@ -70,15 +76,106 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
         etPriceMin = view.findViewById(R.id.et_price_min);
         etPriceMax = view.findViewById(R.id.et_price_max);
         etRooms = view.findViewById(R.id.et_rooms_search);
+        rdbtnBGN = view.findViewById(R.id.rdbtn_BGN_search);
+        rdbtnEU = view.findViewById(R.id.rdbtn_EU_search);
+
+        searchOptions = view.findViewById(R.id.layout_search_options);
+        sortOptions = view.findViewById(R.id.layout_sort);
 
         btnSortDescending = view.findViewById(R.id.imgbtn_descending_search);
         btnSortAscending = view.findViewWithTag(R.id.imgbtn_ascending_search);
+        btnSearchOptions = view.findViewById(R.id.imgbtn_search_options);
+        btnSearch = view.findViewById(R.id.imgbtn_search);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchedOffers = new ArrayList<>();
+                sortOptions.setVisibility(View.VISIBLE);
+                boolean noMinPrice = false;
+                boolean noMaxPrice = false;
+                boolean noRooms = false;
+
+                if (TextUtils.isEmpty(etPriceMin.getText())) {
+                    minPrice = 0;
+                } else {
+                    minPrice = Integer.parseInt(etPriceMin.getText().toString());
+                    if (rdbtnEU.isChecked()) {
+                        minPrice = (int) (minPrice * 1.94);
+                    }
+                }
+                if (TextUtils.isEmpty(etPriceMax.getText())) {
+                    maxPrice = 20000;
+                } else {
+                    maxPrice = Integer.parseInt(etPriceMax.getText().toString());
+                    if (rdbtnEU.isChecked()) {
+                        maxPrice = (int) (maxPrice * 1.94);
+                    }
+                }
+
+                if (TextUtils.isEmpty(etRooms.getText())) {
+                    noRooms = true;
+                } else {
+                    rooms = Integer.parseInt(etRooms.getText().toString());
+                }
+
+                for (Offer offer : allOffers) {
+                    int offerPrice = offer.getPrice();
+                    if (offer.getCurrency() == EU) {
+                        offerPrice = (int) (offerPrice * 1.94);
+                    }
+
+                    if ((offerPrice >= minPrice) && (offerPrice <= maxPrice)) {
+                        if (noRooms) {
+                            if (neighbourhoodList.isEmpty()) {
+                                searchedOffers.add(offer);
+                            } else {
+                                if (neighbourhoodList.contains(offer.getNeighbourhood())) {
+                                    searchedOffers.add(offer);
+                                }
+                            }
+
+                        } else {
+                            if (rooms == offer.getRooms()) {
+                                if (neighbourhoodList.isEmpty()) {
+                                    searchedOffers.add(offer);
+                                } else {
+                                    if (neighbourhoodList.contains(offer.getNeighbourhood())) {
+                                        searchedOffers.add(offer);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                for (Offer offer :
+                        searchedOffers) {
+                    Log.i("search", offer.getNeighbourhood().toString());
+                    Log.i("search", "price" + String.valueOf(offer.getPrice()));
+                    Log.i("search", "rooms" + String.valueOf(offer.getRooms()));
+                }
+                Log.i("search", "SIZE -> " + searchedOffers.size());
+            }
+        });
+
+        btnSearchOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searchOptions.getVisibility() == View.VISIBLE) {
+                    searchOptions.setVisibility(View.GONE);
+                    btnSearchOptions.setImageResource(R.drawable.down_icon);
+                } else {
+                    searchOptions.setVisibility(View.VISIBLE);
+                    btnSearchOptions.setImageResource(R.drawable.up_icon);
+                }
+            }
+        });
 
 //        btnSortAscending.setOnClickListener(this);
 //        btnSortDescending.setOnClickListener(this);
 
-        setUpRecycler(view);
-      //  setUpOfferRecycler(view);
+        setUpRecyclerNeighbourhoods(view);
+        //  setUpOfferRecycler(view);
 
         spinnerNeighbourhoods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -98,9 +195,9 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
         return view;
     }
 
-    private void setUpRecycler(View view) {
+    private void setUpRecyclerNeighbourhoods(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_neighbourhoods_search);
-        adapter = new NeighbourhoodsAdapter(getContext(),neighbourhoodList);
+        adapter = new NeighbourhoodsAdapter(getContext(), neighbourhoodList);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -112,17 +209,17 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
         offerAdapter = new MyOffersAdapter(getActivity(),
                 DatabaseInfo.getOffersList(), new MyOffersAdapter.onOfferClickListener() {
 
-                    @Override
-                    public void onOfferClick(Offer currentOffer) {
-                        FragmentManager fragmentManager = getFragmentManager();
+            @Override
+            public void onOfferClick(Offer currentOffer) {
+                FragmentManager fragmentManager = getFragmentManager();
 
-                        ViewOfferFragment viewOfferFragment = new ViewOfferFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("offer", currentOffer);
-                        viewOfferFragment.setArguments(bundle);
+                ViewOfferFragment viewOfferFragment = new ViewOfferFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("offer", currentOffer);
+                viewOfferFragment.setArguments(bundle);
 
-                        FragmentTransaction ft = fragmentManager.beginTransaction();
-                        ft.replace(R.id.fragment_container_main, viewOfferFragment, "frag").commit();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.fragment_container_main, viewOfferFragment, "frag").commit();
 //                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
 //
 //                        Bundle bundle = new Bundle();
@@ -132,8 +229,8 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
 //                        FragmentTransaction ft = fragmentManager.beginTransaction();
 //                        ft.replace(R.id.fragment_container_main, createOfferFragment, "frag");
 
-                    }
-                });
+            }
+        });
 
         recyclerView.setAdapter(offerAdapter);
 
