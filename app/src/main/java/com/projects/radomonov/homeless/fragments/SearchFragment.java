@@ -1,6 +1,8 @@
 package com.projects.radomonov.homeless.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,13 +20,17 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.adapters.MyOffersAdapter;
 import com.projects.radomonov.homeless.adapters.NeighbourhoodsAdapter;
+import com.projects.radomonov.homeless.database.DatabaseInfo;
+import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.utilities.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.R.attr.onClick;
+import static android.os.Build.VERSION_CODES.M;
 import static java.security.AccessController.getContext;
 import static java.security.AccessController.getContext;
 import static java.security.AccessController.getContext;
@@ -36,13 +42,22 @@ import static java.security.AccessController.getContext;
  * Created by admin on 28.10.2017.
  */
 
-public class SearchFragment extends Fragment implements View.OnClickListener{
+public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferClickListener{
 
     private EditText etPriceMin,etPriceMax,etRooms;
     private NeighbourhoodsAdapter adapter;
     private Spinner spinnerNeighbourhoods;
     private List<Utilities.Neighbourhood> neighbourhoodList;
     private ImageButton btnSortAscending,btnSortDescending;
+
+    // for recycle view
+    private MyOffersAdapter offerAdapter;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        offerAdapter.notifyDataSetChanged();
+    }
 
     @Nullable
     @Override
@@ -63,6 +78,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 //        btnSortDescending.setOnClickListener(this);
 
         setUpRecycler(view);
+        setUpOfferRecycler(view);
 
         spinnerNeighbourhoods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -91,15 +107,43 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         recyclerView.setLayoutManager(manager);
     }
 
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.imgbtn_ascending_search:
+    private void setUpOfferRecycler(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_my_offers_search_frag);
+        offerAdapter = new MyOffersAdapter(getActivity(),
+                DatabaseInfo.getOffersList(), new MyOffersAdapter.onOfferClickListener() {
 
-                break;
-            case R.id.imgbtn_descending_search:
+                    @Override
+                    public void onOfferClick(Offer currentOffer) {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
 
-                break;
-        }
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("offer", currentOffer);
+                        createOfferFragment.setArguments(bundle);
+
+                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                        ft.replace(R.id.fragment_container_main, createOfferFragment, "frag");
+                        ft.commit();
+                    }
+                });
+
+        recyclerView.setAdapter(offerAdapter);
+
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(manager);
+
+
     }
+
+
+    @Override
+    public void onOfferClick(Offer currentOffer) {
+
+    }
+
+    public MyOffersAdapter getOfferAdapter() {
+        return this.offerAdapter;
+    }
+
 }

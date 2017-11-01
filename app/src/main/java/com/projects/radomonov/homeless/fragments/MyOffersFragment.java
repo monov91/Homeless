@@ -152,7 +152,9 @@ public class MyOffersFragment extends Fragment {
 
     private void setUpRecycleView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_my_offers);
-        adapter = new MyOffersAdapter(getActivity(), myOffers, new MyOffersAdapter.onOfferClickListener() {
+        adapter = new MyOffersAdapter(getActivity(), myOffers,
+                new MyOffersAdapter.onOfferClickListener() {
+
             @Override
             public void onOfferClick(Offer currentOffer) {
                 FragmentManager fragmentManager = getFragmentManager();

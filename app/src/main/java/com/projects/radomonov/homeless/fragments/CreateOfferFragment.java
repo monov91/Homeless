@@ -350,10 +350,12 @@ public class CreateOfferFragment extends Fragment {
         etNeighbourhood.setText(offer.getNeighbourhood());
         //get pics links
 
-        for(Map.Entry<String,String> entry : offer.getImageUrls().entrySet()){
-            originalPics.put(entry.getKey(), Uri.parse(entry.getValue()));
-            offerImagesUrls.add(Uri.parse(entry.getValue()));
-            adapter.notifyDataSetChanged();
+        if(offer.getImageUrls() != null) {
+            for(Map.Entry<String,String> entry : offer.getImageUrls().entrySet()){
+                originalPics.put(entry.getKey(), Uri.parse(entry.getValue()));
+                offerImagesUrls.add(Uri.parse(entry.getValue()));
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 

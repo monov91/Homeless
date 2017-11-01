@@ -9,6 +9,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.projects.radomonov.homeless.adapters.MyOffersAdapter;
+import com.projects.radomonov.homeless.fragments.SearchFragment;
 import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.model.User;
 
@@ -28,6 +30,7 @@ public class DatabaseInfo extends AppCompatActivity {
     private static DatabaseReference mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
     private static DatabaseReference mDatabaseOffers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
+//    private MyOffersAdapter adapter = SearchFragment.getOfferAdapter();
 
     public static void readUsers() {
         mDatabaseUsers.addChildEventListener(new ChildEventListener() {
