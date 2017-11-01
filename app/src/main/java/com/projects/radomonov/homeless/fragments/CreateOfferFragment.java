@@ -287,14 +287,15 @@ public class CreateOfferFragment extends Fragment {
         Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
         for(Map.Entry<String,Uri> entry : originalPics.entrySet()){
             Uri url = entry.getValue();
-            String key = entry.getKey();
+            final String key = entry.getKey();
             FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
             StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
             pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.i("delete","successful deletion");
-                  //  FirebaseDatabase.getInstance().getReference().child("Offers").
+                    FirebaseDatabase.getInstance().getReference().child("Offers").child(offer.getKey())
+                            .child("imageUrls").child(key).removeValue();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
