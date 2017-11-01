@@ -78,7 +78,7 @@ public class SearchFragment extends Fragment implements MyOffersAdapter.onOfferC
 //        btnSortDescending.setOnClickListener(this);
 
         setUpRecycler(view);
-      //  setUpOfferRecycler(view);
+//        setUpOfferRecycler(view);
 
         spinnerNeighbourhoods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

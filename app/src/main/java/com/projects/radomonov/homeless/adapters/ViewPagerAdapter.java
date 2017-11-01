@@ -1,6 +1,7 @@
 package com.projects.radomonov.homeless.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -9,9 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.model.Offer;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.projects.radomonov.homeless.R.id.imageView;
+import static java.security.AccessController.getContext;
 
 /**
  * Created by Tom on 01.11.2017.
@@ -21,17 +30,27 @@ public class ViewPagerAdapter extends PagerAdapter{
 
     private Context context;
     private LayoutInflater layoutInflater;
-    private Integer[] images = {R.drawable.slide4, R.drawable.slide5, R.drawable.slide6};
+
+    private ArrayList<String> imgUrls;
+    private Offer offer;
 
     private ImageView imageView;
 
-    public ViewPagerAdapter(Context context) {
+
+    public ViewPagerAdapter(Context context, Offer offer) {
+        this.offer = offer;
         this.context = context;
+        this.imgUrls = new ArrayList<>();
+        Iterator it = offer.getImageUrls().entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            imgUrls.add(pair.getValue().toString());
+        }
     }
 
     @Override
     public int getCount() {
-        return images.length;
+        return imgUrls.size();
     }
 
     @Override
@@ -42,15 +61,10 @@ public class ViewPagerAdapter extends PagerAdapter{
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.fragment_offer_view, null);
-        imageView = view.findViewById(R.id.img_view_offer_info);
-        if(imageView != null) {
-            imageView.setImageResource(images[position]);
-        } else {
-            Toast.makeText(context, "Nullllll", Toast.LENGTH_SHORT).show();
-        }
-
+        layoutInflater = LayoutInflater.from(context);
+        View view = layoutInflater.inflate(R.layout.custom_layout, null);
+        imageView = view.findViewById(R.id.imageView);
+        Glide.with(context).load(Uri.parse(imgUrls.get(position))).into(imageView);
 
         ViewPager vp = (ViewPager) container;
         vp.addView(view, 0);
@@ -67,11 +81,3 @@ public class ViewPagerAdapter extends PagerAdapter{
 
     }
 }
-
-
-
-
-
-
-
-

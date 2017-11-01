@@ -42,17 +42,16 @@ public class ViewOfferFragment extends android.app.Fragment {
         btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
         btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
 
-        //for sliding images
-        viewPager = view.findViewById(R.id.view_pager_offer_view);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity());
-        viewPager.setAdapter(viewPagerAdapter);
-
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             currentOffer = (Offer) getArguments().getSerializable("offer");
             fillFields();
         }
+
+        //for sliding images
+        viewPager = view.findViewById(R.id.view_pager_offer_view);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), currentOffer);
+        viewPager.setAdapter(viewPagerAdapter);
 
         btnMakeCall.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +92,7 @@ public class ViewOfferFragment extends android.app.Fragment {
 //        Glide.with(getContext()).load(offer.getImageThumbnail()).into(imgbtnChoose);
         tvRoomsNeigborhood.setText(currentOffer.getRooms() + "-стаен, кв. " + currentOffer.getNeighbourhood());
         tvPrice.setText(currentOffer.getPrice() + " " + currentOffer.getCurrency() + "/мес.");
-        tvDescription.setText("tuk shte bude opisanieto");
+        tvDescription.setText(currentOffer.getDescription());
     }
 
 }
