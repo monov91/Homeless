@@ -28,10 +28,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".app.LoginActivity" />
         <activity android:name=".app.RegisterActivity" />
-        <activity
-            android:name=".app.NavigationDrawerActivity"
-            android:label="@string/title_activity_navigation_drawer"
-            android:theme="@style/AppTheme"></activity>
+
     </application>
 
 </manifest>

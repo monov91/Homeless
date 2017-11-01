@@ -1,0 +1,80 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projects.radomonov.homeless.fragments.ViewOfferFragment">
+
+    <LinearLayout
+        android:id="@+id/offer_info_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_offer_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </android.support.v4.view.ViewPager>
+
+        <ImageView
+            android:id="@+id/img_view_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/text_rooms_neigborhood_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="x-rooms, Neigborhood"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/text_price_per_month_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price per month"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/text_description_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/btn_call_to_owner_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call owner"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+        <Button
+            android:id="@+id/btn_write_an_email_offer_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Write an e-Mail"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+    </LinearLayout>
+
+
+
+
+</ScrollView>
