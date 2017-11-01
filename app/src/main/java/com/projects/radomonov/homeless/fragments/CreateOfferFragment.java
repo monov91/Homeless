@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -51,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static android.R.attr.data;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -92,6 +92,7 @@ public class CreateOfferFragment extends Fragment {
     private List<Uri> offerImagesUrlsOrig;
     private List<Uri> offerImagesUrls;
     private HashMap<String,Uri> originalPics;
+    private HashMap<String,Uri> toDeletePics;
     private OfferPhotosAdapter adapter;
 
     @Nullable
@@ -102,6 +103,7 @@ public class CreateOfferFragment extends Fragment {
         offerImages = new ArrayList<>();
         offerImagesUrls = new ArrayList<>();
         originalPics = new HashMap<>();
+        toDeletePics = new HashMap<>();
         setUpRecyclerForPhotos(view);
         offers = FirebaseDatabase.getInstance().getReference().child("Offers");
 
@@ -182,7 +184,6 @@ public class CreateOfferFragment extends Fragment {
                     if (thumbnail != null) {
                         updateThumbnail();
                         writeToDB(offer);
-
                     } else {
                         Toast.makeText(getContext(), "Choose Image", Toast.LENGTH_SHORT).show();
                     }
@@ -190,7 +191,7 @@ public class CreateOfferFragment extends Fragment {
                     if (changedImage) {
                         updateThumbnail();
                     }
-                    deleteAllPics();
+                    deletePics();
                     writeToDB(offer);
                 }
             }
@@ -278,14 +279,16 @@ public class CreateOfferFragment extends Fragment {
                 //  Toast.makeText(getActivity(), "Failed phone", Toast.LENGTH_SHORT).show();
             }
         });
-        updatePics();
+        storeNewPics();
         offer.child("owner").setValue(currentUser.getKey().toString());
         progressDialog.dismiss();
-        getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
+        SearchFragment searchFrag = new SearchFragment();
+        getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
+        //getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
     }
-    private void deleteAllPics(){
+    private void deletePics(){
         Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
-        for(Map.Entry<String,Uri> entry : originalPics.entrySet()){
+        for(Map.Entry<String,Uri> entry : toDeletePics.entrySet()){
             Uri url = entry.getValue();
             final String key = entry.getKey();
             FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
@@ -305,35 +308,32 @@ public class CreateOfferFragment extends Fragment {
             });
         }
     }
-    private void updatePics() {
+    private void storeNewPics() {
+        Log.i("proba","offerImagesUrls size v UPDATE - > " + offerImagesUrls.size());
         for (Uri photo : offerImagesUrls) {
-            if(isValidURL(String.valueOf(photo))){
-                photo =  Uri.parse(String.valueOf(photo));
+            if(!isValidURL(String.valueOf(photo))){
+                final String randomString = getRandomString();
+                StorageReference pictureRef = mStorage.child("OfferImages")
+                        .child("Offers").child(offer.getKey()).child("Photos").child(randomString);
+                pictureRef.putFile(photo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i("kachena","pic uploaded");
+                        Uri link = taskSnapshot.getDownloadUrl();
+                        // offerImagesUrls.add(link);
+                        //StorageReference storageRefDelete = FirebaseStorage.getInstance().getReferenceFromUrl(String.valueOf(link));
+                        DatabaseReference pictureDBRef = offer.child("imageUrls").child(randomString);
+                        pictureDBRef.setValue(link.toString());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("kachena","pic upload failed");
+                    }
+                });
             }
-            final String randomString = getRandomString();
-            StorageReference pictureRef = mStorage.child("OfferImages")
-                    .child("Offers").child(offer.getKey()).child("Photos").child(randomString);
-            pictureRef.putFile(photo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.i("kachena","pic uploaded");
-                    Uri link = taskSnapshot.getDownloadUrl();
-                    // offerImagesUrls.add(link);
-                    //StorageReference storageRefDelete = FirebaseStorage.getInstance().getReferenceFromUrl(String.valueOf(link));
-                    DatabaseReference pictureDBRef = offer.child("imageUrls").child(randomString);
-                    pictureDBRef.setValue(link.toString());
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("kachena","pic upload failed");
-                }
-            });
         }
         offer.child("owner").setValue(currentUser.getKey().toString());
-        progressDialog.dismiss();
-        SearchFragment searchFrag = new SearchFragment();
-        getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
     }
 
     public void fillFields(Offer offer) {
@@ -351,11 +351,18 @@ public class CreateOfferFragment extends Fragment {
         etNeighbourhood.setText(offer.getNeighbourhood());
         //get pics links
         if(offer.getImageUrls()!= null){
+
+            Log.i("proba","url-ite NE sa null");
             for(Map.Entry<String,String> entry : offer.getImageUrls().entrySet()){
                 originalPics.put(entry.getKey(), Uri.parse(entry.getValue()));
                 offerImagesUrls.add(Uri.parse(entry.getValue()));
                 adapter.notifyDataSetChanged();
             }
+
+            Log.i("proba","originalPics size -> " + originalPics.size());
+            Log.i("proba","offerImagesUlrs size -> " + offerImagesUrls.size());
+        } else {
+            Log.i("proba","url-ite sa null");
         }
     }
 
@@ -415,7 +422,20 @@ public class CreateOfferFragment extends Fragment {
 
     private void setUpRecyclerForPhotos(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_photos);
-        adapter = new OfferPhotosAdapter(getContext(), offerImagesUrls);
+        adapter = new OfferPhotosAdapter(getContext(), offerImagesUrls, new OfferPhotosAdapter.deleteClickListener() {
+            @Override
+            public void onDeleteClick(Uri uri) {
+                offerImagesUrls.remove(uri);
+                adapter.notifyDataSetChanged();
+                if(isValidURL(String.valueOf(uri))) {
+                    for(Map.Entry<String,Uri> entry : originalPics.entrySet()){
+                        if(entry.getValue().equals(uri)){
+                            toDeletePics.put(entry.getKey(),entry.getValue());
+                        }
+                    }
+                }
+            }
+        });
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -438,4 +458,5 @@ public class CreateOfferFragment extends Fragment {
     public void btnGone() {
         btnDelete.setVisibility(View.GONE);
     }
+
 }
