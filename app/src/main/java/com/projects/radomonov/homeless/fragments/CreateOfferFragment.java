@@ -17,10 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -40,6 +43,7 @@ import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.adapters.OfferPhotosAdapter;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
+import com.projects.radomonov.homeless.utilities.Utilities;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -67,14 +71,13 @@ public class CreateOfferFragment extends Fragment {
     private int price;
     private Offer.Currency currency;
     private int rooms;
-    private String neighbourhood;
     ProgressDialog progressDialog;
 
     private Uri thumbnail;
 
     private FirebaseAuth mAuth;
-    private EditText etTitle, etPrice, etRooms, etNeighbourhood;
-    private Button btnSave, btnDelete;
+    private EditText etTitle, etPrice, etRooms,etNeighbourhood;
+    private Button btnSave, btnDelete,btnCancel;
     private ImageButton imgbtnChoose, imgbtnAdd;
     private DatabaseReference offers;
     private DatabaseReference offer;
@@ -84,6 +87,8 @@ public class CreateOfferFragment extends Fragment {
     private String phoneNum;
     private RadioButton rdbtnEU;
     private RadioButton rddbtnBGN;
+    private Spinner spinnerNeigh;
+    private Utilities.Neighbourhood neighborhood;
     private boolean isNewOffer = true;
     private Offer editOffer;
     private boolean changedImage = false;
@@ -91,6 +96,7 @@ public class CreateOfferFragment extends Fragment {
     private List<Uri> offerImages;
     private List<Uri> offerImagesUrlsOrig;
     private List<Uri> offerImagesUrls;
+    private String neighbourhood;
     private HashMap<String,Uri> originalPics;
     private HashMap<String,Uri> toDeletePics;
     private OfferPhotosAdapter adapter;
@@ -116,10 +122,22 @@ public class CreateOfferFragment extends Fragment {
         etTitle = (EditText) view.findViewById(R.id.et_title_create);
         etPrice = (EditText) view.findViewById(R.id.et_price_create);
         etRooms = (EditText) view.findViewById(R.id.et_rooms_create);
-        etNeighbourhood = (EditText) view.findViewById(R.id.et_neighbourhood_create);
+        etNeighbourhood = view.findViewById(R.id.et_neighbourhood_create);
         btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
         btnDelete.setVisibility(View.GONE);
-
+//        spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
+//        spinnerNeigh.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
+//        spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                neighborhood = (Utilities.Neighbourhood) spinnerNeigh.getSelectedItem();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
         imgbtnAdd = view.findViewById(R.id.imgbtn_add_photo);
         imgbtnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +163,14 @@ public class CreateOfferFragment extends Fragment {
             }
         });
         btnSave = (Button) view.findViewById(R.id.btn_save_create);
+        btnCancel = view.findViewById(R.id.btn_cancel_create);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchFragment searchFrag = new SearchFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
+            }
+        });
         Bundle bundle = getArguments();
         if (bundle != null) {
             editOffer = (Offer) getArguments().getSerializable("offer");
@@ -171,7 +197,6 @@ public class CreateOfferFragment extends Fragment {
                     currency = Offer.Currency.BGN;
                 }
                 rooms = Integer.parseInt(etRooms.getText().toString());
-                neighbourhood = etNeighbourhood.getText().toString().trim();
                 // if(nqkvi validacii)
 
                 if (isNewOffer) {
@@ -191,7 +216,7 @@ public class CreateOfferFragment extends Fragment {
                     if (changedImage) {
                         updateThumbnail();
                     }
-                    deletePics();
+                    deletePics(toDeletePics);
                     writeToDB(offer);
                 }
             }
@@ -211,7 +236,6 @@ public class CreateOfferFragment extends Fragment {
 //                        offersList.remove(of);
 //                    }
 //                }
-
                 final Query offerQuery = offers.child(currentOfferID);
 
                 offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -227,12 +251,55 @@ public class CreateOfferFragment extends Fragment {
 
                     }
                 });
-
-                getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
+                deletePics(originalPics);
+                deleteThumbnail();
+                SearchFragment searchFrag = new SearchFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
 
             }
         });
     }
+
+    private void deleteThumbnail(){
+        FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
+        StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(editOffer.getImageThumbnail()));
+        pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("delete","thumbnail successful deletion");
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("delete","thumbnail UNsuccessful deletion");
+            }
+        });
+    }
+    private void deletePics(final HashMap<String,Uri> pics){
+        for(Map.Entry<String,Uri> entry : pics.entrySet()){
+            Uri url = entry.getValue();
+            final String key = entry.getKey();
+            FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
+            StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
+            pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.i("delete","successful deletion");
+                    if(pics == toDeletePics){
+                        FirebaseDatabase.getInstance().getReference().child("Offers").child(offer.getKey())
+                                .child("imageUrls").child(key).removeValue();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("delete"," UNsuccessful deletion");
+                }
+            });
+        }
+    }
+
 
     private void updateThumbnail() {
         StorageReference filepath2 = mStorage.child("OfferImages").child("Offers").child(offer.getKey()).child("thumbnail");
@@ -286,28 +353,7 @@ public class CreateOfferFragment extends Fragment {
         getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
         //getActivity().getFragmentManager().beginTransaction().remove(CreateOfferFragment.this).commit();
     }
-    private void deletePics(){
-        Log.i("photosize","original size ->" +  String.valueOf(offerImagesUrlsOrig.size()));
-        for(Map.Entry<String,Uri> entry : toDeletePics.entrySet()){
-            Uri url = entry.getValue();
-            final String key = entry.getKey();
-            FirebaseStorage mFireBaseStorage = FirebaseStorage.getInstance();
-            StorageReference pic = mFireBaseStorage.getReferenceFromUrl(String.valueOf(url));
-            pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.i("delete","successful deletion");
-                    FirebaseDatabase.getInstance().getReference().child("Offers").child(offer.getKey())
-                            .child("imageUrls").child(key).removeValue();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.i("delete"," UNsuccessful deletion");
-                }
-            });
-        }
-    }
+
     private void storeNewPics() {
         Log.i("proba","offerImagesUrls size v UPDATE - > " + offerImagesUrls.size());
         for (Uri photo : offerImagesUrls) {
@@ -348,7 +394,8 @@ public class CreateOfferFragment extends Fragment {
         if (currency == Offer.Currency.EU) {
             rdbtnEU.setChecked(true);
         }
-        etNeighbourhood.setText(offer.getNeighbourhood());
+       etNeighbourhood.setText(offer.getNeighbourhood());
+
         //get pics links
         if(offer.getImageUrls()!= null){
 

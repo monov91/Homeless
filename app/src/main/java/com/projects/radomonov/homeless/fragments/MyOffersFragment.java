@@ -93,14 +93,7 @@ public class MyOffersFragment extends Fragment {
         return view;
     }
 
-    private void insertFakeOffers(){
-        Offer offer1 = new Offer("titla1",1,100,"kvartal1", Offer.Currency.EU,"https://firebasestorage.googleapis.com/v0/b/homeless-ddf77.appspot.com/o/OfferImages%2Fimage%3A76?alt=media&token=1a107cb2-d2d6-4ecf-9d26-20a9f21dd49b");
-        Offer offer2 = new Offer("titla2",2,200,"kvartal2", Offer.Currency.BGN,"https://firebasestorage.googleapis.com/v0/b/homeless-ddf77.appspot.com/o/OfferImages%2Fimage%3A76?alt=media&token=1a107cb2-d2d6-4ecf-9d26-20a9f21dd49b");
-        Offer offer3 = new Offer("titla3",3,300,"kvartal3", Offer.Currency.BGN,"https://firebasestorage.googleapis.com/v0/b/homeless-ddf77.appspot.com/o/OfferImages%2Fimage%3A76?alt=media&token=1a107cb2-d2d6-4ecf-9d26-20a9f21dd49b");
-        myOffers.add(offer1);
-        myOffers.add(offer2);
-        myOffers.add(offer3);
-    }
+
 
     private void getMyOffers() {
         final ArrayList<String> allOffers = new ArrayList<>();
