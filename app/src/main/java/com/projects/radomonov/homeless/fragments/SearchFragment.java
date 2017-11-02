@@ -21,7 +21,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.adapters.MyOffersAdapter;
+import com.projects.radomonov.homeless.adapters.OffersAdapter;
 import com.projects.radomonov.homeless.adapters.NeighbourhoodsAdapter;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
@@ -56,7 +56,7 @@ public class SearchFragment extends Fragment  {
 
 
     // for recycle view
-    private MyOffersAdapter offerAdapter;
+    private OffersAdapter offerAdapter;
 
     @Override
     public void onStart() {
@@ -211,8 +211,8 @@ public class SearchFragment extends Fragment  {
 
     private void setUpOfferRecycler(List<Offer> offers,View view) {
 
-        offerAdapter = new MyOffersAdapter(getActivity(),
-                offers, new MyOffersAdapter.onOfferClickListener() {
+        offerAdapter = new OffersAdapter(getActivity(),
+                offers, new OffersAdapter.onOfferClickListener() {
 
             @Override
             public void onOfferClick(Offer currentOffer) {
@@ -244,7 +244,7 @@ public class SearchFragment extends Fragment  {
     }
 
 
-    public MyOffersAdapter getOfferAdapter() {
+    public OffersAdapter getOfferAdapter() {
         return this.offerAdapter;
     }
 

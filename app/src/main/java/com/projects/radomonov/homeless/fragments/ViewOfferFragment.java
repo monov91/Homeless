@@ -18,10 +18,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.adapters.ViewPagerAdapter;
+import com.projects.radomonov.homeless.app.MainActivity;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
 
@@ -38,11 +44,11 @@ public class ViewOfferFragment extends android.app.Fragment {
 
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;
+    private DatabaseReference favouriteOfferID;
     private DatabaseReference favouriteOffers;
 
     private Offer currentOffer;
     private List<Offer> allOffers;
-    private ArrayList<Offer> favouriteOffersList;
 
     private ViewPager viewPager;
 
@@ -52,8 +58,7 @@ public class ViewOfferFragment extends android.app.Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
-        favouriteOffers = currentUser.child("favouriteOffers").push();
-        favouriteOffersList = new ArrayList<>();
+        allOffers = new ArrayList<>();
 
         image = view.findViewById(R.id.img_view_offer_info);
         tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
@@ -63,13 +68,19 @@ public class ViewOfferFragment extends android.app.Fragment {
         btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
         cbLikeThisOffer = view.findViewById(R.id.cb_like_this_offer);
 
-        allOffers = DatabaseInfo.getOffersList();
+        for (Offer of : DatabaseInfo.getOffersList()) {
+            allOffers.add(of);
+        }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             currentOffer = (Offer) getArguments().getSerializable("offer");
             fillFields();
         }
+
+        favouriteOfferID = currentUser.child("favouriteOffers").child(currentOffer.getId());
+        favouriteOffers = currentUser.child("favouriteOffers");
+
 
         //for sliding images
         viewPager = view.findViewById(R.id.view_pager_offer_view);
@@ -110,23 +121,55 @@ public class ViewOfferFragment extends android.app.Fragment {
         cbLikeThisOffer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                for (Offer of : allOffers) {
-                    Log.i("of", "vsi4ki --- > " + allOffers.size());
-                    Log.i("of", "favourite --- > " + favouriteOffersList.size());
-                    if(cbLikeThisOffer.isChecked()) {
-                        favouriteOffersList.add(of);
-                        favouriteOffers.setValue(currentOffer);
-                        Log.i("of", "vlezna v ifa --- > " + favouriteOffersList.size());
-                    } else {
-                        for (Offer oferta : allOffers) {
-                            if(oferta == of) {
-                                favouriteOffersList.remove(of);
-                                Log.i("of", "vlezna v else, iztri --- > " + favouriteOffersList.size());
-                            }
-                        }
+                Log.i("ofa", "favourite --- > " + MainActivity.getFavouriteOffersList());
 
-                    }
+                if(cbLikeThisOffer.isChecked()) {
+                    favouriteOfferID.setValue(currentOffer.getId());
+                    Log.i("ofa", "favourite v if-a() --- > " + MainActivity.getFavouriteOffersList().size());
                 }
+                if(!cbLikeThisOffer.isChecked()) {
+
+                    String currentOfferID = currentOffer.getId();
+                    favouriteOffers.child(currentOfferID).removeValue();
+
+//                    final Query offerQuery = favouriteOffers.child(currentOfferID);
+//                    Log.i("ofa", "setnah query --- > " + MainActivity.getFavouriteOffersList().size());
+//                    offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            for (DataSnapshot offerSnapshot : dataSnapshot.getChildren()) {
+//                                offerSnapshot.getRef().removeValue();
+//                                Log.i("ofa", "setnah query --- > " + MainActivity.getFavouriteOffersList().size());
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
+
+
+                    Log.i("ofa", "favourite v else - if-a() --- > " + MainActivity.getFavouriteOffersList().size());
+
+                }
+//                else {
+//                    String currentOfferID = currentOffer.getId().toString();
+//                    favouriteOffers.child(currentOfferID).removeValue();
+//                }
+//                Log.i("of", "vsi4ki --- > " + allOffers.size());
+//                Log.i("of", "favourite --- > " + DatabaseInfo.getFavouriteOffersList.size());
+//                if (cbLikeThisOffer.isChecked()) {
+//                    favouriteOffersList.add(currentOffer);
+//                    favouriteOffers.setValue(currentOffer);
+//                    Log.i("of", "vlezna v ifa --- > " + favouriteOffersList.size());
+//                } else {
+//                    favouriteOffersList.remove(currentOffer);
+//                    Log.i("of", "vlezna v else, iztri --- > " + favouriteOffersList.size());
+//                    for (Offer oferta : allOffers) {
+//                    }
+//
+//                }
 
             }
         });
@@ -143,7 +186,4 @@ public class ViewOfferFragment extends android.app.Fragment {
         tvDescription.setText(currentOffer.getDescription());
     }
 
-    public List<Offer> getFavouriteOffers() {
-        return (List<Offer>) favouriteOffers ;
-    }
 }

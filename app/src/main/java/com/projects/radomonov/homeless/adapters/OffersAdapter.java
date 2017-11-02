@@ -1,9 +1,7 @@
 package com.projects.radomonov.homeless.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.model.Offer;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ import java.util.List;
  * Created by Tom on 21.10.2017.
  */
 
-public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyViewHolder> {
+public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.MyViewHolder> {
 
     public interface onOfferClickListener{
         void onOfferClick(Offer currentOffer);
@@ -31,7 +28,7 @@ public class MyOffersAdapter extends RecyclerView.Adapter<MyOffersAdapter.MyView
     private LayoutInflater inflater;
     public onOfferClickListener listener;
 
-    public MyOffersAdapter(Context context,List<Offer> myOffers,onOfferClickListener listener) {
+    public OffersAdapter(Context context, List<Offer> myOffers, onOfferClickListener listener) {
         this.myOffers = myOffers;
         this.context = context;
         this.inflater = LayoutInflater.from(context);

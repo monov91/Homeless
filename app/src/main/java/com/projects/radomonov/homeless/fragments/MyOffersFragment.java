@@ -3,7 +3,6 @@ package com.projects.radomonov.homeless.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,22 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.adapters.MyOffersAdapter;
+import com.projects.radomonov.homeless.adapters.OffersAdapter;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.model.User;
-import com.projects.radomonov.homeless.utilities.Utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 /**
@@ -42,7 +38,7 @@ public class MyOffersFragment extends Fragment {
     private DatabaseReference offers;
     private DatabaseReference currentOffer;
     private String currentUserID;
-    private MyOffersAdapter adapter;
+    private OffersAdapter adapter;
     private ArrayList<Offer> myOffers;
 
     HashMap<String, User> usersInMyOffers = new HashMap<>();
@@ -145,8 +141,8 @@ public class MyOffersFragment extends Fragment {
 
     private void setUpRecycleView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_my_offers);
-        adapter = new MyOffersAdapter(getActivity(), myOffers,
-                new MyOffersAdapter.onOfferClickListener() {
+        adapter = new OffersAdapter(getActivity(), myOffers,
+                new OffersAdapter.onOfferClickListener() {
 
             @Override
             public void onOfferClick(Offer currentOffer) {

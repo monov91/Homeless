@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,9 @@ import com.projects.radomonov.homeless.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
 
@@ -46,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     private DatabaseReference mDatabaseUsers;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private DatabaseReference currentUser;
+    private static ArrayList<String> favouriteOffersList = new ArrayList<>();
+    private DatabaseReference mDatabaseFavouriteOffers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         setUpNavigationDrawer();
         DatabaseInfo.readUsers();
         DatabaseInfo.readOffers();
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -81,6 +90,13 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
+//        currentUser = mDatabaseUsers.child(mAuth.getCurrentUser().getUid());
+
+        String currentUserID = mAuth.getCurrentUser().getUid();
+        Log.i("losho", "usera ---> " + currentUserID);
+        mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
+
+        readFavouriteOffers();
 
 
     }
@@ -155,6 +171,38 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 //        }
 
 
+    }
+
+    public void readFavouriteOffers() {
+        mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String offerID = (String) dataSnapshot.getValue();
+                favouriteOffersList.add(offerID);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String offerID = (String) dataSnapshot.getValue();
+                favouriteOffersList.remove(offerID);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static final List<String> getFavouriteOffersList() {
+        return favouriteOffersList;
     }
 
 }
