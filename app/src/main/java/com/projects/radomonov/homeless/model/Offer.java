@@ -21,7 +21,7 @@ public class Offer implements Serializable {
     private String title;
     private int rooms;
     private int price;
-    private Utilities.Neighbourhood neighbourhood;
+    private String neighbourhood;
     private Currency currency;
     private String phoneNumber;
     private String owner;
@@ -79,7 +79,7 @@ public class Offer implements Serializable {
         return price;
     }
 
-    public Utilities.Neighbourhood getNeighbourhood() {
+    public String getNeighbourhood() {
         return neighbourhood;
     }
 

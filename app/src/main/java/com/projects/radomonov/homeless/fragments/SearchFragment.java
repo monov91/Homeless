@@ -28,9 +28,23 @@ import com.projects.radomonov.homeless.model.Offer;
 import com.projects.radomonov.homeless.utilities.Utilities;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.BANSKO;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.BOROVO;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.CENTAR;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.DARVENICA;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.DIANABAD;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.GORNA_BANQ;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.HIPODRUMA;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.KRASNO_SELO;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.KVARTAL;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.LOZENEC;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.MALINOVA_DOLINA;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.STUDENTSKI;
+import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.TARNOVO;
 
 /**
  * Created by admin on 28.10.2017.
@@ -41,7 +55,7 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
     private EditText etPriceMin, etPriceMax, etRooms;
     private NeighbourhoodsAdapter adapter;
     private Spinner spinnerNeighbourhoods;
-    private List<Utilities.Neighbourhood> neighbourhoodList;
+    private List<String> neighbourhoodList;
     private ImageButton btnSortAscending, btnSortDescending, btnSearchOptions, btnSearch;
     private RadioButton rdbtnBGN;
     private RadioButton rdbtnEU;
@@ -79,8 +93,9 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
         offersRecycler = view.findViewById(R.id.recycler_search_search);
         neighbourhoodList = new ArrayList<>();
         spinnerNeighbourhoods = view.findViewById(R.id.spinner_neigh);
-        spinnerNeighbourhoods.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
+        //spinnerNeighbourhoods.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
         etPriceMin = view.findViewById(R.id.et_price_min);
+        spinnerNeighbourhoods.setAdapter(ArrayAdapter.createFromResource(getContext(),R.array.neighbourhoods,R.layout.support_simple_spinner_dropdown_item));
         etPriceMax = view.findViewById(R.id.et_price_max);
         etRooms = view.findViewById(R.id.et_rooms_search);
         rdbtnBGN = view.findViewById(R.id.rdbtn_BGN_search);
@@ -90,10 +105,51 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
         sortOptions = view.findViewById(R.id.layout_sort);
 
         btnSortDescending = view.findViewById(R.id.imgbtn_descending_search);
-        btnSortAscending = view.findViewWithTag(R.id.imgbtn_ascending_search);
+        btnSortAscending = view.findViewById(R.id.imgbtn_ascending_search);
         btnSearchOptions = view.findViewById(R.id.imgbtn_search_options);
         btnSearch = view.findViewById(R.id.imgbtn_search);
 
+        btnSortAscending.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchedOffers.sort(new Comparator<Offer>() {
+                    @Override
+                    public int compare(Offer offer1, Offer offer2) {
+                        int price1 = offer1.getPrice();
+                        if(offer1.getCurrency() == Offer.Currency.EU){
+                            price1 = (int)(price1 * 1.94);
+                        }
+                        int price2 = offer2.getPrice();
+                        if(offer2.getCurrency() == Offer.Currency.EU){
+                            price2 = (int)(price2 * 1.94);
+                        }
+                        return price1 - price2;
+                    }
+                });
+                offerAdapter.notifyDataSetChanged();
+            }
+        });
+
+        btnSortDescending.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchedOffers.sort(new Comparator<Offer>() {
+                    @Override
+                    public int compare(Offer offer1, Offer offer2) {
+                        int price1 = offer1.getPrice();
+                        if(offer1.getCurrency() == Offer.Currency.EU){
+                            price1 = (int)(price1 * 1.94);
+                        }
+                        int price2 = offer2.getPrice();
+                        if(offer2.getCurrency() == Offer.Currency.EU){
+                            price2 = (int)(price2 * 1.94);
+                        }
+                        return price2 - price1;
+                    }
+                });
+                offerAdapter.notifyDataSetChanged();
+            }
+        });
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,8 +247,8 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
         spinnerNeighbourhoods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Utilities.Neighbourhood neighbourhood;
-                neighbourhood = (Utilities.Neighbourhood) spinnerNeighbourhoods.getSelectedItem();
+                String neighbourhood;
+                neighbourhood =  spinnerNeighbourhoods.getSelectedItem().toString();
                 neighbourhoodList.add(neighbourhood);
                 adapter.notifyDataSetChanged();
             }

@@ -22,10 +22,10 @@ import static android.os.Build.VERSION_CODES.M;
 public class NeighbourhoodsAdapter extends RecyclerView.Adapter<NeighbourhoodsAdapter.NeighViewHolder> {
 
     private Context context;
-    private List<Utilities.Neighbourhood> neighbourhoodList;
+    private List<String> neighbourhoodList;
     private LayoutInflater inflater;
 
-    public NeighbourhoodsAdapter(Context context, List<Utilities.Neighbourhood> neighbourhoodList){
+    public NeighbourhoodsAdapter(Context context, List<String> neighbourhoodList){
         this.context = context;
         this.neighbourhoodList = neighbourhoodList;
         this.inflater = LayoutInflater.from(context);

@@ -12,4 +12,23 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name="neighbourhoods">
+        <item>CENTAR</item>
+        <item>LOZENEC</item>
+        <item>STUDENTSKI</item>
+        <item>LIULIN</item>
+        <item>MLADOST</item>
+        <item>DRUJBA</item>
+        <item>BOROVO</item>
+        <item>BANSKO</item>
+        <item>TARNOVO</item>
+        <item>GORNA_BANQ</item>
+        <item>DARVENICA</item>
+        <item>DIANABAD</item>
+        <item>MALINOVA_DOLINA</item>
+        <item>KRASNO_SELO</item>
+        <item>HIPODRUMA</item>
+
+    </string-array>
+
 </resources>

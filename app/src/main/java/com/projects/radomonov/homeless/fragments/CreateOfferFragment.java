@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
-import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -91,7 +88,7 @@ public class CreateOfferFragment extends Fragment {
     private RadioButton rdbtnEU;
     private RadioButton rddbtnBGN;
     private Spinner spinnerNeigh;
-    private Utilities.Neighbourhood neighborhood;
+    private String neighbourhood;
     private boolean isNewOffer = true;
     private Offer editOffer;
     private boolean changedImage = false;
@@ -99,7 +96,7 @@ public class CreateOfferFragment extends Fragment {
     private List<Uri> offerImages;
     private List<Uri> offerImagesUrlsOrig;
     private List<Uri> offerImagesUrls;
-    private String neighbourhood;
+
     private HashMap<String,Uri> originalPics;
     private HashMap<String,Uri> toDeletePics;
     private OfferPhotosAdapter adapter;
@@ -130,13 +127,13 @@ public class CreateOfferFragment extends Fragment {
         btnDelete = (Button) view.findViewById(R.id.btn_delete_create);
         btnDelete.setVisibility(View.GONE);
         spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
-        spinnerNeigh.setAdapter(new ArrayAdapter<Utilities.Neighbourhood>(getContext(), android.R.layout.simple_spinner_item, Utilities.Neighbourhood.values()));
+        spinnerNeigh.setAdapter(ArrayAdapter.createFromResource(getContext(),R.array.neighbourhoods,R.layout.support_simple_spinner_dropdown_item));
         spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                neighborhood = (Utilities.Neighbourhood) spinnerNeigh.getSelectedItem();
+                neighbourhood = spinnerNeigh.getSelectedItem().toString();
                 Log.i("spinner","selected " + spinnerNeigh.getSelectedItem());
-                Log.i("spinner","selected " + neighborhood);
+                Log.i("spinner","selected " + neighbourhood);
             }
 
             @Override
@@ -338,7 +335,7 @@ public class CreateOfferFragment extends Fragment {
         offer.child("price").setValue(price);
         offer.child("currency").setValue(currency);
         offer.child("rooms").setValue(rooms);
-        offer.child("neighbourhood").setValue(neighborhood.toString());
+        offer.child("neighbourhood").setValue(neighbourhood);
         offer.child("description").setValue(description);
         DatabaseReference phoneRef = currentUser.child("phoneNumber");
         phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -401,7 +398,7 @@ public class CreateOfferFragment extends Fragment {
         if (currency == Offer.Currency.EU) {
             rdbtnEU.setChecked(true);
         }
-        Utilities.Neighbourhood neighbourhood = offer.getNeighbourhood();
+        String neighbourhood = offer.getNeighbourhood();
         spinnerNeigh.setSelection(((ArrayAdapter)spinnerNeigh.getAdapter()).getPosition(neighbourhood));
         etDescription.setText(offer.getDescription());
         //get pics links
