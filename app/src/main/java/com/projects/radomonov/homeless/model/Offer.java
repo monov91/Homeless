@@ -34,6 +34,22 @@ public class Offer implements Serializable {
 
     }
 
+    @Override
+    public String toString() {
+        return "Offer{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", rooms=" + rooms +
+                ", price=" + price +
+                ", neighbourhood=" + neighbourhood +
+                ", currency=" + currency +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", owner='" + owner + '\'' +
+                ", imageThumbnail='" + imageThumbnail + '\'' +
+                ", description='" + description + '\'' +
+                ", imageUrls=" + imageUrls +
+                '}';
+    }
 
     public HashMap<String, String> getImageUrls() {
         return imageUrls;

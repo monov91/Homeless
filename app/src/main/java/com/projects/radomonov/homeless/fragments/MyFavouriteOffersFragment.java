@@ -44,10 +44,8 @@ public class MyFavouriteOffersFragment extends Fragment {
         myFavouriteOffers = new ArrayList<>();
 
 
-
         getMyFavouriteOffers();
         setUpRecycleView(view);
-
         return view;
     }
 
@@ -57,11 +55,9 @@ public class MyFavouriteOffersFragment extends Fragment {
             for(Offer offer : DatabaseInfo.getOffersList()) {
                 if(MainActivity.getFavouriteOffersList().get(i).equals(offer.getId())) {
                     myFavouriteOffers.add(offer);
-                    Log.i("lubimi", "mai dobavi ======> " + myFavouriteOffers.size());
                 }
             }
         }
-
     }
 
 

@@ -135,44 +135,12 @@ public class ViewOfferFragment extends android.app.Fragment {
                     String currentOfferID = currentOffer.getId();
                     favouriteOffers.child(currentOfferID).removeValue();
 
-//                    final Query offerQuery = favouriteOffers.child(currentOfferID);
-//                    Log.i("ofa", "setnah query --- > " + MainActivity.getFavouriteOffersList().size());
-//                    offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            for (DataSnapshot offerSnapshot : dataSnapshot.getChildren()) {
-//                                offerSnapshot.getRef().removeValue();
-//                                Log.i("ofa", "setnah query --- > " + MainActivity.getFavouriteOffersList().size());
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//
-//                        }
-//                    });
 
 
                     Log.i("ofa", "favourite v else - if-a() --- > " + MainActivity.getFavouriteOffersList().size());
 
                 }
-//                else {
-//                    String currentOfferID = currentOffer.getId().toString();
-//                    favouriteOffers.child(currentOfferID).removeValue();
-//                }
-//                Log.i("of", "vsi4ki --- > " + allOffers.size());
-//                Log.i("of", "favourite --- > " + DatabaseInfo.getFavouriteOffersList.size());
-//                if (cbLikeThisOffer.isChecked()) {
-//                    favouriteOffersList.add(currentOffer);
-//                    favouriteOffers.setValue(currentOffer);
-//                    Log.i("of", "vlezna v ifa --- > " + favouriteOffersList.size());
-//                } else {
-//                    favouriteOffersList.remove(currentOffer);
-//                    Log.i("of", "vlezna v else, iztri --- > " + favouriteOffersList.size());
-//                    for (Offer oferta : allOffers) {
-//                    }
-//
-//                }
+
 
             }
         });

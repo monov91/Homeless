@@ -56,7 +56,7 @@ public class SearchFragment extends Fragment  {
 
 
     // for recycle view
-    private OffersAdapter offerAdapter;
+    public static OffersAdapter offerAdapter;
 
     @Override
     public void onStart() {
@@ -74,7 +74,7 @@ public class SearchFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        allOffers = DatabaseInfo.getOffersList();
+
         offersRecycler = view.findViewById(R.id.recycler_search_search);
         neighbourhoodList = new ArrayList<>();
         spinnerNeighbourhoods = view.findViewById(R.id.spinner_neigh);
@@ -97,6 +97,7 @@ public class SearchFragment extends Fragment  {
             @Override
             public void onClick(View view) {
                 searchedOffers = new ArrayList<>();
+                allOffers = DatabaseInfo.getOffersList();
                 sortOptions.setVisibility(View.VISIBLE);
                 boolean noRooms = false;
 
@@ -122,7 +123,11 @@ public class SearchFragment extends Fragment  {
                 } else {
                     rooms = Integer.parseInt(etRooms.getText().toString());
                 }
-
+                Log.i("kriterii","rooms " + rooms);
+                Log.i("kriterii","max " + maxPrice);
+                Log.i("kriterii","min " + minPrice);
+                Log.i("kriterii","kvartal " + neighbourhoodList.toString());
+                Log.i("kriterii","oferti " + allOffers.size());
                 for (Offer offer : allOffers) {
                     int offerPrice = offer.getPrice();
                     if (offer.getCurrency() == EU) {
