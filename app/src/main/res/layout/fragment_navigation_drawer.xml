@@ -45,7 +45,7 @@
             android:layout_marginRight="16dp"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:text="My offers"/>
+            android:text="My Offers"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/btn_create_offer"
@@ -72,6 +72,33 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:text="Create Offer"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_my_favourite_offers"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_profile"
+            android:tint="@android:color/darker_gray"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:text="My Favourite Offers"/>
     </LinearLayout>
 
     <LinearLayout

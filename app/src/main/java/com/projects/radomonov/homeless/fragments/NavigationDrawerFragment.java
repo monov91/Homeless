@@ -59,6 +59,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private LinearLayout btnCreateOffer;
     private LinearLayout btnLogOut;
     private LinearLayout btnMyOffers;
+    private LinearLayout btnMyFavouriteOffers;
     private ImageView imgEditProfile;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
@@ -80,6 +81,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnLogOut = view.findViewById(R.id.btn_log_out);
         btnCreateOffer = view.findViewById(R.id.btn_create_offer);
         btnMyOffers = view.findViewById(R.id.btn_my_offers);
+        btnMyFavouriteOffers = view.findViewById(R.id.btn_my_favourite_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
 //        String currentUserID = mAuth.getCurrentUser().getUid();
@@ -98,6 +100,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnLogOut.setOnClickListener(this);
         btnMyOffers.setOnClickListener(this);
         imgEditProfile.setOnClickListener(this);
+        btnMyFavouriteOffers.setOnClickListener(this);
 
         return view;
     }
@@ -203,6 +206,13 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyOffersFragment fragMyOffers = new MyOffersFragment();
                 fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.commit();
+                break;
+
+            case R.id.btn_my_favourite_offers :
+                fragmentTransaction = fragmentManager.beginTransaction();
+                MyFavouriteOffersFragment fragMyFavouriteOffers = new MyFavouriteOffersFragment();
+                fragmentTransaction.replace(R.id.fragment_container_main,fragMyFavouriteOffers,"myFavouriteOffersFrag");
                 fragmentTransaction.commit();
                 break;
 

@@ -117,6 +117,9 @@ public class ViewOfferFragment extends android.app.Fragment {
             }
         });
 
+        if (MainActivity.getFavouriteOffersList().contains(currentOffer.getId())) {
+            cbLikeThisOffer.setChecked(true);
+        }
 
         cbLikeThisOffer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
