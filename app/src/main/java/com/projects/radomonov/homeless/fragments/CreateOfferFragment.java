@@ -249,9 +249,7 @@ public class CreateOfferFragment extends Fragment {
                 offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot offerSnapshot : dataSnapshot.getChildren()) {
-                            offerSnapshot.getRef().removeValue();
-                        }
+                        dataSnapshot.getRef().removeValue();
                     }
 
                     @Override

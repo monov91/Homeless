@@ -16,11 +16,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static android.R.attr.id;
+import static android.os.Build.ID;
+
 /**
  * Created by Tom on 28.10.2017.
  */
 
 public class DatabaseInfo extends AppCompatActivity {
+
+    public interface DatabaseChangedListener {
+        void onDatabaseChanged();
+    }
+
+    private static DatabaseChangedListener listener;
 
     private static ArrayList<User> usersList;
     private static ArrayList<Offer> offersList;
@@ -105,17 +114,29 @@ public class DatabaseInfo extends AppCompatActivity {
                 offersList.add(offer);
                 if (SearchFragment.offerAdapter != null) {
                     Log.i("del", "vlezna v ifa 1");
-                    SearchFragment.offerAdapter.notifyDataSetChanged();
+//                    SearchFragment.offerAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //readOffers();
-                if (SearchFragment.offerAdapter != null) {
-                    Log.i("del", "vlezna v read offers 1");
-                    SearchFragment.offerAdapter.notifyDataSetChanged();
+                Offer changedOffer = dataSnapshot.getValue(Offer.class);
+                String ID = changedOffer.getId();
+
+                Log.i("child", "kolko puti ---> " + 1);
+
+                for (Offer offer : offersList) {
+                    if (offer.getId() != null) {
+                        if (offer.getId().equals(ID)) {
+                            offersList.remove(offer);
+                            break;
+                        }
+                    }
                 }
+                offersList.add(changedOffer);
+//                Log.i("child", "id --- > " + ID);
+//                Log.i("child", "s-value --- > " + s);
+
 //                Offer offer = dataSnapshot.getValue(Offer.class);
 //                Log.i("ofertata", offer.toString());
 //                offersList.remove(offer);
@@ -134,12 +155,22 @@ public class DatabaseInfo extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Offer offer = dataSnapshot.getValue(Offer.class);
-                offersList.remove(offer);
-                Log.i("del", " on child removed " + offersList.size());
+                String delID = dataSnapshot.getValue(Offer.class).getId();
+                Log.i("koli4estvo", "predi remove" + offersList.size());
+                for (Offer offer : offersList) {
+                    if (offer.getId() != null) {
+                        if (offer.getId().equals(delID)) {
+                            offersList.remove(offer);
+                            break;
+                        }
+                    }
+                }
+
+
+                Log.i("koli4estvo", "sled remove ------> " + offersList.size());
                 if (SearchFragment.offerAdapter != null) {
                     Log.i("del", "vlezna v ifa 4");
-                    SearchFragment.offerAdapter.notifyDataSetChanged();
+//                    SearchFragment.offerAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -161,7 +192,6 @@ public class DatabaseInfo extends AppCompatActivity {
     public static final List<Offer> getOffersList() {
         return Collections.unmodifiableList(offersList);
     }
-
 
 }
 

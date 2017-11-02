@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference currentUser;
-    private static ArrayList<String> favouriteOffersList = new ArrayList<>();
+    private static ArrayList<String> favouriteOffersList;
     private DatabaseReference mDatabaseFavouriteOffers;
 
     @Override
@@ -174,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     }
 
     public void readFavouriteOffers() {
+
+        favouriteOffersList = new ArrayList<>();
+
         mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

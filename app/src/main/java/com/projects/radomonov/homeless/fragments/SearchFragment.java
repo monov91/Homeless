@@ -36,7 +36,7 @@ import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
  * Created by admin on 28.10.2017.
  */
 
-public class SearchFragment extends Fragment  {
+public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseChangedListener {
 
     private EditText etPriceMin, etPriceMax, etRooms;
     private NeighbourhoodsAdapter adapter;
@@ -55,13 +55,14 @@ public class SearchFragment extends Fragment  {
     private RecyclerView offersRecycler;
 
 
+
     // for recycle view
     public static OffersAdapter offerAdapter;
 
     @Override
     public void onStart() {
         super.onStart();
-        //offerAdapter.notifyDataSetChanged();
+//        offerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -92,6 +93,7 @@ public class SearchFragment extends Fragment  {
         btnSortAscending = view.findViewWithTag(R.id.imgbtn_ascending_search);
         btnSearchOptions = view.findViewById(R.id.imgbtn_search_options);
         btnSearch = view.findViewById(R.id.imgbtn_search);
+
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,9 +160,9 @@ public class SearchFragment extends Fragment  {
                     }
                 }
                 for (Offer offer : searchedOffers) {
-                    Log.i("search", offer.getNeighbourhood().toString());
-                    Log.i("search", "price" + String.valueOf(offer.getPrice()));
-                    Log.i("search", "rooms" + String.valueOf(offer.getRooms()));
+//                    Log.i("search", offer.getNeighbourhood().toString());
+//                    Log.i("search", "price" + String.valueOf(offer.getPrice()));
+//                    Log.i("search", "rooms" + String.valueOf(offer.getRooms()));
                 }
                 setUpOfferRecycler(searchedOffers,view);
                 Log.i("search", "SIZE -> " + searchedOffers.size());
@@ -253,4 +255,8 @@ public class SearchFragment extends Fragment  {
         return this.offerAdapter;
     }
 
+    @Override
+    public void onDatabaseChanged() {
+
+    }
 }
