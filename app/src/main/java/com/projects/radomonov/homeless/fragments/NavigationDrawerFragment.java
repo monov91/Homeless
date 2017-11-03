@@ -79,11 +79,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             updateProfilePic();
         }
 
-        btnCreateOffer.setOnClickListener(this);
-        btnLogOut.setOnClickListener(this);
-        btnMyOffers.setOnClickListener(this);
-        imgEditProfile.setOnClickListener(this);
-        btnMyFavouriteOffers.setOnClickListener(this);
+        setListeners();
 
         return view;
     }
@@ -205,6 +201,14 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             default:  break;
         }
         closeNavDrawer();
+    }
+
+    private void setListeners() {
+        btnCreateOffer.setOnClickListener(this);
+        btnLogOut.setOnClickListener(this);
+        btnMyOffers.setOnClickListener(this);
+        imgEditProfile.setOnClickListener(this);
+        btnMyFavouriteOffers.setOnClickListener(this);
     }
 
     private void initialiseData() {
