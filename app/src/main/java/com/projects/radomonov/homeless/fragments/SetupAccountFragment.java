@@ -18,7 +18,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.telephony.PhoneNumberUtils;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,13 +58,18 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
+import static android.telephony.PhoneNumberUtils.isGlobalPhoneNumber;
+import static com.projects.radomonov.homeless.R.id.btn_save_changes_setup_acc;
 import static com.theartofdev.edmodo.cropper.CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE;
 
 /**
  * Created by Tom on 22.10.2017.
  */
 
-public class SetupAccountFragment extends Fragment {
+public class SetupAccountFragment extends Fragment implements View.OnClickListener{
+
+    public static final int GALLERY_REQUEST = 10;
+    public static final int REQUEST_PERMISSION_CODE = 1;
 
     private View view;
     private ImageView imgProfilePic;
@@ -71,71 +79,26 @@ public class SetupAccountFragment extends Fragment {
     private StorageReference mStorage;
     private RoundedBitmapDrawable round;
     private EditText etPhoneNumber;
-
     private Intent GalIntent;
     boolean flag = false;
     private Uri downloadURL;
-    public static final int GALLERY_REQUEST = 10;
-    public static final int REQUEST_PERMISSION_CODE = 1;
-
     private OnFragmentUpdateListener mListener;
     private DatabaseReference currentUserPic;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.fragment_setup_account, container, false);
-        mAuth = FirebaseAuth.getInstance();
-        mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
+        initialiseData();
         updateProfilePic();
         EnableRuntimePermission();
 
-        etPhoneNumber = view.findViewById(R.id.edit_phone_number_setup_frag);
-        btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
-        btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
-        imgProfilePic = view.findViewById(R.id.img_edit_profile);
+        getCurrentPhoneNumber();
 
-        // Setting PhoneNumber field with Current User PhoneNumber value
-        String currentUserPhoneNumber = null;
-        for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
-            if (mAuth.getCurrentUser().getUid().equals(DatabaseInfo.getUsersList().get(i).getID())) {
-                currentUserPhoneNumber = DatabaseInfo.getUsersList().get(i).getPhoneNumber();
-            }
-        }
-        if(currentUserPhoneNumber != null) {
-            etPhoneNumber.setText(currentUserPhoneNumber);
-        }
-
-        imgProfilePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GetImageFromGallery();
-            }
-        });
-
-        btnSaveChanges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String phoneNumber = etPhoneNumber.getText().toString().trim();
-                if (validateStringForNullAndIsEmpty(phoneNumber)) {
-                    currentUser.child("phoneNumber").setValue(phoneNumber);
-                }
-                goToMain();
-                mListener.updateFragment();
-                goToMain();
-            }
-        });
-
-        btnCancelChanges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToMain();
-
-            }
-        });
+        imgProfilePic.setOnClickListener(this);
+        btnSaveChanges.setOnClickListener(this);
+        btnCancelChanges.setOnClickListener(this);
 
         return view;
     }
@@ -150,7 +113,11 @@ public class SetupAccountFragment extends Fragment {
     InputStream input = null;
 
     public void updateProfilePic() {
-        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
+        // In this method we are taking current user profile picture,
+        // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
+        // make it round and setting it to imgProfilePic to this fragment
+        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -191,6 +158,10 @@ public class SetupAccountFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // In this method we are choosing profile picture from gallery,
+        // cropping it with RoundedBitmapDrawableFactory,
+        // make it round, setting it to imgProfilePic to this fragment
+        // and writing this data into Firebase Database
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri imageUri2 = data.getData();
@@ -252,27 +223,46 @@ public class SetupAccountFragment extends Fragment {
 
 
     public void EnableRuntimePermission() {
-
+        // requiring permission for using camera on mobile device.
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 Manifest.permission.CAMERA)) {
             Toast.makeText(getActivity(), "CAMERA permission allows us to Access CAMERA app",
                     Toast.LENGTH_LONG).show();
-
         } else {
             ActivityCompat.requestPermissions(getActivity(), new String[]{
                     Manifest.permission.CAMERA}, REQUEST_PERMISSION_CODE);
         }
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.img_edit_profile:
+                GetImageFromGallery();
+                break;
+
+            case R.id.btn_save_changes_setup_acc:
+                String phoneNumber = etPhoneNumber.getText().toString().trim();
+                if (!isValidPhoneNumber(phoneNumber)) {
+                    etPhoneNumber.setError("Invalid Phone Number");
+                    return;
+                }
+                currentUser.child("phoneNumber").setValue(phoneNumber);
+                goToMain();
+                mListener.updateFragment();
+                goToMain();
+                break;
+
+            case R.id.btn_cancel_changes_setup_acc :
+                goToMain();
+                break;
+        }
+
     }
 
-    // interface for connection between fragments
     public interface OnFragmentUpdateListener {
+        // interface for connection between fragments
         void updateFragment();
     }
 
@@ -283,20 +273,46 @@ public class SetupAccountFragment extends Fragment {
         mListener.updateFragment();
     }
 
-    private void setImage(Context context, String imgURL) {
-//        Picasso.with(context).load(imgURL).into(imgEditProfile);
-        Glide.with(context).load(imgURL).override(200, 200).into(imgProfilePic);
-    }
-
     public void goToMain() {
+        //Sending to the Main(Search in uor case) fragment
         SearchFragment searchFrag = new SearchFragment();
         getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
     }
 
-    private boolean validateStringForNullAndIsEmpty(String str) {
-        if (str == null || str.isEmpty()) {
+    private void initialiseData() {
+        mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        etPhoneNumber = view.findViewById(R.id.edit_phone_number_setup_frag);
+        btnSaveChanges = view.findViewById(btn_save_changes_setup_acc);
+        btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
+        imgProfilePic = view.findViewById(R.id.img_edit_profile);
+    }
+
+    private void getCurrentPhoneNumber() {
+        // Setting PhoneNumber field with Current User PhoneNumber value
+        String currentUserPhoneNumber = null;
+        for (int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
+            if (mAuth.getCurrentUser().getUid().equals(DatabaseInfo.getUsersList().get(i).getID())) {
+                currentUserPhoneNumber = DatabaseInfo.getUsersList().get(i).getPhoneNumber();
+            }
+        }
+        if (currentUserPhoneNumber != null) {
+            etPhoneNumber.setText(currentUserPhoneNumber);
+        }
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        // Create regex to validate input phoneNumber
+        String regex = "0[8-9]{2}[0-9]{7}";
+        if(phoneNumber.matches(regex)) {
+            return true;
+        } else
+            regex = "[+]359[8-9]{2}[0-9]{7}";
+            if(phoneNumber.matches(regex)) {
+                return true;
+            } else {
             return false;
         }
-        return true;
     }
 }
