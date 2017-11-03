@@ -17,7 +17,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -136,20 +138,26 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Are you sure you want to exit?")
-                    .setCancelable(false)
+
+            View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.alert_dialog_layout, null);
+            TextView title = view.findViewById(R.id.tv_title_alert);
+            ImageView imageView = view.findViewById(R.id.image_btn_alert);
+
+            title.setText("Warning");
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ezhik_belii_png));
+
+            builder.setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             MainActivity.this.finish();
                         }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
-            AlertDialog alert = builder.create();
-            alert.show();
+            builder.setView(view);
+            builder.show();
         } else
         if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
             getFragmentManager().popBackStack();
