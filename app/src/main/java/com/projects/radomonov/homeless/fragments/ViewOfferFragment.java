@@ -35,42 +35,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ViewOfferFragment extends android.app.Fragment {
+public class ViewOfferFragment extends android.app.Fragment implements View.OnClickListener {
 
-    private ImageView image;
     private TextView tvRoomsNeigborhood, tvPrice, tvDescription;
     private Button btnMakeCall, btnWriteEmail;
     private CheckBox cbLikeThisOffer;
-
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;
     private DatabaseReference favouriteOfferID;
     private DatabaseReference favouriteOffers;
-
     private Offer currentOffer;
-    private List<Offer> allOffers;
-
     private ViewPager viewPager;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_offer_view, container, false);
+        view = inflater.inflate(R.layout.fragment_offer_view, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
-        allOffers = new ArrayList<>();
-
-        image = view.findViewById(R.id.img_view_offer_info);
-        tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
-        tvPrice = view.findViewById(R.id.text_price_per_month_offer_info);
-        tvDescription = view.findViewById(R.id.text_description_offer_info);
-        btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
-        btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
-        cbLikeThisOffer = view.findViewById(R.id.cb_like_this_offer);
-
-        for (Offer of : DatabaseInfo.getOffersList()) {
-            allOffers.add(of);
-        }
+        initialiseData();
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -78,44 +60,8 @@ public class ViewOfferFragment extends android.app.Fragment {
             fillFields();
         }
 
-        favouriteOfferID = currentUser.child("favouriteOffers").child(currentOffer.getId());
-        favouriteOffers = currentUser.child("favouriteOffers");
-
-
-        //for sliding images
-        viewPager = view.findViewById(R.id.view_pager_offer_view);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), currentOffer);
-        viewPager.setAdapter(viewPagerAdapter);
-
-        btnMakeCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String phoneNumber = currentOffer.getPhoneNumber();
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-                startActivity(intent);
-            }
-        });
-
-        btnWriteEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String ownerID = currentOffer.getOwner();
-                String ownerEmail = null;
-                for (int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
-
-                    Log.i("userID", "userID " + DatabaseInfo.getUsersList().get(i).getID());
-
-                    if (DatabaseInfo.getUsersList().get(i).getID().equals(ownerID)) {
-                        ownerEmail = DatabaseInfo.getUsersList().get(i).geteMail();
-                    }
-                }
-                if (ownerEmail != null) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:" + ownerEmail));
-                    startActivity(intent);
-                }
-            }
-        });
+        btnMakeCall.setOnClickListener(this);
+        btnWriteEmail.setOnClickListener(this);
 
         if (MainActivity.getFavouriteOffersList().contains(currentOffer.getId())) {
             cbLikeThisOffer.setChecked(true);
@@ -124,37 +70,67 @@ public class ViewOfferFragment extends android.app.Fragment {
         cbLikeThisOffer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Log.i("ofa", "favourite --- > " + MainActivity.getFavouriteOffersList());
-
-                if(cbLikeThisOffer.isChecked()) {
+                if (cbLikeThisOffer.isChecked()) {
                     favouriteOfferID.setValue(currentOffer.getId());
-                    Log.i("ofa", "favourite v if-a() --- > " + MainActivity.getFavouriteOffersList().size());
                 }
-                if(!cbLikeThisOffer.isChecked()) {
-
+                if (!cbLikeThisOffer.isChecked()) {
                     String currentOfferID = currentOffer.getId();
                     favouriteOffers.child(currentOfferID).removeValue();
-
-
-
-                    Log.i("ofa", "favourite v else - if-a() --- > " + MainActivity.getFavouriteOffersList().size());
-
                 }
-
-
             }
         });
-
 
         return view;
     }
 
-    public void fillFields() {
-//        Glide.with(getContext()).load(currentOffer.getImageThumbnail()).into(image);
-//        Glide.with(getContext()).load(offer.getImageThumbnail()).into(imgbtnChoose);
+    private void fillFields() {
         tvRoomsNeigborhood.setText(currentOffer.getRooms() + "-стаен, кв. " + currentOffer.getNeighbourhood());
         tvPrice.setText(currentOffer.getPrice() + " " + currentOffer.getCurrency() + "/мес.");
         tvDescription.setText(currentOffer.getDescription());
     }
 
+    private void initialiseData() {
+        favouriteOfferID = currentUser.child("favouriteOffers").child(currentOffer.getId());
+        favouriteOffers = currentUser.child("favouriteOffers");
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
+        tvPrice = view.findViewById(R.id.text_price_per_month_offer_info);
+        tvDescription = view.findViewById(R.id.text_description_offer_info);
+        btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
+        btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
+        cbLikeThisOffer = view.findViewById(R.id.cb_like_this_offer);
+
+        //for sliding images
+        viewPager = view.findViewById(R.id.view_pager_offer_view);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), currentOffer);
+        viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.btn_call_to_owner_offer_info:
+                String phoneNumber = currentOffer.getPhoneNumber();
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+                startActivity(callIntent);
+                return;
+
+            case R.id.btn_write_an_email_offer_info:
+                String ownerID = currentOffer.getOwner();
+                String ownerEmail = null;
+                for (int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
+                    if (DatabaseInfo.getUsersList().get(i).getID().equals(ownerID)) {
+                        ownerEmail = DatabaseInfo.getUsersList().get(i).geteMail();
+                    }
+                }
+                if (ownerEmail != null) {
+                    Intent eMailIntent = new Intent(Intent.ACTION_SENDTO);
+                    eMailIntent.setData(Uri.parse("mailto:" + ownerEmail));
+                    startActivity(eMailIntent);
+                }
+                return;
+        }
+    }
 }

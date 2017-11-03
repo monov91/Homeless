@@ -74,18 +74,14 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         DatabaseInfo.readUsers();
         DatabaseInfo.readOffers();
 
-
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
                 if(mAuth.getCurrentUser() == null) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
-                } else {
-//                    Toast.makeText(MainActivity.this, "Welcome...", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -98,26 +94,19 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
-//        currentUser = mDatabaseUsers.child(mAuth.getCurrentUser().getUid());
 
         if(mAuth.getCurrentUser() != null) {
             String currentUserID = mAuth.getCurrentUser().getUid();
-            Log.i("losho", "usera ---> " + currentUserID);
             mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
         }
         readFavouriteOffers();
-
-
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthListener);
-
-
     }
 
     private void setUpNavigationDrawer(){
@@ -130,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     private void setUpToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Search Homes");
-
     }
 
 
@@ -143,14 +131,8 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
     @Override
     public void onBackPressed() {
-
-        int count = getFragmentManager().getBackStackEntryCount();
         FragmentManager fragmentManager = getFragmentManager();
         Fragment currFrag = fragmentManager.findFragmentById(R.id.fragment_container_main);
-
-
-
-
 
         if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -170,37 +152,22 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
             alert.show();
         } else
         if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
-            Log.i("fragment", "vlezna v ifa v maina");
             getFragmentManager().popBackStack();
         }
         else
         if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
             getFragmentManager().popBackStack();
         }
-
-
-
         else {
-                Log.i("fragment", "vlezna v else v maina");
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
             ft.commit();
-//            getFragmentManager().popBackStack();
         }
-
-//        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
-//        Log.i("frag", "cur ===> " + currFrag);
-//        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
-//
-//        }
-
-
     }
 
     public void readFavouriteOffers() {
-
+        // Getting current user favourite offers
         favouriteOffersList = new ArrayList<>();
-
         if(mDatabaseFavouriteOffers != null) {
             mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
                 @Override

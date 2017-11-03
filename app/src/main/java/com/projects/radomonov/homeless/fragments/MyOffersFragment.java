@@ -40,6 +40,7 @@ public class MyOffersFragment extends Fragment {
     }
 
     private List<Offer> getMyOffers(){
+        // Getting current user offer from collection with all offers
         List<Offer> allOffers = DatabaseInfo.getOffersList();
         List<Offer> myOfferss = new ArrayList<>();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -70,7 +71,6 @@ public class MyOffersFragment extends Fragment {
                 ft.replace(R.id.fragment_container_main, createOfferFragment, "createOfferFrag");
                 ft.addToBackStack(null);
                 ft.commit();
-                //prati kam edit offer fragment
             }
         });
         recyclerView.setAdapter(adapter);

@@ -37,7 +37,7 @@ import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
  * Created by admin on 28.10.2017.
  */
 
-public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseChangedListener {
+public class SearchFragment extends Fragment {
 
     private EditText etPriceMin, etPriceMax, etRooms;
     private NeighbourhoodsAdapter adapter;
@@ -277,8 +277,4 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
         offersRecycler.setAdapter(offerAdapter);
     }
 
-    @Override
-    public void onDatabaseChanged() {
-
-    }
 }
