@@ -67,7 +67,8 @@ public class MyOffersFragment extends Fragment {
                 createOfferFragment.setArguments(bundle);
 
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container_main,createOfferFragment,"frag");
+                ft.replace(R.id.fragment_container_main, createOfferFragment, "createOfferFrag");
+                ft.addToBackStack(null);
                 ft.commit();
                 //prati kam edit offer fragment
             }

@@ -148,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         FragmentManager fragmentManager = getFragmentManager();
         Fragment currFrag = fragmentManager.findFragmentById(R.id.fragment_container_main);
 
+
+
+
+
         if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to exit?")
@@ -164,14 +168,19 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
                     });
             AlertDialog alert = builder.create();
             alert.show();
-//        } else
-//            if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
-//                Log.i("fragment", "vlezna v ifa v maina");
-//                getFragmentManager().popBackStack();
-//            }
+        } else
+        if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
+            Log.i("fragment", "vlezna v ifa v maina");
+            getFragmentManager().popBackStack();
+        }
+        else
+        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
+            getFragmentManager().popBackStack();
+        }
 
 
-        } else {
+
+        else {
                 Log.i("fragment", "vlezna v else v maina");
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
