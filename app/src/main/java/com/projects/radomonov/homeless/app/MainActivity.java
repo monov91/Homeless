@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                if(firebaseAuth.getCurrentUser() == null) {
+                if(mAuth.getCurrentUser() == null) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
@@ -92,10 +92,11 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         mDatabaseUsers.keepSynced(true);
 //        currentUser = mDatabaseUsers.child(mAuth.getCurrentUser().getUid());
 
-        String currentUserID = mAuth.getCurrentUser().getUid();
-        Log.i("losho", "usera ---> " + currentUserID);
-        mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
-
+        if(mAuth.getCurrentUser() != null) {
+            String currentUserID = mAuth.getCurrentUser().getUid();
+            Log.i("losho", "usera ---> " + currentUserID);
+            mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
+        }
         readFavouriteOffers();
 
 
@@ -177,31 +178,34 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         favouriteOffersList = new ArrayList<>();
 
-        mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String offerID = (String) dataSnapshot.getValue();
-                favouriteOffersList.add(offerID);
-            }
+        if(mDatabaseFavouriteOffers != null) {
+            mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String offerID = (String) dataSnapshot.getValue();
+                    favouriteOffersList.add(offerID);
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String offerID = (String) dataSnapshot.getValue();
-                favouriteOffersList.remove(offerID);
-            }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    String offerID = (String) dataSnapshot.getValue();
+                    favouriteOffersList.remove(offerID);
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
+
     }
 
     public static final List<String> getFavouriteOffersList() {
