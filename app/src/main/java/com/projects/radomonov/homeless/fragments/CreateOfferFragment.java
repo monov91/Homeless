@@ -447,6 +447,7 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
+        MyOffersFragment myOffersFragment;
         switch (view.getId()) {
             case R.id.btn_save_create:
                 description = etDescription.getText().toString();
@@ -479,6 +480,9 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
                         writeToDB(offer);
                     }
                 }
+                myOffersFragment = new MyOffersFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
+                        myOffersFragment, "searchFrag").commit();
                 break;
             case R.id.btn_delete_create:
                 // Delete offer from database
@@ -497,13 +501,17 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
                 });
                 deletePics(originalPics);
                 deleteThumbnail();
-                SearchFragment searchFrag = new SearchFragment();
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
+                myOffersFragment = new MyOffersFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
+                        myOffersFragment, "searchFrag").commit();
                 break;
+
             case R.id.btn_cancel_create:
-                SearchFragment searchFrag2 = new SearchFragment();
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag2, "searchFrag").commit();
+                myOffersFragment = new MyOffersFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
+                        myOffersFragment, "searchFrag").commit();
                 break;
+
             case R.id.imgbtn_add_photo:
                 Intent intent = new Intent();
                 intent.setType("image/*");
@@ -511,6 +519,7 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"),
                         ADD_PHOTO);
                 break;
+
             case R.id.imgbtn_thumbnail_create:
                 Intent intent2 = new Intent();
                 intent2.setType("image/*");
