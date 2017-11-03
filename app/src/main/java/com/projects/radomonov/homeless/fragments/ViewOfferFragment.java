@@ -115,7 +115,7 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
                 String phoneNumber = currentOffer.getPhoneNumber();
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
                 startActivity(callIntent);
-                return;
+                break;
 
             case R.id.btn_write_an_email_offer_info:
                 String ownerID = currentOffer.getOwner();
@@ -130,7 +130,7 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
                     eMailIntent.setData(Uri.parse("mailto:" + ownerEmail));
                     startActivity(eMailIntent);
                 }
-                return;
+                break;
         }
     }
 }

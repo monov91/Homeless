@@ -168,6 +168,11 @@ public class SearchFragment extends Fragment {
                 } else {
                     rooms = Integer.parseInt(etRooms.getText().toString());
                 }
+                Log.i("kriterii","rooms " + rooms);
+                Log.i("kriterii","max " + maxPrice);
+                Log.i("kriterii","min " + minPrice);
+                Log.i("kriterii","kvartal " + neighbourhoodList.toString());
+                Log.i("kriterii","oferti " + allOffers.size());
                 for (Offer offer : allOffers) {
                     int offerPrice = offer.getPrice();
                     if (offer.getCurrency() == EU) {
@@ -196,6 +201,11 @@ public class SearchFragment extends Fragment {
                             }
                         }
                     }
+                }
+                for (Offer offer : searchedOffers) {
+//                    Log.i("search", offer.getNeighbourhood().toString());
+//                    Log.i("search", "price" + String.valueOf(offer.getPrice()));
+//                    Log.i("search", "rooms" + String.valueOf(offer.getRooms()));
                 }
                 setUpOfferRecycler(searchedOffers,view);
                 Log.i("search", "SIZE -> " + searchedOffers.size());
@@ -267,6 +277,14 @@ public class SearchFragment extends Fragment {
                 ft.replace(R.id.fragment_container_main, viewOfferFragment, "viewOfferFrag");
                 ft.addToBackStack(null);
                 ft.commit();
+//                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
+//
+//                        Bundle bundle = new Bundle();
+//                        bundle.putSerializable("offer", currentOffer);
+//                        createOfferFragment.setArguments(bundle);
+//
+//                        FragmentTransaction ft = fragmentManager.beginTransaction();
+//                        ft.replace(R.id.fragment_container_main, createOfferFragment, "frag");
 
             }
         });
@@ -275,6 +293,11 @@ public class SearchFragment extends Fragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         offersRecycler.setLayoutManager(manager);
         offersRecycler.setAdapter(offerAdapter);
+    }
+
+
+    public OffersAdapter getOfferAdapter() {
+        return this.offerAdapter;
     }
 
 }
