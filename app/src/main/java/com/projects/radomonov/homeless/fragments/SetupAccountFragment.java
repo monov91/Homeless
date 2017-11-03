@@ -43,6 +43,7 @@ import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Owner;
+import com.projects.radomonov.homeless.model.User;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -64,7 +65,7 @@ public class SetupAccountFragment extends Fragment {
 
     private View view;
     private ImageView imgProfilePic;
-    private Button btnEditPhoneNumber, btnSaveChanges, btnCancelChanges;
+    private Button btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
     private DatabaseReference currentUserID;
     private StorageReference mStorage;
@@ -92,11 +93,24 @@ public class SetupAccountFragment extends Fragment {
         updateProfilePic();
         EnableRuntimePermission();
 
-        btnEditPhoneNumber = view.findViewById(R.id.btn_edit_phone_number);
         etPhoneNumber = view.findViewById(R.id.edit_phone_number_setup_frag);
         btnSaveChanges = view.findViewById(R.id.btn_save_changes_setup_acc);
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
         imgProfilePic = view.findViewById(R.id.img_edit_profile);
+
+        String currentUserPhoneNumber = null;
+        Log.i("telefon", "userID---> " + mAuth.getCurrentUser().getUid());
+        for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
+            if (mAuth.getCurrentUser().getUid().equals(DatabaseInfo.getUsersList().get(i).getID())) {
+                currentUserPhoneNumber = DatabaseInfo.getUsersList().get(i).getPhoneNumber();
+                Log.i("telefon", "telefon ---> " + DatabaseInfo.getUsersList().get(i).getID());
+                Log.i("telefon", "telefon ---> " + currentUserPhoneNumber);
+            }
+        }
+
+        if(currentUserPhoneNumber != null) {
+            etPhoneNumber.setText(currentUserPhoneNumber);
+        }
 
         imgProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +122,11 @@ public class SetupAccountFragment extends Fragment {
         btnSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String phoneNumber = etPhoneNumber.getText().toString().trim();
+                if (validateStringForNullAndIsEmpty(phoneNumber)) {
+                    currentUserID.child("phoneNumber").setValue(phoneNumber);
+                }
+                goToMain();
                 mListener.updateFragment();
                 goToMain();
 
@@ -119,17 +138,6 @@ public class SetupAccountFragment extends Fragment {
             public void onClick(View view) {
                 goToMain();
 
-            }
-        });
-
-        btnEditPhoneNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String phoneNumber = etPhoneNumber.getText().toString().trim();
-                if (validateStringForNullAndIsEmpty(phoneNumber)) {
-                    currentUserID.child("phoneNumber").setValue(phoneNumber);
-                }
-               goToMain();
             }
         });
 
