@@ -46,6 +46,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
 
+    private static SearchFragment searchFragInstance;
+    public static SearchFragment getSearchFragInstance() {
+        if (searchFragInstance == null) {
+            return new SearchFragment();
+        } else {
+            return searchFragInstance;
+        }
+    }
+
     private Toolbar toolbar;
     private DatabaseReference mDatabaseUsers;
     private FirebaseAuth mAuth;
@@ -83,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        SearchFragment search = new SearchFragment();
-        ft.add(R.id.fragment_container_main,search, "searchFrag");
+        ft.add(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
         ft.commit();
 
 
@@ -137,9 +145,10 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     public void onBackPressed() {
 
         int count = getFragmentManager().getBackStackEntryCount();
-        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currFrag = fragmentManager.findFragmentById(R.id.fragment_container_main);
 
-        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
+        if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to exit?")
                     .setCancelable(false)
@@ -155,12 +164,17 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
                     });
             AlertDialog alert = builder.create();
             alert.show();
-            //additional code
+//        } else
+//            if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
+//                Log.i("fragment", "vlezna v ifa v maina");
+//                getFragmentManager().popBackStack();
+//            }
+
+
         } else {
-            FragmentManager fragmentManager = getFragmentManager();
+                Log.i("fragment", "vlezna v else v maina");
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            SearchFragment searchFrag = new SearchFragment();
-            ft.replace(R.id.fragment_container_main, searchFrag, "searchFrag");
+            ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
             ft.commit();
 //            getFragmentManager().popBackStack();
         }

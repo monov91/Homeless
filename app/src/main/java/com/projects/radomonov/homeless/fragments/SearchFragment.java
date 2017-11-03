@@ -32,19 +32,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.BANSKO;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.BOROVO;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.CENTAR;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.DARVENICA;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.DIANABAD;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.GORNA_BANQ;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.HIPODRUMA;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.KRASNO_SELO;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.KVARTAL;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.LOZENEC;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.MALINOVA_DOLINA;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.STUDENTSKI;
-import static com.projects.radomonov.homeless.utilities.Utilities.Neighbourhood.TARNOVO;
 
 /**
  * Created by admin on 28.10.2017.
@@ -287,7 +274,9 @@ public class SearchFragment extends Fragment implements DatabaseInfo.DatabaseCha
                 viewOfferFragment.setArguments(bundle);
 
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container_main, viewOfferFragment, "frag").commit();
+                ft.replace(R.id.fragment_container_main, viewOfferFragment, "viewOfferFrag");
+                ft.addToBackStack(null);
+                ft.commit();
 //                        CreateOfferFragment createOfferFragment = new CreateOfferFragment();
 //
 //                        Bundle bundle = new Bundle();

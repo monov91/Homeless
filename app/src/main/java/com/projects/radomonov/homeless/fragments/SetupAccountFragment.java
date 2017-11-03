@@ -67,7 +67,7 @@ public class SetupAccountFragment extends Fragment {
     private ImageView imgProfilePic;
     private Button btnSaveChanges, btnCancelChanges;
     private FirebaseAuth mAuth;
-    private DatabaseReference currentUserID;
+    private DatabaseReference currentUser;
     private StorageReference mStorage;
     private RoundedBitmapDrawable round;
     private EditText etPhoneNumber;
@@ -88,7 +88,7 @@ public class SetupAccountFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_setup_account, container, false);
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference().child("ProfilePics");
-        currentUserID = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
         updateProfilePic();
         EnableRuntimePermission();
@@ -98,16 +98,13 @@ public class SetupAccountFragment extends Fragment {
         btnCancelChanges = view.findViewById(R.id.btn_cancel_changes_setup_acc);
         imgProfilePic = view.findViewById(R.id.img_edit_profile);
 
+        // Setting PhoneNumber field with Current User PhoneNumber value
         String currentUserPhoneNumber = null;
-        Log.i("telefon", "userID---> " + mAuth.getCurrentUser().getUid());
         for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
             if (mAuth.getCurrentUser().getUid().equals(DatabaseInfo.getUsersList().get(i).getID())) {
                 currentUserPhoneNumber = DatabaseInfo.getUsersList().get(i).getPhoneNumber();
-                Log.i("telefon", "telefon ---> " + DatabaseInfo.getUsersList().get(i).getID());
-                Log.i("telefon", "telefon ---> " + currentUserPhoneNumber);
             }
         }
-
         if(currentUserPhoneNumber != null) {
             etPhoneNumber.setText(currentUserPhoneNumber);
         }
@@ -124,12 +121,11 @@ public class SetupAccountFragment extends Fragment {
             public void onClick(View view) {
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
                 if (validateStringForNullAndIsEmpty(phoneNumber)) {
-                    currentUserID.child("phoneNumber").setValue(phoneNumber);
+                    currentUser.child("phoneNumber").setValue(phoneNumber);
                 }
                 goToMain();
                 mListener.updateFragment();
                 goToMain();
-
             }
         });
 
@@ -229,7 +225,7 @@ public class SetupAccountFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             downloadURL = taskSnapshot.getDownloadUrl();
-                            currentUserID.child("profilePic").setValue(downloadURL.toString());
+                            currentUser.child("profilePic").setValue(downloadURL.toString());
                         }
                     });
 
