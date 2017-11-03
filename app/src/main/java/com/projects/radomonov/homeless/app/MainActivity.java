@@ -46,6 +46,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
 
+    private static SearchFragment searchFragInstance;
+    public static SearchFragment getSearchFragInstance() {
+        if (searchFragInstance == null) {
+            return new SearchFragment();
+        } else {
+            return searchFragInstance;
+        }
+    }
+
     private Toolbar toolbar;
     private DatabaseReference mDatabaseUsers;
     private FirebaseAuth mAuth;
@@ -65,51 +74,39 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         DatabaseInfo.readUsers();
         DatabaseInfo.readOffers();
 
-
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
                 if(mAuth.getCurrentUser() == null) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
-                } else {
-//                    Toast.makeText(MainActivity.this, "Welcome...", Toast.LENGTH_SHORT).show();
                 }
             }
         };
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        SearchFragment search = new SearchFragment();
-        ft.add(R.id.fragment_container_main,search, "searchFrag");
+        ft.add(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
         ft.commit();
 
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
-//        currentUser = mDatabaseUsers.child(mAuth.getCurrentUser().getUid());
 
         if(mAuth.getCurrentUser() != null) {
             String currentUserID = mAuth.getCurrentUser().getUid();
-            Log.i("losho", "usera ---> " + currentUserID);
             mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
         }
         readFavouriteOffers();
-
-
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthListener);
-
-
     }
 
     private void setUpNavigationDrawer(){
@@ -122,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     private void setUpToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Search Homes");
-
     }
 
 
@@ -135,11 +131,10 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
     @Override
     public void onBackPressed() {
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currFrag = fragmentManager.findFragmentById(R.id.fragment_container_main);
 
-        int count = getFragmentManager().getBackStackEntryCount();
-        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
-
-        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
+        if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to exit?")
                     .setCancelable(false)
@@ -155,29 +150,24 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
                     });
             AlertDialog alert = builder.create();
             alert.show();
-            //additional code
-        } else {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            SearchFragment searchFrag = new SearchFragment();
-            ft.replace(R.id.fragment_container_main, searchFrag, "searchFrag");
-            ft.commit();
-//            getFragmentManager().popBackStack();
+        } else
+        if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
+            getFragmentManager().popBackStack();
         }
-
-//        Fragment currFrag = getFragmentManager().findFragmentById(R.id.fragment_container_main);
-//        Log.i("frag", "cur ===> " + currFrag);
-//        if (currFrag == getFragmentManager().findFragmentByTag("searchFrag")) {
-//
-//        }
-
-
+        else
+        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
+            getFragmentManager().popBackStack();
+        }
+        else {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
+            ft.commit();
+        }
     }
 
     public void readFavouriteOffers() {
-
+        // Getting current user favourite offers
         favouriteOffersList = new ArrayList<>();
-
         if(mDatabaseFavouriteOffers != null) {
             mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
                 @Override

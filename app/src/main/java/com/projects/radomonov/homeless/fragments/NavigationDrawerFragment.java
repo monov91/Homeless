@@ -65,11 +65,8 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
     private RoundedBitmapDrawable round;
-    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference currentUserPic;
-    private DatabaseReference currentUser;
-
 
     @Nullable
     @Override
@@ -84,17 +81,9 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         btnMyFavouriteOffers = view.findViewById(R.id.btn_my_favourite_offers);
         imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
 
-//        String currentUserID = mAuth.getCurrentUser().getUid();
-//        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-
         if(mAuth != null) {
             updateProfilePic();
         }
-//        if(currentUser.child("profilePic") != null) {
-//            Log.i("plamen", "1");
-//            updateProfilePic();
-//        }
-
 
         btnCreateOffer.setOnClickListener(this);
         btnLogOut.setOnClickListener(this);
@@ -104,10 +93,12 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
 
         return view;
     }
-
+    // Using this Stream in updateProfilePic method
     InputStream input = null;
-
     public void updateProfilePic(){
+        // In this method we are taking current user profile picture,
+        // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
+        // make it round and setting it to imgEditProfile to this fragment
         if (mAuth.getCurrentUser() != null) {
             currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
 
@@ -115,11 +106,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getValue() != null) {
-//                        String picURL = dataSnapshot.getValue().toString();
-//                        setImage(getContext(), picURL);
-
                         final String picURL = dataSnapshot.getValue().toString();
-
                         new AsyncTask<Void, Void, Bitmap>() {
                             @Override
                             protected Bitmap doInBackground(Void... voids) {
@@ -158,13 +145,11 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // getActivity().invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // getActivity().invalidateOptionsMenu();
             }
 
             @Override
@@ -225,12 +210,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
 
             default:  break;
         }
-        mDrawerLayout.closeDrawers();
-    }
-
-    private void setImage(Context context, String imgURL) {
-//        Picasso.with(context).load(imgURL).into(imgEditProfile);
-        Glide.with(context).load(imgURL).override(60, 60).into(imgEditProfile);
+        closeNavDrawer();
     }
 
 }

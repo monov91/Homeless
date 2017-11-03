@@ -26,45 +26,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText etName, etEmail, etPassword, etConfirmPass, etPhoneNumber;
     private Button btnRegister;
-
     private ArrayList<String> keyList;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseUsers;
-    private Map<String, String> mapUserNamesEmails = new HashMap<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
+        initialiseData();
 
-        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        btnRegister.setOnClickListener(this);
 
-
-        etName = (EditText) findViewById(R.id.et_nick_name_reg);
-        etEmail = (EditText) findViewById(R.id.et_email_reg);
-        etPhoneNumber = (EditText) findViewById(R.id.et_phone_number_reg);
-        etPassword = (EditText) findViewById(R.id.et_password_reg);
-        etConfirmPass = (EditText) findViewById(R.id.et_confirm_password_reg);
-
-        btnRegister = (Button) findViewById(R.id.btn_register_reg);
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startRegister();
-            }
-        });
     }
 
     private void startRegister() {
-
         mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -72,11 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
                 keyList = new ArrayList<>();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     keyList.add(child.getKey());
-                }
-
-
-                for (Map.Entry<String, String> entry : mapUserNamesEmails.entrySet()) {
-                    Log.i("tagche", entry.getKey() + " ---> " + entry.getValue());
                 }
 
                 final String userName = etName.getText().toString().trim();
@@ -93,7 +69,6 @@ public class RegisterActivity extends AppCompatActivity {
                 // iterating firebase and checking is user exist
                 if (userName != null) {
                     for (int i = 0; i < keyList.size(); i++) {
-                        Log.i("user", keyList.get(i));
                         DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("nickName");
                         nickName.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -104,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     return;
                                 }
                             }
-
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
 
@@ -118,7 +92,6 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-
                 for (int i = 0; i < keyList.size(); i++) {
                     DatabaseReference nickName = mDatabaseUsers.child(keyList.get(i)).child("eMail");
                     nickName.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -130,20 +103,15 @@ public class RegisterActivity extends AppCompatActivity {
                                     etEmail.setError("e-Mail already exist!");
                                     return;
                                 }
-                            } else { // tuka puk ni dava null dataSnapshot.getValue(), mamka mu deeba!!! SUKA!
-                                Toast.makeText(RegisterActivity.this, "Pizdec Bleeeeaaaatttttt..........", Toast.LENGTH_SHORT).show();
                             }
-
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                 }
 
-                if (!validateStringForNullAndIsEmpty(phoneNumber)) {
+                if (!isValidPhoneNumber(phoneNumber)) {
                     etPhoneNumber.setError("Invalid PhoneNumber");
                     return;
                 }
@@ -157,14 +125,12 @@ public class RegisterActivity extends AppCompatActivity {
                     etConfirmPass.setError("Passwords don't match");
                     return;
                 }
-
-
+                // Creating user and write it to the FirebaseDatabase
                 mAuth.createUserWithEmailAndPassword(eMail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             String userID = mAuth.getCurrentUser().getUid();
-                            Log.i("dima", "ID --- > " + userID);
 
                             DatabaseReference currentUserDb = mDatabaseUsers.child(userID);
 
@@ -189,6 +155,25 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void initialiseData() {
+        mAuth = FirebaseAuth.getInstance();
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        etName = (EditText) findViewById(R.id.et_nick_name_reg);
+        etEmail = (EditText) findViewById(R.id.et_email_reg);
+        etPhoneNumber = (EditText) findViewById(R.id.et_phone_number_reg);
+        etPassword = (EditText) findViewById(R.id.et_password_reg);
+        etConfirmPass = (EditText) findViewById(R.id.et_confirm_password_reg);
+        btnRegister = (Button) findViewById(R.id.btn_register_reg);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_register_reg :
+                startRegister();
+                return;
+        }
+    }
 
     private boolean validateStringForNullAndIsEmpty(String str) {
         if (str == null || str.isEmpty()) {
@@ -196,6 +181,21 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        // Create regex to validate input phoneNumber
+        String regex = "0[8-9]{2}[0-9]{7}";
+        if(phoneNumber.matches(regex)) {
+            return true;
+        } else
+            regex = "[+]359[8-9]{2}[0-9]{7}";
+        if(phoneNumber.matches(regex)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }
 
