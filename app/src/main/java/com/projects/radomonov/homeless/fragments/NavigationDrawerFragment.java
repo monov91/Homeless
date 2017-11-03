@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,7 +56,6 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-
     private LinearLayout btnCreateOffer;
     private LinearLayout btnLogOut;
     private LinearLayout btnMyOffers;
@@ -65,21 +65,15 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private FragmentTransaction fragmentTransaction;
     private FirebaseAuth mAuth;
     private RoundedBitmapDrawable round;
-
+    private View view;
     private DatabaseReference currentUserPic;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+        view = inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
 
-        mAuth = FirebaseAuth.getInstance();
-        fragmentManager = getFragmentManager();
-        btnLogOut = view.findViewById(R.id.btn_log_out);
-        btnCreateOffer = view.findViewById(R.id.btn_create_offer);
-        btnMyOffers = view.findViewById(R.id.btn_my_offers);
-        btnMyFavouriteOffers = view.findViewById(R.id.btn_my_favourite_offers);
-        imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
+        initialiseData();
 
         if(mAuth != null) {
             updateProfilePic();
@@ -211,6 +205,16 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             default:  break;
         }
         closeNavDrawer();
+    }
+
+    private void initialiseData() {
+        mAuth = FirebaseAuth.getInstance();
+        fragmentManager = getFragmentManager();
+        btnLogOut = view.findViewById(R.id.btn_log_out);
+        btnCreateOffer = view.findViewById(R.id.btn_create_offer);
+        btnMyOffers = view.findViewById(R.id.btn_my_offers);
+        btnMyFavouriteOffers = view.findViewById(R.id.btn_my_favourite_offers);
+        imgEditProfile = view.findViewById(R.id.img_edit_profile_drawer_frag);
     }
 
 }

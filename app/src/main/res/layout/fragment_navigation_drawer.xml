@@ -28,50 +28,53 @@
         android:orientation="horizontal"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="5dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:src="@drawable/ic_profile"
-            android:tint="@android:color/darker_gray"
-            />
+            android:id="@+id/my_offers_pic_nav_draw"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:src="@drawable/my_offers_house" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:text="My Offers"/>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/btn_create_offer"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:clickable="true"
+        android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackground"
-        android:gravity="center">
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:src="@drawable/ic_profile"
-            android:tint="@android:color/darker_gray"
-            />
+            android:id="@+id/crete_offer_pic_nav_draw"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:src="@drawable/plus_icon_blue" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:text="Create Offer"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:text="Create Offer"/>
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -81,31 +84,31 @@
         android:orientation="horizontal"
         android:clickable="true"
         android:background="?attr/selectableItemBackground"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="5dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:id="@+id/my_favourite_offers_pic_nav_draw"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:src="@drawable/ic_profile"
-            android:tint="@android:color/darker_gray"
-            />
+            android:src="@drawable/star_icon" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:text="My Favourite Offers"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-    </LinearLayout>
+        android:layout_weight="1"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/btn_log_out"
@@ -114,15 +117,15 @@
         android:orientation="horizontal"
         android:clickable="true"
         android:background="?attr/selectableItemBackground"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:src="@drawable/ic_profile"
-            android:tint="@android:color/darker_gray"
+            android:layout_marginRight="13dp"
+            android:src="@drawable/logout_icon_red"
             />
         <TextView
             android:layout_width="match_parent"
@@ -130,7 +133,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:text="Log out"/>
     </LinearLayout>
 
