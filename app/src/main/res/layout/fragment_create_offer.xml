@@ -8,7 +8,8 @@
         android:id="@+id/create_offer_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="16dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -61,58 +62,95 @@
                 android:inputType="text"
                 android:textAlignment="center"
                 android:textSize="28sp"
+                android:background="@drawable/input_outline"
                  />
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_rooms_create"
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:hint="Rooms"
-                android:inputType="number"
-                android:maxLength="1"
-                />
+                app:hintTextAppearance="@style/MyEditTextLayout">
 
-        </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/et_rooms_create"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:layout_margin="16dp"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:hint="Rooms"
+                    app:hintTextAppearance="@style/MyEditText"
+                    android:inputType="number"
+                    android:background="@drawable/input_outline"
+                    android:maxLength="1"
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                    />
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_price_create"
-                android:layout_width="match_parent"
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:hint="Price"
-                android:inputType="number"
-                android:maxLength="4"
+                app:hintTextAppearance="@style/MyEditTextLayout">
 
-                />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/et_price_create"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:layout_margin="16dp"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:hint="Price"
+                    app:hintTextAppearance="@style/MyEditText"
+                    android:inputType="number"
+                    android:background="@drawable/input_outline"
+                    android:maxLength="4"
 
-        </android.support.design.widget.TextInputLayout>
+                    />
 
-       <RadioGroup
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
-           <RadioButton
-               android:id="@+id/rdbtn_bgn_create"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:checked="true"
-               android:text="BGN"/>
-           <RadioButton
-               android:id="@+id/rdbtn_eu_create"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="EU"/>
-       </RadioGroup>
+            </android.support.design.widget.TextInputLayout>
+
+            <RadioGroup
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/rdbtn_bgn_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="BGN"/>
+                <RadioButton
+                    android:id="@+id/rdbtn_eu_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="EU"/>
+            </RadioGroup>
+
+        </LinearLayout>
+
+
+
+
+
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/et_description_layout_create"
@@ -127,7 +165,8 @@
                 android:gravity="top|left"
                 android:minLines="10"
                 android:lines="10"
-                android:hint="Description"/>
+                android:hint="Description"
+                android:background="@drawable/input_outline"/>
         </android.support.design.widget.TextInputLayout>
 
 
