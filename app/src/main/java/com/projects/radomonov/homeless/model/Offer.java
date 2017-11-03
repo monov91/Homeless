@@ -37,17 +37,17 @@ public class Offer implements Serializable {
     @Override
     public String toString() {
         return "Offer{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", rooms=" + rooms +
-                ", price=" + price +
-                ", neighbourhood=" + neighbourhood +
-                ", currency=" + currency +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", owner='" + owner + '\'' +
-                ", imageThumbnail='" + imageThumbnail + '\'' +
-                ", description='" + description + '\'' +
-                ", imageUrls=" + imageUrls +
+                "id='" + id + '\'' + "\n" +
+                ", title='" + title + '\'' + "\n" +
+                ", rooms=" + rooms + "\n" +
+                ", price=" + price + "\n" +
+                ", neighbourhood=" + neighbourhood + "\n" +
+                ", currency=" + currency + "\n" +
+                ", phoneNumber='" + phoneNumber + '\'' + "\n" +
+                ", owner='" + owner + '\'' + "\n" +
+                ", imageThumbnail='" + imageThumbnail + '\'' + "\n" +
+                ", description='" + description + '\'' + "\n" +
+                ", imageUrls=" + imageUrls + "\n" +
                 '}';
     }
 

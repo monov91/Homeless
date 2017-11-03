@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         if (currFrag == fragmentManager.findFragmentByTag("searchFrag")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
+            // Making custom alertDiialog
             View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.alert_dialog_layout, null);
             TextView title = view.findViewById(R.id.tv_title_alert);
             ImageView imageView = view.findViewById(R.id.image_btn_alert);

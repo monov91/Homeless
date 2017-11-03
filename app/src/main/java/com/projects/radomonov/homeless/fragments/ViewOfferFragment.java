@@ -60,6 +60,16 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
             fillFields();
         }
 
+        favouriteOfferID = currentUser.child("favouriteOffers").child(currentOffer.getId());
+        favouriteOffers = currentUser.child("favouriteOffers");
+
+        //for sliding images
+        viewPager = view.findViewById(R.id.view_pager_offer_view);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), currentOffer);
+        viewPager.setAdapter(viewPagerAdapter);
+
+
+
         btnMakeCall.setOnClickListener(this);
         btnWriteEmail.setOnClickListener(this);
 
@@ -90,8 +100,6 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
     }
 
     private void initialiseData() {
-        favouriteOfferID = currentUser.child("favouriteOffers").child(currentOffer.getId());
-        favouriteOffers = currentUser.child("favouriteOffers");
         mAuth = FirebaseAuth.getInstance();
         currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
@@ -100,11 +108,6 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
         btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
         btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
         cbLikeThisOffer = view.findViewById(R.id.cb_like_this_offer);
-
-        //for sliding images
-        viewPager = view.findViewById(R.id.view_pager_offer_view);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity(), currentOffer);
-        viewPager.setAdapter(viewPagerAdapter);
     }
 
     @Override
