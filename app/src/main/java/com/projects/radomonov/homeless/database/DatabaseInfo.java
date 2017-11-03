@@ -76,8 +76,6 @@ public class DatabaseInfo extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Offer offer = dataSnapshot.getValue(Offer.class);
                 offersList.add(offer);
-                if (SearchFragment.offerAdapter != null) {
-                }
             }
 
             @Override
