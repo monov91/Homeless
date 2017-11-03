@@ -18,7 +18,7 @@
             android:gravity="center"
             android:textSize="20sp" />
         <ImageButton
-            android:id="@+id/img_select_create"
+            android:id="@+id/imgbtn_thumbnail_create"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginLeft="0dp"
@@ -145,7 +145,8 @@
             android:layout_height="wrap_content"
             android:text="Delete Offer"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_cancel_create"

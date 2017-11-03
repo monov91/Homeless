@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -57,23 +54,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static android.R.attr.editable;
 import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Tom on 21.10.2017.
  */
 
-public class CreateOfferFragment extends Fragment {
-    public static final int ADD_PHOTO_CROP = 5;
-    public static final int GALLERY_REQUEST = 1;
+public class CreateOfferFragment extends Fragment implements View.OnClickListener {
     public static final int CHOOSE_OFFER_THUMBNAIL = 2;
     public static final int ADD_PHOTO = 3;
-    private String title;
-    private String price;
-    private String description;
-    private Offer.Currency currency;
-    private String rooms;
+
+
 
     private Uri thumbnail;
 
@@ -81,147 +72,35 @@ public class CreateOfferFragment extends Fragment {
     private EditText etTitle, etPrice, etRooms;
     private TextInputEditText etDescription;
     private Button btnSave, btnDelete, btnCancel;
-    private ImageButton imgbtnChoose, imgbtnAdd;
-    private DatabaseReference offers;
-    private DatabaseReference offer;
-    private DatabaseReference currentUser;
+    private RadioButton rdbtnEU,rdbtnBGN;
+    private ImageButton imgbtnChooseThumbnail, imgbtnAdd;
+    private DatabaseReference allOffers,offer,currentUser;
     private StorageReference mStorage;
-    private String phoneNum;
-    private RadioButton rdbtnEU;
-    private RadioButton rdbtnBGN;
+    private String phoneNum,neighbourhood,description,price,title,rooms;
+    private Offer.Currency currency;
+
     private Spinner spinnerNeigh;
-    private String neighbourhood;
-    private boolean isNewOffer = true;
+    private boolean isNewOffer,changedImage;
     private Offer editOffer;
-    private boolean changedImage = false;
 
     private List<Uri> offerImagesUrls;
-
     private HashMap<String, Uri> originalPics;
     private HashMap<String, Uri> toDeletePics;
+
     private OfferPhotosAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_offer, container, false);
-        offerImagesUrls = new ArrayList<>();
-        originalPics = new HashMap<>();
-        toDeletePics = new HashMap<>();
+
+        initialiseVariables(view);
+        setEditTextListeners();
         setUpRecyclerForPhotos(view);
-        offers = FirebaseDatabase.getInstance().getReference().child("Offers");
+        setUpNeighbourhoodsSpinner();
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
-        mStorage = FirebaseStorage.getInstance().getReference();
-        rdbtnBGN = view.findViewById(R.id.rdbtn_bgn_create);
-        rdbtnEU = view.findViewById(R.id.rdbtn_eu_create);
-        etTitle = view.findViewById(R.id.et_title_create);
-        etPrice = view.findViewById(R.id.et_price_create);
-        etRooms = view.findViewById(R.id.et_rooms_create);
-        etRooms.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        setListeners();
 
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                int length = etRooms.length();
-                if(length == 1 && etRooms.getText().toString().equals("0")){
-                    etRooms.setError("Cannot Start With \"0\"");
-                    etRooms.setText("");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            etRooms.setError(null);
-                        }
-                    }, 1500);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-        etPrice.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                int length = etPrice.length();
-                if(length == 1 && etPrice.getText().toString().equals("0")){
-                    etPrice.setError("Cannot Start With \"0\"");
-                    etPrice.setText("");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            etPrice.setError(null);
-                        }
-                    }, 1500);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-        etDescription = view.findViewById(R.id.et_description_create);
-
-        btnDelete = view.findViewById(R.id.btn_delete_create);
-        btnDelete.setVisibility(View.GONE);
-        spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
-        spinnerNeigh.setAdapter(ArrayAdapter.createFromResource(getContext(), R.array.neighbourhoods, R.layout.support_simple_spinner_dropdown_item));
-        spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                neighbourhood = spinnerNeigh.getSelectedItem().toString();
-                Log.i("spinner", "selected " + spinnerNeigh.getSelectedItem());
-                Log.i("spinner", "selected " + neighbourhood);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        imgbtnAdd = view.findViewById(R.id.imgbtn_add_photo);
-        imgbtnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
-                        ADD_PHOTO);
-            }
-        });
-
-        imgbtnChoose = view.findViewById(R.id.img_select_create);
-        imgbtnChoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
-                        CHOOSE_OFFER_THUMBNAIL);
-
-            }
-        });
-        btnSave =  view.findViewById(R.id.btn_save_create);
-        btnCancel = view.findViewById(R.id.btn_cancel_create);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SearchFragment searchFrag = new SearchFragment();
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
-            }
-        });
         Bundle bundle = getArguments();
         if (bundle != null) {
             editOffer = (Offer) getArguments().getSerializable("offer");
@@ -231,73 +110,29 @@ public class CreateOfferFragment extends Fragment {
             fillFields(editOffer);
 
             btnDelete.setVisibility(View.VISIBLE);
-            setDeleteListener();
         }
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                description = etDescription.getText().toString();
-                title = etTitle.getText().toString().trim();
-                price = etPrice.getText().toString();
-
-                if (rdbtnEU.isChecked()) {
-                    currency = Offer.Currency.EU;
-                } else {
-                    currency = Offer.Currency.BGN;
-                }
-                rooms = etRooms.getText().toString();
-
-                if(!hasValidEntries()){
-                    return;
-                } else{
-                    if (isNewOffer) {
-                        // Create new child for the offer in database
-                        offer = offers.push();
-                        if (thumbnail != null) {
-                            updateThumbnail();
-                            writeToDB(offer);
-                        } else {
-                            Toast.makeText(getContext(), "Choose offer thumbnail", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        // Set the DB reference to the current offer (editing the offer)
-                        offer = offers.child(editOffer.getId());
-                        if (changedImage) {
-                            updateThumbnail();
-                        }
-                        deletePics(toDeletePics);
-                        writeToDB(offer);
-                    }
-                }
-            }
-        });
         return view;
     }
 
-    private void setDeleteListener() {
-        btnDelete.setOnClickListener(new View.OnClickListener() {
+    private void setListeners() {
+        btnCancel.setOnClickListener(this);
+        btnDelete.setOnClickListener(this);
+        btnSave.setOnClickListener(this);
+        imgbtnAdd.setOnClickListener(this);
+        imgbtnChooseThumbnail.setOnClickListener(this);
+    }
+
+    private void setUpNeighbourhoodsSpinner() {
+        spinnerNeigh.setAdapter(ArrayAdapter.createFromResource(getContext(), R.array.neighbourhoods, R.layout.support_simple_spinner_dropdown_item));
+        spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                // Delete offer from database
-                String currentOfferID = editOffer.getId();
-                final Query offerQuery = offers.child(currentOfferID);
-                offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        dataSnapshot.getRef().removeValue();
-                    }
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                neighbourhood = spinnerNeigh.getSelectedItem().toString();
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                deletePics(originalPics);
-                deleteThumbnail();
-                SearchFragment searchFrag = new SearchFragment();
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
@@ -309,13 +144,7 @@ public class CreateOfferFragment extends Fragment {
         pic.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.i("delete", "thumbnail successful deletion");
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.i("delete", "thumbnail UNsuccessful deletion");
             }
         });
     }
@@ -411,7 +240,7 @@ public class CreateOfferFragment extends Fragment {
 
     public void fillFields(Offer offer) {
         thumbnail = Uri.parse(offer.getImageThumbnail());
-        Glide.with(getContext()).load(thumbnail).into(imgbtnChoose);
+        Glide.with(getContext()).load(thumbnail).into(imgbtnChooseThumbnail);
         etTitle.setText(offer.getTitle());
         etRooms.setText("" + offer.getRooms());
         etPrice.setText("" + offer.getPrice());
@@ -457,7 +286,7 @@ public class CreateOfferFragment extends Fragment {
                         .getBitmap(getActivity().getContentResolver(), result.getUri());
                 //Convert cropped bitmap into URI and set the thumbnail in ImageButton
                 thumbnail = getImageUri(getContext(), bitmap);
-                imgbtnChoose.setImageURI(thumbnail);
+                imgbtnChooseThumbnail.setImageURI(thumbnail);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -506,7 +335,7 @@ public class CreateOfferFragment extends Fragment {
         return uuid;
     }
 
-    private boolean hasValidEntries(){
+    private boolean hasValidEntries() {
         boolean result = true;
         if (TextUtils.isEmpty(description)) {
             etDescription.setError("Enter a Description");
@@ -524,16 +353,171 @@ public class CreateOfferFragment extends Fragment {
             etPrice.setError("Enter Price");
             result = false;
         }
-        if(offerImagesUrls.isEmpty()){
+        if (offerImagesUrls.isEmpty()) {
             Toast.makeText(getContext(), "Add at least 1 picture", Toast.LENGTH_SHORT).show();
             result = false;
         }
-        if(thumbnail == null){
+        if (isNewOffer && thumbnail == null) {
             Toast.makeText(getContext(), "Choose offer Thumbnail", Toast.LENGTH_SHORT).show();
             result = false;
         }
 
 
         return result;
+    }
+
+    private void initialiseVariables(View view) {
+        allOffers = FirebaseDatabase.getInstance().getReference().child("Offers");
+        offerImagesUrls = new ArrayList<>();
+        originalPics = new HashMap<>();
+        toDeletePics = new HashMap<>();
+        isNewOffer = true;
+        changedImage = false;
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        mStorage = FirebaseStorage.getInstance().getReference();
+        rdbtnBGN = view.findViewById(R.id.rdbtn_bgn_create);
+        rdbtnEU = view.findViewById(R.id.rdbtn_eu_create);
+        etTitle = view.findViewById(R.id.et_title_create);
+        etPrice = view.findViewById(R.id.et_price_create);
+        etRooms = view.findViewById(R.id.et_rooms_create);
+        etDescription = view.findViewById(R.id.et_description_create);
+        btnDelete = view.findViewById(R.id.btn_delete_create);
+        spinnerNeigh = view.findViewById(R.id.spinnner_neigh_create);
+        btnSave = view.findViewById(R.id.btn_save_create);
+        btnCancel = view.findViewById(R.id.btn_cancel_create);
+        imgbtnChooseThumbnail = view.findViewById(R.id.imgbtn_thumbnail_create);
+        imgbtnAdd = view.findViewById(R.id.imgbtn_add_photo);
+    }
+
+    private void setEditTextListeners() {
+        etRooms.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                int length = etRooms.length();
+                if (length == 1 && etRooms.getText().toString().equals("0")) {
+                    etRooms.setError("Cannot Start With \"0\"");
+                    etRooms.setText("");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            etRooms.setError(null);
+                        }
+                    }, 1500);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        etPrice.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                int length = etPrice.length();
+                if (length == 1 && etPrice.getText().toString().equals("0")) {
+                    etPrice.setError("Cannot Start With \"0\"");
+                    etPrice.setText("");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            etPrice.setError(null);
+                        }
+                    }, 1500);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_save_create:
+                description = etDescription.getText().toString();
+                title = etTitle.getText().toString().trim();
+                price = etPrice.getText().toString();
+
+                if (rdbtnEU.isChecked()) {
+                    currency = Offer.Currency.EU;
+                } else {
+                    currency = Offer.Currency.BGN;
+                }
+                rooms = etRooms.getText().toString();
+
+                if (!hasValidEntries()) {
+                    return;
+                } else {
+                    if (isNewOffer) {
+                        // Create new child for the offer in database
+                        offer = allOffers.push();
+                        updateThumbnail();
+                        writeToDB(offer);
+
+                    } else {
+                        // Set the DB reference to the current offer (editing the offer)
+                        offer = allOffers.child(editOffer.getId());
+                        if (changedImage) {
+                            updateThumbnail();
+                        }
+                        deletePics(toDeletePics);
+                        writeToDB(offer);
+                    }
+                }
+                break;
+            case R.id.btn_delete_create:
+                // Delete offer from database
+                String currentOfferID = editOffer.getId();
+                final Query offerQuery = allOffers.child(currentOfferID);
+                offerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        dataSnapshot.getRef().removeValue();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                deletePics(originalPics);
+                deleteThumbnail();
+                SearchFragment searchFrag = new SearchFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag, "searchFrag").commit();
+                break;
+            case R.id.btn_cancel_create:
+                SearchFragment searchFrag2 = new SearchFragment();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main, searchFrag2, "searchFrag").commit();
+                break;
+            case R.id.imgbtn_add_photo:
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
+                        ADD_PHOTO);
+                break;
+            case R.id.imgbtn_thumbnail_create:
+                Intent intent2 = new Intent();
+                intent2.setType("image/*");
+                intent2.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent2, "Select Picture"),
+                        CHOOSE_OFFER_THUMBNAIL);
+                break;
+        }
     }
 }
