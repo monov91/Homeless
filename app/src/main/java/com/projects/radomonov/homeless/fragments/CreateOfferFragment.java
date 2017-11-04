@@ -4,10 +4,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -73,7 +76,8 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
     private TextInputEditText etDescription;
     private Button btnSave, btnDelete, btnCancel;
     private RadioButton rdbtnEU,rdbtnBGN;
-    private ImageButton imgbtnChooseThumbnail, imgbtnAdd;
+    private ImageButton imgbtnChooseThumbnail;
+    private ImageView imgbtnAdd;
     private DatabaseReference allOffers,offer,currentUser;
     private StorageReference mStorage;
     private String phoneNum,neighbourhood,description,price,title,rooms;
@@ -123,8 +127,19 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
         imgbtnChooseThumbnail.setOnClickListener(this);
     }
 
+
+
     private void setUpNeighbourhoodsSpinner() {
-        spinnerNeigh.setAdapter(ArrayAdapter.createFromResource(getContext(), R.array.neighbourhoods, R.layout.support_simple_spinner_dropdown_item));
+        String[] arr = getResources().getStringArray(R.array.neighbourhoods);
+        ArrayAdapter adapter2 = new ArrayAdapter(getContext(),R.layout.support_simple_spinner_dropdown_item,arr) {
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                v.setMinimumHeight(70);
+                return v;
+            }
+        };
+        spinnerNeigh.setAdapter(adapter2);
         spinnerNeigh.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
