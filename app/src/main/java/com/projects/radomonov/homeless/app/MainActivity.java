@@ -152,21 +152,21 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
                             MainActivity.this.finish();
                         }
                     }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
             builder.setView(view);
             builder.show();
-        } else
-        if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
-            getFragmentManager().popBackStack();
-        }
-        else
-        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
-            getFragmentManager().popBackStack();
-        }
-        else {
+//        } else
+//        if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
+//            getFragmentManager().popBackStack();
+//        }
+//        else
+//        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
+//            getFragmentManager().popBackStack();
+//        }
+        } else {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
             ft.commit();
