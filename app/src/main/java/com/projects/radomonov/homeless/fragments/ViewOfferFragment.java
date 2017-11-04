@@ -208,7 +208,7 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
                 offerOwnerName = DatabaseInfo.getUsersList().get(i).getNickName();
             }
         }
-        userNameEt.setText("Posted by:  " + offerOwnerName);
+        userNameEt.setText(offerOwnerName);
     }
 
     private void getOfferOwner() {
