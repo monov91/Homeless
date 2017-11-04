@@ -41,7 +41,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_photos"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/input_outline">
 
         </android.support.v7.widget.RecyclerView>
 
@@ -124,22 +125,23 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layout_gravity="center">
 
                 <RadioButton
                     android:id="@+id/rdbtn_bgn_create"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:textSize="20sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:text="BGN"/>
                 <RadioButton
                     android:id="@+id/rdbtn_eu_create"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:text="EU"/>
             </RadioGroup>
@@ -147,22 +149,20 @@
         </LinearLayout>
 
 
-
-
-
-
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/et_description_layout_create"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:hintTextAppearance="@style/MyEditTextLayout">
             <android.support.design.widget.TextInputEditText
-
                 android:id="@+id/et_description_create"
+
+                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textMultiLine"
                 android:gravity="top|left"
+                app:hintTextAppearance="@style/MyEditText"
                 android:minLines="10"
                 android:lines="10"
                 android:hint="Description"
@@ -194,6 +194,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:text="Cancel"
+            android:layout_marginBottom="16dp"
             />
     </LinearLayout>
 </ScrollView>
