@@ -1,9 +1,12 @@
 package com.projects.radomonov.homeless.app;
 
 import android.content.Intent;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -44,12 +47,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btnRegister.setOnClickListener(this);
 
     }
-
+    boolean invalidEntries = false;
     private void startRegister() {
+
+        final Drawable errorIcon = getResources().getDrawable(R.drawable.error_final);
+        errorIcon.setBounds(new Rect(0, 0, errorIcon.getIntrinsicWidth(), errorIcon.getIntrinsicHeight()));
         mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 keyList = new ArrayList<>();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     keyList.add(child.getKey());
@@ -62,8 +67,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 String passConfirm = etConfirmPass.getText().toString().trim();
 
                 if (!validateStringForNullAndIsEmpty(userName)) {
-                    etName.setError("Invalid Name");
-                    return;
+//                    etName.setError(Html.fromHtml("<font color='white'>Invalid name</font>"));
+                    etName.setError("Invalid Name", errorIcon);
+                    invalidEntries = true;
                 }
 
                 // iterating firebase and checking is user exist
@@ -75,8 +81,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 String nick = (String) dataSnapshot.getValue();
                                 if (nick.equals(userName)) {
-                                    etName.setError("NickName already exist!");
-                                    return;
+                                    etName.setError("NickName already exist!", errorIcon);
+                                    invalidEntries = true;
                                 }
                             }
                             @Override
@@ -87,9 +93,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     }
                 }
 
-                if (!validateStringForNullAndIsEmpty(eMail)) {
-                    etEmail.setError("Invalid eMail");
-                    return;
+                if (!isValidEmail(eMail)) {
+                    etEmail.setError("Invalid eMail", errorIcon);
+                    invalidEntries = true;
                 }
 
                 for (int i = 0; i < keyList.size(); i++) {
@@ -100,8 +106,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             String mail = (String) dataSnapshot.getValue();
                             if (mail != null) {
                                 if (mail.equals(eMail)) {
-                                    etEmail.setError("e-Mail already exist!");
-                                    return;
+                                    etEmail.setError("e-Mail already exist!", errorIcon);
+                                    invalidEntries = true;
                                 }
                             }
                         }
@@ -112,17 +118,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 if (!isValidPhoneNumber(phoneNumber)) {
-                    etPhoneNumber.setError("Invalid PhoneNumber");
-                    return;
+                    etPhoneNumber.setError("Invalid PhoneNumber", errorIcon);
+                    invalidEntries = true;
                 }
 
                 if (!validateStringForNullAndIsEmpty(pass)) {
-                    etPassword.setError("Invalid Password");
-                    return;
+                    etPassword.setError("Invalid Password", errorIcon);
+                    invalidEntries = true;
                 }
 
                 if (!pass.equals(passConfirm)) {
-                    etConfirmPass.setError("Passwords don't match");
+//                    etConfirmPass.setError(Html.fromHtml("<font color='white'>Passwords don't match</font>"));
+                    etConfirmPass.setError("Passwords don't match", errorIcon);
+                    invalidEntries = true;
+                }
+                if (invalidEntries == true) {
                     return;
                 }
                 // Creating user and write it to the FirebaseDatabase
@@ -171,7 +181,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.btn_register_reg :
                 startRegister();
-                return;
+                break;
+        }
+    }
+
+    private  boolean isValidEmail(CharSequence email) {
+        if (TextUtils.isEmpty(email)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
         }
     }
 

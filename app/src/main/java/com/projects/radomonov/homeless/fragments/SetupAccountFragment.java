@@ -226,8 +226,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
         // requiring permission for using camera on mobile device.
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 Manifest.permission.CAMERA)) {
-            Toast.makeText(getActivity(), "CAMERA permission allows us to Access CAMERA app",
-                    Toast.LENGTH_LONG).show();
         } else {
             ActivityCompat.requestPermissions(getActivity(), new String[]{
                     Manifest.permission.CAMERA}, REQUEST_PERMISSION_CODE);

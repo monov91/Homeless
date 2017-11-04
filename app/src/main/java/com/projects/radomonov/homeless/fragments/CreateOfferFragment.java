@@ -44,6 +44,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.adapters.OfferPhotosAdapter;
+import com.projects.radomonov.homeless.app.MainActivity;
 import com.projects.radomonov.homeless.model.Offer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -462,7 +463,7 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        MyOffersFragment myOffersFragment;
+        SearchFragment searchFragment;
         switch (view.getId()) {
             case R.id.btn_save_create:
                 description = etDescription.getText().toString();
@@ -495,9 +496,9 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
                         writeToDB(offer);
                     }
                 }
-                myOffersFragment = new MyOffersFragment();
+                searchFragment = MainActivity.getSearchFragInstance();
                 getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
-                        myOffersFragment, "searchFrag").commit();
+                        searchFragment, "searchFrag").commit();
                 break;
             case R.id.btn_delete_create:
                 // Delete offer from database
@@ -516,15 +517,15 @@ public class CreateOfferFragment extends Fragment implements View.OnClickListene
                 });
                 deletePics(originalPics);
                 deleteThumbnail();
-                myOffersFragment = new MyOffersFragment();
+                searchFragment = MainActivity.getSearchFragInstance();
                 getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
-                        myOffersFragment, "searchFrag").commit();
+                        searchFragment, "searchFrag").commit();
                 break;
 
             case R.id.btn_cancel_create:
-                myOffersFragment = new MyOffersFragment();
+                searchFragment = MainActivity.getSearchFragInstance();
                 getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_container_main,
-                        myOffersFragment, "searchFrag").commit();
+                        searchFragment, "searchFrag").commit();
                 break;
 
             case R.id.imgbtn_add_photo:

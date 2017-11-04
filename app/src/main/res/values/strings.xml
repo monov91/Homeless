@@ -12,6 +12,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="create_one_login"><u>Create one!</u></string>
+
+
     <string-array name="neighbourhoods">
         <item>CENTAR</item>
         <item>LOZENEC</item>
