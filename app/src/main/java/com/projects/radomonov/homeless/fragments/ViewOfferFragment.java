@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +47,7 @@ import java.util.List;
 public class ViewOfferFragment extends android.app.Fragment implements View.OnClickListener {
 
     private TextView tvRoomsNeigborhood, tvPrice, tvDescription;
-    private Button btnMakeCall, btnWriteEmail;
+    private ImageView btnMakeCall, btnWriteEmail;
     private CheckBox cbLikeThisOffer;
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;

@@ -25,6 +25,31 @@
             android:layout_height="wrap_content"
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/cb_like_this_offer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:text="Like this offer"
+                android:layout_marginTop="10dp"/>
+
+        </LinearLayout>
+
+
+
         <TextView
             android:id="@+id/text_rooms_neigborhood_offer_info"
             android:layout_width="match_parent"
@@ -33,7 +58,9 @@
             android:gravity="center"
             android:layout_marginTop="15dp"
             android:textStyle="bold"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textColor="#111111"
+            />
 
         <TextView
             android:id="@+id/text_price_per_month_offer_info"
@@ -43,7 +70,8 @@
             android:gravity="center"
             android:layout_marginTop="15dp"
             android:textStyle="bold"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textColor="#111111"/>
 
         <TextView
             android:id="@+id/text_description_offer_info"
@@ -53,16 +81,9 @@
             android:gravity="center"
             android:layout_marginTop="15dp"
             android:textStyle="bold"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textColor="#111111"/>
 
-        <CheckBox
-            android:id="@+id/cb_like_this_offer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:text="Like this offer"
-            android:layout_marginTop="10dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,23 +112,49 @@
                 />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_call_to_owner_offer_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Call owner"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="15dp"/>
 
-        <Button
-            android:id="@+id/btn_write_an_email_offer_info"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Write an e-Mail"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="2dp"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Contact owner:"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#111111"/>
+
+            <ImageView
+                android:id="@+id/btn_call_to_owner_offer_info"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:clickable="true"
+                android:src="@drawable/call_btn"
+                />
+
+            <ImageView
+                android:id="@+id/btn_write_an_email_offer_info"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:clickable="true"
+                android:src="@drawable/email_btn_konvert"
+                />
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
