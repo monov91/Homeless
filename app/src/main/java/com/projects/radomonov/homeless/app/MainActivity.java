@@ -162,10 +162,10 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
             getFragmentManager().popBackStack();
         }
-//        else
-//        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
-//            getFragmentManager().popBackStack();
-//        }
+        else
+        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
+            getFragmentManager().popBackStack();
+        }
         else {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
