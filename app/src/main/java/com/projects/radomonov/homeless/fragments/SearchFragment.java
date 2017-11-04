@@ -16,9 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.adapters.OffersAdapter;
@@ -40,10 +42,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     private EditText etPriceMin, etPriceMax, etRooms;
     private List<String> neighbourhoodList;
-    private ImageButton btnSortAscending, btnSortDescending, btnSearchOptions, btnSearch;
+    private ImageButton btnSortAscending, btnSortDescending;
+    private ImageView btnSearch,btnSearchOptions;
     private RadioButton rdbtnEU;
     private LinearLayout searchOptions, sortOptions;
-
+    private TextView tvSearchOptionsMessage;
     private List<Offer> allOffers,searchedOffers;
 
     private Spinner spinnerNeighbourhoods;
@@ -109,6 +112,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
 
     private void initialiseVariables(View view) {
+        tvSearchOptionsMessage = view.findViewById(R.id.tv_search_options_message_search);
         offersRecycler = view.findViewById(R.id.recycler_search_search);
         neighbourhoodList = new ArrayList<>();
         spinnerNeighbourhoods = view.findViewById(R.id.spinner_neigh);
@@ -241,10 +245,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             case R.id.imgbtn_search_options :
                 if (searchOptions.getVisibility() == View.VISIBLE) {
                     searchOptions.setVisibility(View.GONE);
-                    btnSearchOptions.setImageResource(R.drawable.down_icon);
+                    btnSearchOptions.setImageResource(R.drawable.arrow_show);
+                    tvSearchOptionsMessage.setText("Show Search Options");
+
                 } else {
                     searchOptions.setVisibility(View.VISIBLE);
-                    btnSearchOptions.setImageResource(R.drawable.up_icon);
+                    btnSearchOptions.setImageResource(R.drawable.arrow_hide);
+                    tvSearchOptionsMessage.setText("Hide Search Options");
                 }
                 break;
 

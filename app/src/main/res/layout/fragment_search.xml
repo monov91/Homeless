@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="16dp">
 
     <LinearLayout
         android:id="@+id/layout_search_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Neighbourhood" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Neighbourhood   ->"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:textAlignment="center"
+                />
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </LinearLayout>
             <Spinner
+                android:layout_alignParentRight="true"
                 android:id="@+id/spinner_neigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                />
+                android:background="@drawable/spinner_background"/>
 
+        </LinearLayout>
 
 
         <android.support.v7.widget.RecyclerView
@@ -33,6 +53,7 @@
         </android.support.v7.widget.RecyclerView>
 
         <TextView
+            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Price" />
@@ -42,74 +63,156 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_price_min"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Min"
-                android:inputType="number"
-                android:maxLength="4" />
+                app:hintTextAppearance="@style/MyEditTextLayout">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" - "
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/et_price_min"
+                    android:layout_width="63dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/input_outline"
+                    android:hint="Min"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:hintTextAppearance="@style/MyEditText"
 
-            <EditText
-                android:id="@+id/et_price_max"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Max"
-                android:inputType="number"
-                android:maxLength="4" />
+                app:hintTextAppearance="@style/MyEditTextLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/et_price_max"
+                    android:layout_width="63dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/input_outline"
+                    android:hint="Max"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:hintTextAppearance="@style/MyEditText"
+
+                    />
+
+            </android.support.design.widget.TextInputLayout>
 
             <RadioGroup
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
                 <RadioButton
-                    android:id="@+id/rdbtn_BGN_search"
+                    android:id="@+id/rdbtn_bgn_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="BGN"
-                    android:checked="true"/>
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <RadioButton
                     android:id="@+id/rdbtn_EU_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EU" />
+                    android:text="EU"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
             </RadioGroup>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@style/MyEditTextLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/et_rooms_search"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/input_outline"
+                    android:hint="Rooms"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:padding="6dp"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:hintTextAppearance="@style/MyEditText"
+
+                    />
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_rooms_search"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Rooms"
-            android:inputType="number"
-            android:maxLength="2" />
-
-        <ImageButton
-            android:id="@+id/imgbtn_search"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/search_icon" />
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></LinearLayout>
+            <ImageView
+                android:id="@+id/imgbtn_search"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/search_icon" />
+        </LinearLayout>
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/imgbtn_search_options"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/up_icon" />
+
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_options_outline">
+            <TextView
+
+                android:id="@+id/tv_search_options_message_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="Hide Search Options"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/imgbtn_search_options"
+                android:layout_marginRight="32dp" />
+
+
+            <ImageView
+                android:id="@+id/imgbtn_search_options"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_hide"
+                android:layout_marginRight="0dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" />
+        </android.support.constraint.ConstraintLayout>
+
+
+
 
     <LinearLayout
         android:id="@+id/layout_sort"
@@ -143,10 +246,11 @@
             android:src="@drawable/up_icon" />
 
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_search_search"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1">
 
     </android.support.v7.widget.RecyclerView>
