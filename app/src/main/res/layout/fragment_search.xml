@@ -193,6 +193,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:text="Hide Search Options"
+                android:textColor="@android:color/black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/imgbtn_search_options"
@@ -213,14 +214,12 @@
                 android:layout_marginBottom="8dp" />
         </android.support.constraint.ConstraintLayout>
 
-
-
-
     <LinearLayout
         android:id="@+id/layout_sort"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:visibility="gone">
@@ -229,14 +228,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sort by price"
-            android:textSize="20sp" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:layout_marginRight="8dp"/>
 
         <ImageButton
             android:id="@+id/imgbtn_descending_search"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginRight="8dp"
             android:scaleType="fitCenter"
+            android:background="@color/colorPrimary"
             android:src="@drawable/down_icon" />
 
         <ImageButton
@@ -244,6 +247,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:background="@color/colorPrimary"
             android:scaleType="fitCenter"
             android:src="@drawable/up_icon" />
 

@@ -71,17 +71,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     }
 
     private void setUpNeighbourhoodsChoosing(View view) {
-        /*
-        String[] arr = getResources().getStringArray(R.array.neighbourhoods);
-        ArrayAdapter adapter2 = new ArrayAdapter(getContext(),R.layout.support_simple_spinner_dropdown_item,arr) {
-            @Override
-            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                v.setMinimumHeight(70);
-                return v;
-            }
-        };
-         */
         String[] arr = getResources().getStringArray(R.array.neighbourhoods);
         ArrayAdapter spinnerAdapter = new ArrayAdapter(getContext(),R.layout.support_simple_spinner_dropdown_item,arr){
             @Override
@@ -92,7 +81,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             }
         };
 
-        //spinnerNeighbourhoods.setAdapter(ArrayAdapter.createFromResource(getContext(), R.array.neighbourhoods, R.layout.support_simple_spinner_dropdown_item));
         spinnerNeighbourhoods.setAdapter(spinnerAdapter);
         setUpRecyclerNeighbourhoods(view);
 
