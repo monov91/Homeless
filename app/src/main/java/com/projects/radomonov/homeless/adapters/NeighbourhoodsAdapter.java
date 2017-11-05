@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.utilities.Utilities;
 
 import java.util.List;
 

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -27,12 +28,12 @@ import java.util.List;
  */
 
 public class MyOffersFragment extends Fragment {
-
+    private TextView title;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_offers, container, false);
-
+        initialiseVariables(view);
         List<Offer> myOffers = getMyOffers();
         setUpRecycleView(view,myOffers);
 
@@ -78,6 +79,11 @@ public class MyOffersFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(manager);
+    }
+
+    private void initialiseVariables(View view){
+        title = view.findViewById(R.id.tv_title_of_layout);
+        title.setText(R.string.my_offers_title);
     }
 
 

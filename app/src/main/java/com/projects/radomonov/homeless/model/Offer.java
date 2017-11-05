@@ -1,12 +1,7 @@
 package com.projects.radomonov.homeless.model;
 
-import android.net.Uri;
-
-import com.projects.radomonov.homeless.utilities.Utilities;
-
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by admin on 17.10.2017.

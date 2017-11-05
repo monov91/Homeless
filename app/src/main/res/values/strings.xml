@@ -4,8 +4,20 @@
     <string name="drawer_close">Close</string>
     <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
 
+    <string name="Users_folder_in_DB">Users</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="rooms_view_offer">Rooms: </string>
+    <string name="in_view_offer"> in </string>
+    <string name="per_month_view_offer">/month</string>
+    <string name="user_profile_pic">profilePic</string>
+    <string name="false_view_offer">false</string>
+    <string name="true_view_offer">true</string>
+    <string name="user_favourite_offers">favouriteOffers</string>
+    <string name="offer_bundle_tag_view_offer">offer</string>
+
+    <string name="my_offers_title">My Offers</string>
+    <string name="my_favourite_offers_title">My Favourite Offers</string>
 
     <string name="action_settings">Settings</string>
 

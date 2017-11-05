@@ -16,7 +16,8 @@
         android:roundIcon="@drawable/app_icon_5"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".app.MainActivity">
+        <activity android:name=".app.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,8 +27,10 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".app.LoginActivity" />
-        <activity android:name=".app.RegisterActivity" />
+        <activity android:name=".app.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".app.RegisterActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

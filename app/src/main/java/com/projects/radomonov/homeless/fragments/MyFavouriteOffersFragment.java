@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.adapters.OffersAdapter;
@@ -28,6 +29,7 @@ public class MyFavouriteOffersFragment extends Fragment {
 
     private ArrayList<Offer> myFavouriteOffers;
     private OffersAdapter adapter;
+    private TextView title;
 
     @Override
     public void onStart() {
@@ -40,7 +42,7 @@ public class MyFavouriteOffersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_offers, container, false);
-
+        initialiseVariables(view);
         getMyFavouriteOffers();
         setUpRecycleView(view);
         return view;
@@ -83,6 +85,11 @@ public class MyFavouriteOffersFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(manager);
+    }
+
+    private void initialiseVariables(View view) {
+        title = view.findViewById(R.id.tv_title_of_layout);
+        title.setText(R.string.my_favourite_offers_title);
     }
 
 }
