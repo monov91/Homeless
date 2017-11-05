@@ -28,7 +28,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -36,19 +37,30 @@
                 android:layout_weight="1">
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/cb_like_this_offer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                android:text="Like this offer"
-                android:layout_marginTop="10dp"/>
+            <ImageView
+                android:id="@+id/image_star_like_this_offer"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/star_btn_empty"
+                android:layout_marginRight="20dp"
+                android:clickable="true"/>
+
 
         </LinearLayout>
 
-
+        <TextView
+            android:id="@+id/text_offer_title_view_offer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#111111"
+            android:background="@drawable/input_outline"
+            />
 
         <TextView
             android:id="@+id/text_rooms_neigborhood_offer_info"

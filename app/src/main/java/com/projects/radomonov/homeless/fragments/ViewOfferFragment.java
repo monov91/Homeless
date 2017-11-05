@@ -46,9 +46,8 @@ import java.util.List;
 
 public class ViewOfferFragment extends android.app.Fragment implements View.OnClickListener {
 
-    private TextView tvRoomsNeigborhood, tvPrice, tvDescription;
+    private TextView tvRoomsNeigborhood, tvPrice, tvDescription, tvTitle;
     private ImageView btnMakeCall, btnWriteEmail;
-    private CheckBox cbLikeThisOffer;
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;
     private DatabaseReference favouriteOfferID;
@@ -61,6 +60,8 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
     private RoundedBitmapDrawable round;
     private DatabaseReference currentUserPic;
     private DatabaseReference offerOwner;
+    private ImageView btnLikeDislike;
+    private boolean isLiked;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,23 +89,13 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
 
         btnMakeCall.setOnClickListener(this);
         btnWriteEmail.setOnClickListener(this);
+        btnLikeDislike.setOnClickListener(this);
 
         if (MainActivity.getFavouriteOffersList().contains(currentOffer.getId())) {
-            cbLikeThisOffer.setChecked(true);
+            setStarChecked("true");
         }
 
-        cbLikeThisOffer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (cbLikeThisOffer.isChecked()) {
-                    favouriteOfferID.setValue(currentOffer.getId());
-                }
-                if (!cbLikeThisOffer.isChecked()) {
-                    String currentOfferID = currentOffer.getId();
-                    favouriteOffers.child(currentOfferID).removeValue();
-                }
-            }
-        });
+
 
         return view;
     }
@@ -155,7 +146,8 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
     }
 
     private void fillFields() {
-        tvRoomsNeigborhood.setText(currentOffer.getRooms() + "-стаен, кв. " + currentOffer.getNeighbourhood());
+        tvTitle.setText(currentOffer.getTitle());
+        tvRoomsNeigborhood.setText("Rooms: " + currentOffer.getRooms() + " in " + currentOffer.getNeighbourhood());
         tvPrice.setText(currentOffer.getPrice() + " " + currentOffer.getCurrency() + "/мес.");
         tvDescription.setText(currentOffer.getDescription());
     }
@@ -165,12 +157,14 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
         currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
         tvPrice = view.findViewById(R.id.text_price_per_month_offer_info);
+        tvTitle = view.findViewById(R.id.text_offer_title_view_offer);
         tvDescription = view.findViewById(R.id.text_description_offer_info);
         btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
         btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
-        cbLikeThisOffer = view.findViewById(R.id.cb_like_this_offer);
         profilePic = view.findViewById(R.id.profile_pic_view_offer);
         userNameEt = view.findViewById(R.id.tv_user_name_view_offer);
+        btnLikeDislike = view.findViewById(R.id.image_star_like_this_offer);
+//        btnLikeDislike.setClickable(true);
     }
 
     @Override
@@ -181,6 +175,17 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
                 String phoneNumber = currentOffer.getPhoneNumber();
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
                 startActivity(callIntent);
+                break;
+
+            case R.id.image_star_like_this_offer :
+                if(isLiked) {
+                    String currentOfferID = currentOffer.getId();
+                    favouriteOffers.child(currentOfferID).removeValue();
+                    setStarChecked("false");
+                } else {
+                    favouriteOfferID.setValue(currentOffer.getId());
+                    setStarChecked("true");
+                }
                 break;
 
             case R.id.btn_write_an_email_offer_info:
@@ -214,10 +219,18 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
     private void getOfferOwner() {
         String offerOwnerID = currentOffer.getOwner();
         offerOwner = FirebaseDatabase.getInstance().getReference().child("Users").child(offerOwnerID);
-//        for(int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
-//            if(offerOwnerID.equals(DatabaseInfo.getUsersList().get(i).getID())) {
-//                offerOwner = DatabaseInfo.getUsersList().get(i);
-//            }
-//        }
     }
+
+    private void setStarChecked(String trueOrFalse) {
+        if(trueOrFalse.equals("true")){
+            isLiked = true;
+            btnLikeDislike.setImageResource(R.drawable.star_btn_full);
+        }
+        if(trueOrFalse.equals("false")) {
+            isLiked = false;
+            btnLikeDislike.setImageResource(R.drawable.star_btn_empty);
+        }
+    }
+
+
 }
