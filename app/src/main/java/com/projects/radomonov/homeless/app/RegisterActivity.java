@@ -16,9 +16,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -125,8 +127,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     invalidEntries = true;
                 }
 
-                if (!validateStringForNullAndIsEmpty(pass)) {
-                    etPassword.setError("Invalid Password", errorIcon);
+                if (!validateStringForNullAndIsEmpty(pass) || pass.length() < 6) {
+                    etPassword.setError("Invalid Password, enter > 5 symbols", errorIcon);
                     invalidEntries = true;
                 }
 
@@ -160,10 +162,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             startActivity(mainIntent);
                             mProgress.dismiss();
                             Toast.makeText(RegisterActivity.this, "Successfully Registered", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            mProgress.dismiss();
-//                            Toast.makeText(RegisterActivity.this, "Register problems :(...", Toast.LENGTH_SHORT).show();
+                        } else {
+                            mProgress.dismiss();
+                            Toast.makeText(RegisterActivity.this, "Register problems :(...", Toast.LENGTH_SHORT).show();
                         }
+                    }
+
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("register", e.getMessage());
                     }
                 });
             }

@@ -44,7 +44,7 @@
         android:layout_marginTop="10dp"
         android:textColor="#000"
         android:gravity="center"
-        android:text="Are you really want stay \n Homeless?"
+        android:text="Are you really want to stay \n Homeless?"
         android:textSize="18sp" />
     </RelativeLayout>
 
