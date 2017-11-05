@@ -5,9 +5,28 @@
     <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
 
     <string name="profilePic_in_user_DB">profilePic</string>
-
     <string name="phoneNumber_in_user_DB">phoneNumber</string>
+
+
     <string name="users_directory_DB">Users</string>
+    <string name="offers_directoy_DB">Offers</string>
+
+    <string name="images_directory_offer_DB">imageUrls</string>
+    <string name="offer_thumbnail_DB">imageThumbnail</string>
+    <string name="id_offer_DB">id</string>
+    <string name="title_offer_DB">title</string>
+    <string name="price_offer_DB">price</string>
+    <string name="currency_offer_DB">currency</string>
+    <string name="rooms_offer_DB">rooms</string>
+    <string name="neighbourhood_offer_DB">neighbourhood</string>
+    <string name="description_offer_DB">description</string>
+    <string name="phone_offer_DB">phoneNumber</string>
+    <string name="owner_offer_DB">owner</string>
+
+
+    <string name="offer_images_directoty_storage">OfferImages</string>
+    <string name="offers_directory_storage">Offers</string>
+    <string name="offer_thumbnail_storage">thumbnail</string>
 
 
     <string name="Users_folder_in_DB">Users</string>
@@ -32,10 +51,20 @@
     <string name="search_options_message_show">Show Search Options</string>
     <string name="open_offer_bundle_tag">offer</string>
     <string name="view_offer_frag_tag">viewOfferFrag</string>
+    <string name="search_frag_tag">searchFrag</string>
     <string name="create_offer_frag_tag">createOfferFrag</string>
     <string name="my_offers_frag_tag">myOffersFrag</string>
     <string name="my_fav_offers_frag_tag">myFavouriteOffersFrag</string>
     <string name="setup_acc_frag_tag">setupAccFrag</string>
+    <string name="offer_bundle_tag_create_offer">offer</string>
+
+    <string name="et_error_description_create">Enter a Description</string>
+    <string name="et_error_title_create">Enter a Title</string>
+    <string name="et_error_rooms_create">Enter Rooms</string>
+    <string name="et_error_price_create">Enter Price</string>
+    <string name="toast_error_message_thumbnail">Choose offer Thumbnail</string>
+    <string name="toast_error_message_photos">Add at least 1 picture</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

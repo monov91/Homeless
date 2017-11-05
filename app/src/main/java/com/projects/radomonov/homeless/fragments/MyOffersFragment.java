@@ -65,11 +65,11 @@ public class MyOffersFragment extends Fragment {
                 CreateOfferFragment createOfferFragment = new CreateOfferFragment();
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("offer",currentOffer);
+                bundle.putSerializable(getResources().getString(R.string.offer_bundle_tag_create_offer),currentOffer);
                 createOfferFragment.setArguments(bundle);
 
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container_main, createOfferFragment, "createOfferFrag");
+                ft.replace(R.id.fragment_container_main, createOfferFragment, getResources().getString(R.string.create_offer_frag_tag));
                 ft.addToBackStack(null);
                 ft.commit();
             }

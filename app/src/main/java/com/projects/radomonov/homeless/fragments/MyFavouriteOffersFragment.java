@@ -71,11 +71,11 @@ public class MyFavouriteOffersFragment extends Fragment {
                         ViewOfferFragment viewOfferFragment = new ViewOfferFragment();
 
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("offer",currentOffer);
+                        bundle.putSerializable(getResources().getString(R.string.offer_bundle_tag_view_offer),currentOffer);
                         viewOfferFragment.setArguments(bundle);
 
                         FragmentTransaction ft = fragmentManager.beginTransaction();
-                        ft.replace(R.id.fragment_container_main, viewOfferFragment, "viewOfferFrag");
+                        ft.replace(R.id.fragment_container_main, viewOfferFragment, getResources().getString(R.string.view_offer_frag_tag));
                         ft.addToBackStack(null);
                         ft.commit();
                     }
