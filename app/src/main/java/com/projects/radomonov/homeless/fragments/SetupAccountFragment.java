@@ -116,8 +116,8 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
         // In this method we are taking current user profile picture,
         // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
         // make it round and setting it to imgProfilePic to this fragment
-        currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users")
-                .child(mAuth.getCurrentUser().getUid()).child("profilePic");
+        currentUserPic = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.users_directory_DB))
+                .child(mAuth.getCurrentUser().getUid()).child(getResources().getString(R.string.profilePic_in_user_DB));
 
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -196,7 +196,7 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             downloadURL = taskSnapshot.getDownloadUrl();
-                            currentUser.child("profilePic").setValue(downloadURL.toString());
+                            currentUser.child(getResources().getString(R.string.profilePic_in_user_DB)).setValue(downloadURL.toString());
                         }
                     });
 
@@ -207,16 +207,16 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
                     });
 
                     flag = true;
-                    Toast.makeText(getActivity().getBaseContext(), "Image changed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.successful_image_change_setup), Toast.LENGTH_SHORT).show();
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     flag = false;
-                    Toast.makeText(getActivity().getBaseContext(), "Unable to open image...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity().getBaseContext(),getResources().getString(R.string.fnf_exception_message_setup), Toast.LENGTH_LONG).show();
                 }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(getActivity().getBaseContext(), "Somethings wrong with cropping...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.cropping_error_setup), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -243,10 +243,10 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
             case R.id.btn_save_changes_setup_acc:
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
                 if (!isValidPhoneNumber(phoneNumber)) {
-                    etPhoneNumber.setError("Invalid Phone Number");
+                    etPhoneNumber.setError(getResources().getString(R.string.et_error_phone_setupaccount));
                     return;
                 }
-                currentUser.child("phoneNumber").setValue(phoneNumber);
+                currentUser.child(getResources().getString(R.string.phoneNumber_in_user_DB)).setValue(phoneNumber);
                 mListener.updateFragment();
                 goToMain();
                 break;

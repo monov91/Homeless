@@ -4,6 +4,12 @@
     <string name="drawer_close">Close</string>
     <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
 
+    <string name="profilePic_in_user_DB">profilePic</string>
+
+    <string name="phoneNumber_in_user_DB">phoneNumber</string>
+    <string name="users_directory_DB">Users</string>
+
+
     <string name="Users_folder_in_DB">Users</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,11 +21,13 @@
     <string name="true_view_offer">true</string>
     <string name="user_favourite_offers">favouriteOffers</string>
     <string name="offer_bundle_tag_view_offer">offer</string>
-
+    <string name="et_error_phone_setupaccount">Invalid Phone Number</string>
     <string name="my_offers_title">My Offers</string>
     <string name="my_favourite_offers_title">My Favourite Offers</string>
-
+    <string name="cropping_error_setup">Somethings wrong with cropping</string>
     <string name="action_settings">Settings</string>
+    <string name="successful_image_change_setup">Image changed!</string>
+    <string name="fnf_exception_message_setup">Unable to open image...</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
