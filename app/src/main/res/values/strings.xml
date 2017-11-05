@@ -28,6 +28,10 @@
     <string name="action_settings">Settings</string>
     <string name="successful_image_change_setup">Image changed!</string>
     <string name="fnf_exception_message_setup">Unable to open image...</string>
+    <string name="search_options_message_hide">Hide Search Options</string>
+    <string name="search_options_message_show">Show Search Options</string>
+    <string name="open_offer_bundle_tag">offer</string>
+    <string name="view_offer_frag_tag">viewOfferFrag</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

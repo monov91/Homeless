@@ -41,6 +41,13 @@ import static com.projects.radomonov.homeless.model.Offer.Currency.EU;
 
 public class SearchFragment extends Fragment implements View.OnClickListener{
 
+    private static int MAX_POSSIBLE_SEARCH_PRICE = 20000;
+    private static int MIN_POSSIBLE_SEaRCH_PRICE = 0;
+    private static int MIN_POSSIBLE_SEARCH_ROOMS = 0;
+    private static int OFFERS_NEEDED_TO_SORT = 2;
+    private static double EURO_RATE = 1.94;
+
+
     private EditText etPriceMin, etPriceMax, etRooms;
     private List<String> neighbourhoodList;
     private ImageButton btnSortAscending, btnSortDescending;
@@ -141,11 +148,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
                 ViewOfferFragment viewOfferFragment = new ViewOfferFragment();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("offer", currentOffer);
+                bundle.putSerializable(getResources().getString(R.string.open_offer_bundle_tag), currentOffer);
                 viewOfferFragment.setArguments(bundle);
 
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container_main, viewOfferFragment, "viewOfferFrag");
+                ft.replace(R.id.fragment_container_main, viewOfferFragment, getResources().getString(R.string.view_offer_frag_tag));
                 ft.addToBackStack(null);
                 ft.commit();
             }
@@ -165,21 +172,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     }
 
     private int getCalculatedMinPrice(){
-        int minPrice = 0;
+        int minPrice = MIN_POSSIBLE_SEaRCH_PRICE;
         if (!TextUtils.isEmpty(etPriceMin.getText())) {
             minPrice = Integer.parseInt(etPriceMin.getText().toString());
             if (rdbtnEU.isChecked()) {
-                minPrice = (int) (minPrice * 1.94);
+                minPrice = (int) (minPrice * EURO_RATE);
             }
         }
         return  minPrice;
     }
     private int getCalculatedMaxPrice() {
-        int maxPrice = 20000;
+        int maxPrice = MAX_POSSIBLE_SEARCH_PRICE;
         if (!TextUtils.isEmpty(etPriceMax.getText())) {
             maxPrice = Integer.parseInt(etPriceMax.getText().toString());
             if (rdbtnEU.isChecked()) {
-                maxPrice = (int) (maxPrice * 1.94);
+                maxPrice = (int) (maxPrice * EURO_RATE);
             }
         }
         return maxPrice;
@@ -193,7 +200,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 allOffers = DatabaseInfo.getOffersList();
                 sortOptions.setVisibility(View.VISIBLE);
                 boolean noRooms = false;
-                int rooms = 0;
+                int rooms = MIN_POSSIBLE_SEARCH_ROOMS;
                 int minPrice = getCalculatedMinPrice();
                 int maxPrice = getCalculatedMaxPrice();
 
@@ -205,7 +212,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 for (Offer offer : allOffers) {
                     int offerPrice = offer.getPrice();
                     if (offer.getCurrency() == EU) {
-                        offerPrice = (int) (offerPrice * 1.94);
+                        offerPrice = (int) (offerPrice * EURO_RATE);
                     }
 
                     if ((offerPrice >= minPrice) && (offerPrice <= maxPrice)) {
@@ -238,27 +245,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 if (searchOptions.getVisibility() == View.VISIBLE) {
                     searchOptions.setVisibility(View.GONE);
                     btnSearchOptions.setImageResource(R.drawable.arrow_show);
-                    tvSearchOptionsMessage.setText("Show Search Options");
+                    tvSearchOptionsMessage.setText(getResources().getString(R.string.search_options_message_show));
 
                 } else {
                     searchOptions.setVisibility(View.VISIBLE);
                     btnSearchOptions.setImageResource(R.drawable.arrow_hide);
-                    tvSearchOptionsMessage.setText("Hide Search Options");
+                    tvSearchOptionsMessage.setText(getResources().getString(R.string.search_options_message_hide));
                 }
                 break;
 
             case R.id.imgbtn_ascending_search :
-                if (searchedOffers.size() > 1) {
+                if (searchedOffers.size() >= OFFERS_NEEDED_TO_SORT) {
                     Collections.sort(searchedOffers,new Comparator<Offer>() {
                         @Override
                         public int compare(Offer offer1, Offer offer2) {
                             int price1 = offer1.getPrice();
                             if (offer1.getCurrency() == Offer.Currency.EU) {
-                                price1 = (int) (price1 * 1.94);
+                                price1 = (int) (price1 * EURO_RATE);
                             }
                             int price2 = offer2.getPrice();
                             if (offer2.getCurrency() == Offer.Currency.EU) {
-                                price2 = (int) (price2 * 1.94);
+                                price2 = (int) (price2 * EURO_RATE);
                             }
                             return price1 - price2;
                         }
@@ -268,17 +275,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.imgbtn_descending_search :
-                if (searchedOffers.size() > 1) {
+                if (searchedOffers.size() >= OFFERS_NEEDED_TO_SORT) {
                     Collections.sort(searchedOffers,new Comparator<Offer>() {
                         @Override
                         public int compare(Offer offer1, Offer offer2) {
                             int price1 = offer1.getPrice();
                             if (offer1.getCurrency() == Offer.Currency.EU) {
-                                price1 = (int) (price1 * 1.94);
+                                price1 = (int) (price1 * EURO_RATE);
                             }
                             int price2 = offer2.getPrice();
                             if (offer2.getCurrency() == Offer.Currency.EU) {
-                                price2 = (int) (price2 * 1.94);
+                                price2 = (int) (price2 * EURO_RATE);
                             }
                             return price2 - price1;
                         }
