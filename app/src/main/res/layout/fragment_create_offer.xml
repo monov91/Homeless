@@ -9,19 +9,21 @@
         android:id="@+id/create_offer_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:orientation="vertical">
 
         <ImageButton
             android:id="@+id/imgbtn_thumbnail_create"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
-            android:background="#00ffffff"
+            android:padding="5dp"
+            android:background="@drawable/input_outline"
             android:scaleType="fitCenter"
+
             app:srcCompat="@mipmap/add_btn" />
 
         <LinearLayout
@@ -41,7 +43,8 @@
                 android:layout_height="70dp"
                 android:scaleType="centerInside"
                 android:layout_margin="16dp"
-                android:src="@drawable/add_pic_icon" />
+                android:src="@drawable/add_pic_icon"
+                />
         </LinearLayout>
 
 
@@ -61,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Choose Neighbourhood ->"
+                android:text="Neighbourhood  -->"
                 android:textStyle="bold" />
 
             <Spinner
@@ -200,26 +203,36 @@
             android:id="@+id/btn_save_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:background="@drawable/my_button"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:text="Save"/>
 
         <Button
             android:id="@+id/btn_delete_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delete Offer"
+            android:layout_marginBottom="12dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:background="@drawable/my_button"
+            android:textColor="@color/colorWhite"
+            android:visibility="gone"
+
+            android:text="Delete Offer"/>
 
         <Button
             android:id="@+id/btn_cancel_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Cancel"
+            android:layout_marginBottom="32dp"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:background="@drawable/my_button"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold"
+            android:text="Cancel"/>
     </LinearLayout>
 </ScrollView>

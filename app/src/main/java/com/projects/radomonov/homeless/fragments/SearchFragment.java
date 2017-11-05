@@ -29,6 +29,7 @@ import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.model.Offer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private RadioButton rdbtnEU;
     private LinearLayout searchOptions, sortOptions;
     private TextView tvSearchOptionsMessage;
-    private List<Offer> allOffers,searchedOffers;
+    private List<Offer> allOffers;
+    private ArrayList<Offer> searchedOffers;
 
     private Spinner spinnerNeighbourhoods;
     private NeighbourhoodsAdapter neighbourhoodsAdapter;
@@ -99,7 +101,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String neighbourhood;
                 neighbourhood = spinnerNeighbourhoods.getSelectedItem().toString();
-                neighbourhoodList.add(neighbourhood);
+                if(!neighbourhoodList.contains(neighbourhood)){
+                    neighbourhoodList.add(neighbourhood);
+                }
                 neighbourhoodsAdapter.notifyDataSetChanged();
             }
 
@@ -256,8 +260,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.imgbtn_ascending_search :
-                if (!searchedOffers.isEmpty()) {
-                    searchedOffers.sort(new Comparator<Offer>() {
+                if (searchedOffers.size() > 1) {
+                    Collections.sort(searchedOffers,new Comparator<Offer>() {
                         @Override
                         public int compare(Offer offer1, Offer offer2) {
                             int price1 = offer1.getPrice();
@@ -276,8 +280,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.imgbtn_descending_search :
-                if (!searchedOffers.isEmpty()) {
-                    searchedOffers.sort(new Comparator<Offer>() {
+                if (searchedOffers.size() > 1) {
+                    Collections.sort(searchedOffers,new Comparator<Offer>() {
                         @Override
                         public int compare(Offer offer1, Offer offer2) {
                             int price1 = offer1.getPrice();
