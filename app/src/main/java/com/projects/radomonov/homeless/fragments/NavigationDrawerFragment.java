@@ -90,7 +90,8 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
         // make it round and setting it to imgEditProfile to this fragment
         if (mAuth.getCurrentUser() != null) {
-            currentUserPic = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("profilePic");
+            currentUserPic = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.users_directory_DB))
+                    .child(mAuth.getCurrentUser().getUid()).child(getResources().getString(R.string.profilePic_in_user_DB));
 
             currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -173,28 +174,28 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
             case R.id.btn_create_offer :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 CreateOfferFragment fragment = new CreateOfferFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main,fragment,"createOfferFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main,fragment,getResources().getString(R.string.create_offer_frag_tag));
                 fragmentTransaction.commit();
                 break;
 
             case R.id.btn_my_offers :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyOffersFragment fragMyOffers = new MyOffersFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,"myOffersFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main,fragMyOffers,getResources().getString(R.string.my_offers_frag_tag));
                 fragmentTransaction.commit();
                 break;
 
             case R.id.btn_my_favourite_offers :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 MyFavouriteOffersFragment fragMyFavouriteOffers = new MyFavouriteOffersFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main,fragMyFavouriteOffers,"myFavouriteOffersFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main,fragMyFavouriteOffers,getResources().getString(R.string.my_fav_offers_frag_tag));
                 fragmentTransaction.commit();
                 break;
 
             case R.id.img_edit_profile_drawer_frag :
                 fragmentTransaction = fragmentManager.beginTransaction();
                 SetupAccountFragment setupFrag = new SetupAccountFragment();
-                fragmentTransaction.replace(R.id.fragment_container_main, setupFrag, "setupAccFrag");
+                fragmentTransaction.replace(R.id.fragment_container_main, setupFrag, getResources().getString(R.string.setup_acc_frag_tag));
                 fragmentTransaction.commit();
                 break;
 
