@@ -144,10 +144,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 mAuth.createUserWithEmailAndPassword(eMail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.i("reg", "1");
                         if (task.isSuccessful()) {
                             String userID = mAuth.getCurrentUser().getUid();
-                            Log.i("reg", "2");
 
                             DatabaseReference currentUserDb = mDatabaseUsers.child(userID);
 
@@ -158,12 +156,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                             Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                            Log.i("reg", "3");
                             mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(mainIntent);
-                            Log.i("reg", "4");
                             mProgress.dismiss();
-                            Log.i("reg", "5");
                             Toast.makeText(RegisterActivity.this, "Successfully Registered", Toast.LENGTH_SHORT).show();
 //                        } else {
 //                            mProgress.dismiss();
