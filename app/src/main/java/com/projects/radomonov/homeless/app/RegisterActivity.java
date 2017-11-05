@@ -151,10 +151,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                             DatabaseReference currentUserDb = mDatabaseUsers.child(userID);
 
+                            currentUserDb.child("ID").setValue(userID);
                             currentUserDb.child("nickName").setValue(userName);
                             currentUserDb.child("eMail").setValue(eMail);
                             currentUserDb.child("phoneNumber").setValue(phoneNumber);
-                            currentUserDb.child("ID").setValue(userID);
+
 
                             Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
                             Log.i("reg", "3");

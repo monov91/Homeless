@@ -191,11 +191,14 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
             case R.id.btn_write_an_email_offer_info:
                 String ownerID = currentOffer.getOwner();
                 String ownerEmail = null;
-                for (int i = 0; i < DatabaseInfo.getUsersList().size(); i++) {
-                    if (DatabaseInfo.getUsersList().get(i).getID().equals(ownerID)) {
-                        ownerEmail = DatabaseInfo.getUsersList().get(i).geteMail();
+                List<User> users = DatabaseInfo.getUsersList();
+                for(User user : users){
+                    Log.i("user",user.toString());
+                    if(user.getID().equals(ownerID)){
+                        ownerEmail = user.geteMail();
                     }
                 }
+                Log.i("user","email  = " + ownerEmail);
                 if (ownerEmail != null) {
                     Intent eMailIntent = new Intent(Intent.ACTION_SENDTO);
                     eMailIntent.setData(Uri.parse("mailto:" + ownerEmail));

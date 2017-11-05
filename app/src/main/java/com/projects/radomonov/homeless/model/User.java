@@ -18,6 +18,17 @@ public class User {
 
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "nickName='" + nickName + '\'' + "\n" +
+                ", eMail='" + eMail + '\'' + "\n" +
+                ", phoneNumber='" + phoneNumber + '\'' + "\n" +
+                ", profilePic='" + profilePic + '\'' + "\n" +
+                ", ID='" + ID + '\'' + "\n" +
+                '}';
+    }
+
     public User(String nickName, String eMail, String phoneNumber, String profilePic, String ID) {
         this.nickName = nickName;
         this.eMail = eMail;

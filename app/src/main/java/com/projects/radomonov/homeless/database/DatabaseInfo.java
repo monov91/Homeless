@@ -40,17 +40,32 @@ public class DatabaseInfo extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User user = dataSnapshot.getValue(User.class);
                 usersList.add(user);
+                Log.i("user","on ChildAdded");
+                Log.i("user",user.toString());
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                User user = dataSnapshot.getValue(User.class);
-                usersList.remove(s);
-                usersList.add(user);
+                Log.i("user","onChildChanged");
+                User changedUser = dataSnapshot.getValue(User.class);
+                Log.i("user",changedUser.toString());
+                String ID = changedUser.getID();
+                for (User user: usersList) {
+                    if (user.getID() != null) {
+                        if (user.getID().equals(ID)) {
+                            usersList.remove(user);
+                            break;
+                        }
+                    } else {
+                        Log.i("user","imame NULL ID v userList-a");
+                    }
+                }
+                usersList.add(changedUser);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.i("user","onChildRemoved");
                 User user = dataSnapshot.getValue(User.class);
                 usersList.remove(user);
             }
