@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -160,9 +161,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             startActivity(mainIntent);
                             mProgress.dismiss();
                             Toast.makeText(RegisterActivity.this, "Successfully Registered", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            mProgress.dismiss();
-//                            Toast.makeText(RegisterActivity.this, "Register problems :(...", Toast.LENGTH_SHORT).show();
+                        } else {
+                            mProgress.dismiss();
+                            Toast.makeText(RegisterActivity.this, "Register problems :(", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

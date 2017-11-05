@@ -71,7 +71,6 @@
 
     <string name="create_one_login"><u>Create one!</u></string>
 
-
     <string-array name="neighbourhoods">
         <item>CENTAR</item>
         <item>LOZENEC</item>
@@ -80,14 +79,15 @@
         <item>MLADOST</item>
         <item>DRUJBA</item>
         <item>BOROVO</item>
-        <item>BANSKO</item>
-        <item>TARNOVO</item>
         <item>GORNA_BANQ</item>
         <item>DARVENICA</item>
         <item>DIANABAD</item>
         <item>MALINOVA_DOLINA</item>
         <item>KRASNO_SELO</item>
         <item>HIPODRUMA</item>
+        <item>DRAGALEVCI</item>
+        <item>BOYANA</item>
+        <item>VITOSHA</item>
 
     </string-array>
 
