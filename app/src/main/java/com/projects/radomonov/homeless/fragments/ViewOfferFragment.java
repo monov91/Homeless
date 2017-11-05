@@ -69,7 +69,6 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
 
         initialiseData();
 
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             currentOffer = (Offer) getArguments().getSerializable("offer");

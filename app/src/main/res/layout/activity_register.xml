@@ -11,14 +11,14 @@
     tools:context="com.projects.radomonov.homeless.app.RegisterActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="cursive"
         android:text="Homeless"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        android:textSize="40sp"
-        android:fontFamily="cursive"
-        />
+        android:textSize="80sp"
+        android:textStyle="bold" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

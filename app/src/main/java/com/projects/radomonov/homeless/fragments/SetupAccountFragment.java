@@ -69,7 +69,6 @@ import static com.theartofdev.edmodo.cropper.CropImage.CROP_IMAGE_ACTIVITY_REQUE
 public class SetupAccountFragment extends Fragment implements View.OnClickListener{
 
     public static final int GALLERY_REQUEST = 10;
-    public static final int REQUEST_PERMISSION_CODE = 1;
 
     private View view;
     private ImageView imgProfilePic;
@@ -92,7 +91,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
 
         initialiseData();
         updateProfilePic();
-        EnableRuntimePermission();
 
         getCurrentPhoneNumber();
 
@@ -102,7 +100,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
 
         return view;
     }
-
 
     public void GetImageFromGallery() {
         GalIntent = new Intent(Intent.ACTION_PICK,
@@ -146,10 +143,8 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
                             super.onPostExecute(object);
                         }
                     }.execute();
-//                    setImage(getContext(), picURL);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -221,17 +216,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
         }
     }
 
-
-    public void EnableRuntimePermission() {
-        // requiring permission for using camera on mobile device.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.CAMERA)) {
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{
-                    Manifest.permission.CAMERA}, REQUEST_PERMISSION_CODE);
-        }
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -255,7 +239,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
                 goToMain();
                 break;
         }
-
     }
 
     public interface OnFragmentUpdateListener {

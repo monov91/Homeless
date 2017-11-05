@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
     private void setUpToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Search Homes");
+        toolbar.setTitle("Homeless");
     }
 
 
