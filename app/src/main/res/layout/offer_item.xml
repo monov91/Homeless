@@ -6,7 +6,8 @@
     cardview:cardCornerRadius="22dp"
     cardview:cardElevation="14dp"
     android:id="@+id/card_view_item"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,6 +71,7 @@
                 android:layout_height="150dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
+                android:layout_marginRight="10dp"
                 />
 
         </LinearLayout>

@@ -247,7 +247,6 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
                     return;
                 }
                 currentUser.child("phoneNumber").setValue(phoneNumber);
-                goToMain();
                 mListener.updateFragment();
                 goToMain();
                 break;
