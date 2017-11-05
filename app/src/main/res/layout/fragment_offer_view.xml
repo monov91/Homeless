@@ -28,7 +28,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -47,6 +48,19 @@
 
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_offer_title_view_offer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#111111"
+            android:background="@drawable/input_outline"
+            />
 
         <TextView
             android:id="@+id/text_rooms_neigborhood_offer_info"

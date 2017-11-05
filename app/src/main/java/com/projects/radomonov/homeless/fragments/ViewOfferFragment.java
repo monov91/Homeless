@@ -46,7 +46,7 @@ import java.util.List;
 
 public class ViewOfferFragment extends android.app.Fragment implements View.OnClickListener {
 
-    private TextView tvRoomsNeigborhood, tvPrice, tvDescription;
+    private TextView tvRoomsNeigborhood, tvPrice, tvDescription, tvTitle;
     private ImageView btnMakeCall, btnWriteEmail;
     private FirebaseAuth mAuth;
     private DatabaseReference currentUser;
@@ -146,6 +146,7 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
     }
 
     private void fillFields() {
+        tvTitle.setText(currentOffer.getTitle());
         tvRoomsNeigborhood.setText("Rooms: " + currentOffer.getRooms() + " in " + currentOffer.getNeighbourhood());
         tvPrice.setText(currentOffer.getPrice() + " " + currentOffer.getCurrency() + "/мес.");
         tvDescription.setText(currentOffer.getDescription());
@@ -156,6 +157,7 @@ public class ViewOfferFragment extends android.app.Fragment implements View.OnCl
         currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         tvRoomsNeigborhood = view.findViewById(R.id.text_rooms_neigborhood_offer_info);
         tvPrice = view.findViewById(R.id.text_price_per_month_offer_info);
+        tvTitle = view.findViewById(R.id.text_offer_title_view_offer);
         tvDescription = view.findViewById(R.id.text_description_offer_info);
         btnMakeCall = view.findViewById(R.id.btn_call_to_owner_offer_info);
         btnWriteEmail = view.findViewById(R.id.btn_write_an_email_offer_info);
