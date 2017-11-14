@@ -4,12 +4,17 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.icu.text.LocaleDisplayNames;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +38,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
+import com.projects.radomonov.homeless.broadcastReceivers.NetworkReceiver;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
 import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
@@ -46,9 +53,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener{
+public class MainActivity extends AppCompatActivity implements SetupAccountFragment.OnFragmentUpdateListener {
 
     private static SearchFragment searchFragInstance;
+
     public static SearchFragment getSearchFragInstance() {
         if (searchFragInstance == null) {
             return new SearchFragment();
@@ -65,11 +73,13 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     private DatabaseReference currentUser;
     private static ArrayList<String> favouriteOffersList;
     private DatabaseReference mDatabaseFavouriteOffers;
+    private NetworkReceiver myNetworkReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myNetworkReceiver = new NetworkReceiver();
 
         setUpToolbar();
         setUpNavigationDrawer();
@@ -80,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(mAuth.getCurrentUser() == null) {
+                if (mAuth.getCurrentUser() == null) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
@@ -97,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             String currentUserID = mAuth.getCurrentUser().getUid();
             mDatabaseFavouriteOffers = mDatabaseUsers.child(currentUserID).child("favouriteOffers");
         }
@@ -108,17 +118,27 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     @Override
     protected void onStart() {
         super.onStart();
+        IntentFilter connectivityFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        IntentFilter wifiFilter = new IntentFilter("android.net.wifi.WIFI_STATE_CHANGED");
+        registerReceiver(myNetworkReceiver, connectivityFilter);
+        registerReceiver(myNetworkReceiver, wifiFilter);
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void setUpNavigationDrawer(){
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(myNetworkReceiver);
+    }
+
+    private void setUpNavigationDrawer() {
         NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.nav_drawer_fragment);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
-        drawerFragment.setUpDrawer(R.id.nav_drawer_fragment,drawerLayout,toolbar);
+        drawerFragment.setUpDrawer(R.id.nav_drawer_fragment, drawerLayout, toolbar);
 
     }
 
-    private void setUpToolbar(){
+    private void setUpToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Homeless");
     }
@@ -158,14 +178,6 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
             });
             builder.setView(view);
             builder.show();
-//        } else
-//        if(currFrag == fragmentManager.findFragmentByTag("viewOfferFrag")) {
-//            getFragmentManager().popBackStack();
-//        }
-//        else
-//        if (currFrag == fragmentManager.findFragmentByTag("createOfferFrag")) {
-//            getFragmentManager().popBackStack();
-//        }
         } else {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
@@ -176,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
     public void readFavouriteOffers() {
         // Getting current user favourite offers
         favouriteOffersList = new ArrayList<>();
-        if(mDatabaseFavouriteOffers != null) {
+        if (mDatabaseFavouriteOffers != null) {
             mDatabaseFavouriteOffers.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -210,4 +222,53 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         return favouriteOffersList;
     }
 
+
+    public class NetworkReceiver extends BroadcastReceiver {
+
+        public NetworkReceiver() {
+        }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(!isConnected(MainActivity.this)) {
+                buildDialog(MainActivity.this).show();
+            }
+        }
+
+        public boolean isConnected(Context context) {
+
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+            if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+                android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+                if ((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting()))
+                    return true;
+                else return false;
+            } else
+                return false;
+        }
+
+        public AlertDialog.Builder buildDialog(Context c) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(c);
+            builder.setTitle("No Internet Connection");
+            builder.setMessage("You need to have Mobile Data or Wi-Fi connection to access offers. Press ok to Exit");
+
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                MainActivity.this.finish();
+                }
+            });
+
+            return builder;
+        }
+    }
+
 }
+
+
