@@ -47,6 +47,7 @@ import com.projects.radomonov.homeless.app.LoginActivity;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -97,7 +98,7 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
         // In this method we are taking current user profile picture,
         // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
         // make it round and setting it to imgEditProfile to this fragment
-        if (mAuth.getCurrentUser() != null) {
+        /*if (mAuth.getCurrentUser() != null) {
             currentUserPic = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.users_directory_DB))
                     .child(mAuth.getCurrentUser().getUid()).child(getResources().getString(R.string.profilePic_in_user_DB));
 
@@ -133,7 +134,12 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
-        }
+        }*/
+        Bitmap bitmap = loadImageBitmap(getContext());
+        round = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+        round.setCircular(true);
+
+        imgEditProfile.setImageDrawable(round);
 
     }
 
@@ -170,6 +176,28 @@ public class NavigationDrawerFragment extends android.app.Fragment implements Vi
     private void closeNavDrawer(){
         mDrawerLayout.closeDrawers();
     }
+
+    public Bitmap loadImageBitmap(Context context){
+        String name = "profilePic" + "." + "jpg";
+        FileInputStream fileInputStream = null;
+        Bitmap bitmap = null;
+        try{
+            fileInputStream = context.openFileInput(name);
+            bitmap = BitmapFactory.decodeStream(fileInputStream);
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fileInputStream != null){
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
+    }
+
 
     @Override
     public void onClick(View view) {

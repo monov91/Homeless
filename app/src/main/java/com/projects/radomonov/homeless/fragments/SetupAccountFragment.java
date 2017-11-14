@@ -45,6 +45,7 @@ import com.google.firebase.storage.UploadTask;
 import com.projects.radomonov.homeless.R;
 import com.projects.radomonov.homeless.app.MainActivity;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
+import com.projects.radomonov.homeless.model.ContextWrapper;
 import com.projects.radomonov.homeless.model.Owner;
 import com.projects.radomonov.homeless.model.User;
 import com.squareup.picasso.Picasso;
@@ -53,7 +54,9 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,6 +64,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.telephony.PhoneNumberUtils.isGlobalPhoneNumber;
 import static com.projects.radomonov.homeless.R.id.btn_save_changes_setup_acc;
 import static com.theartofdev.edmodo.cropper.CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE;
+import static java.lang.System.out;
 
 /**
  * Created by Tom on 22.10.2017.
@@ -113,7 +117,12 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
         // In this method we are taking current user profile picture,
         // cropping it with RoundedBitmapDrawableFactory by using Asynctask,
         // make it round and setting it to imgProfilePic to this fragment
-        currentUserPic = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.users_directory_DB))
+        Bitmap bitmap = loadImageBitmap(getContext());
+        round = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+        round.setCircular(true);
+
+        imgProfilePic.setImageDrawable(round);
+       /* currentUserPic = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.users_directory_DB))
                 .child(mAuth.getCurrentUser().getUid()).child(getResources().getString(R.string.profilePic_in_user_DB));
 
         currentUserPic.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -148,7 +157,7 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
+        });*/
     }
 
     @Override
@@ -183,6 +192,7 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
 
                     round = RoundedBitmapDrawableFactory.create(getResources(), image);
                     round.setCircular(true);
+                    saveImage(getContext(),image);
 
                     imgProfilePic.setImageDrawable(round);
 
@@ -294,5 +304,45 @@ public class SetupAccountFragment extends Fragment implements View.OnClickListen
             } else {
             return false;
         }
+    }
+
+    public void saveImage(Context context, Bitmap bitmap){
+        String name = "profilePic" + "." + "jpg";
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = context.openFileOutput(name, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fileOutputStream != null){
+                    fileOutputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Bitmap loadImageBitmap(Context context){
+        String name = "profilePic" + "." + "jpg";
+        FileInputStream fileInputStream = null;
+        Bitmap bitmap = null;
+        try{
+            fileInputStream = context.openFileInput(name);
+            bitmap = BitmapFactory.decodeStream(fileInputStream);
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fileInputStream != null){
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
     }
 }
