@@ -254,14 +254,24 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
             AlertDialog.Builder builder = new AlertDialog.Builder(c);
             builder.setTitle("No Internet Connection");
-            builder.setMessage("You need to have Mobile Data or Wi-Fi connection to access offers. Press ok to Exit");
+            builder.setMessage("You need to have Mobile Data or Wi-Fi connection to access offers. Close App or Retry");
 
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
                 MainActivity.this.finish();
+                }
+            });
+
+            builder.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if(!isConnected(MainActivity.this)) {
+                        buildDialog(MainActivity.this).show();
+                    }
                 }
             });
 
