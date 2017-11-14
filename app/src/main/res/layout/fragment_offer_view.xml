@@ -43,8 +43,7 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:src="@drawable/star_btn_empty"
-                android:layout_marginRight="20dp"
-                android:clickable="true"/>
+                android:layout_marginRight="20dp"/>
 
 
         </LinearLayout>

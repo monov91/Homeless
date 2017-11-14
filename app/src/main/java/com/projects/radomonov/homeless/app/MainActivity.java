@@ -38,7 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.projects.radomonov.homeless.R;
-import com.projects.radomonov.homeless.broadcastReceivers.NetworkReceiver;
 import com.projects.radomonov.homeless.database.DatabaseInfo;
 import com.projects.radomonov.homeless.fragments.CreateOfferFragment;
 import com.projects.radomonov.homeless.fragments.NavigationDrawerFragment;
@@ -83,8 +82,7 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
 
         setUpToolbar();
         setUpNavigationDrawer();
-        DatabaseInfo.readUsers();
-        DatabaseInfo.readOffers();
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -103,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements SetupAccountFragm
         ft.add(R.id.fragment_container_main, getSearchFragInstance(), "searchFrag");
         ft.commit();
 
+        DatabaseInfo.readUsers();
+        DatabaseInfo.readOffers();
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);

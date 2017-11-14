@@ -156,12 +156,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             currentUserDb.child("eMail").setValue(eMail);
                             currentUserDb.child("phoneNumber").setValue(phoneNumber);
 
-
-                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(mainIntent);
+                            Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(loginIntent);
                             mProgress.dismiss();
-                            Toast.makeText(RegisterActivity.this, "Successfully Registered", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Successfully Registered, now Log In", Toast.LENGTH_SHORT).show();
+
+//                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+//                            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            startActivity(mainIntent);
+//                            mProgress.dismiss();
+//                            Toast.makeText(RegisterActivity.this, "Successfully Registered", Toast.LENGTH_SHORT).show();
                         } else {
                             mProgress.dismiss();
                             Toast.makeText(RegisterActivity.this, "Register problems :(...", Toast.LENGTH_SHORT).show();
